@@ -1,12 +1,11 @@
 import 'dart:convert';
-
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/BottomSheets/AccountBottomSheetDummy.dart';
-import 'package:transportationapp/Models/GooglePlaces.dart';
 import 'package:http/http.dart' as http;
-import 'package:transportationapp/MyConstants.dart';
+import 'package:ownerapp/BottomSheets/AccountBottomSheetDummy.dart';
+import 'package:ownerapp/Models/GooglePlaces.dart';
+import 'package:ownerapp/MyConstants.dart';
 
 class TollCalculator extends StatefulWidget {
   TollCalculator({Key key, this.title}) : super(key: key);

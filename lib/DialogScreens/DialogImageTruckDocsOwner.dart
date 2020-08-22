@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:transportationapp/DialogScreens/DialogFailed.dart';
-import 'package:transportationapp/DialogScreens/DialogProcessing.dart';
-import 'package:transportationapp/DialogScreens/DialogSuccess.dart';
-import 'package:transportationapp/HttpHandler.dart';
+import 'package:ownerapp/DialogScreens/DialogFailed.dart';
+import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
+import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
+import 'package:ownerapp/HttpHandler.dart';
 
 class DialogImageTruckDocs {
   static DialogImageTruckDocs _instance = new DialogImageTruckDocs.internal();

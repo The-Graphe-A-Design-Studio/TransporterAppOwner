@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:transportationapp/CommonPages/LoadingBody.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogFailed.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogProcessing.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogSuccess.dart';
-import 'package:transportationapp/HttpHandler.dart';
-import 'package:transportationapp/Models/Truck.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/Models/TruckCategory.dart';
+import 'package:ownerapp/CommonPages/LoadingBody.dart';
+import 'package:ownerapp/DialogScreens/DialogFailed.dart';
+import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
+import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
+import 'package:ownerapp/HttpHandler.dart';
+import 'package:ownerapp/Models/Truck.dart';
+import 'package:ownerapp/Models/TruckCategory.dart';
 
 class EditTruckOwner extends StatefulWidget {
   final Truck truck;

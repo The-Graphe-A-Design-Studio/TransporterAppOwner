@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/BottomSheets/AccountBottomSheetLoggedIn.dart';
-import 'package:transportationapp/Models/User.dart';
-import 'package:transportationapp/MyConstants.dart';
+import 'package:ownerapp/BottomSheets/AccountBottomSheetLoggedIn.dart';
+import 'package:ownerapp/Models/User.dart';
+import 'package:ownerapp/MyConstants.dart';
 
 class HomePageOwner extends StatefulWidget {
   final UserOwner userOwner;

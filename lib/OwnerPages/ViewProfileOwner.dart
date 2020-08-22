@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogFailed.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogProcessing.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogSuccess.dart';
-import 'package:transportationapp/HttpHandler.dart';
-import 'package:transportationapp/Models/User.dart';
+import 'package:ownerapp/DialogScreens/DialogFailed.dart';
+import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
+import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
+import 'package:ownerapp/HttpHandler.dart';
+import 'package:ownerapp/Models/User.dart';
 
 class ViewProfileOwner extends StatefulWidget {
   final UserOwner userOwner;

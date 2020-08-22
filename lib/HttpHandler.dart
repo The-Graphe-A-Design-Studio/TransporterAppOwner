@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
+import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
+import 'package:ownerapp/Models/Truck.dart';
+import 'package:ownerapp/Models/TruckCategory.dart';
+import 'package:ownerapp/Models/User.dart';
+import 'package:ownerapp/MyConstants.dart';
+import 'package:ownerapp/PostMethodResult.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:transportationapp/Models/Truck.dart';
-import 'package:transportationapp/Models/User.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogProcessing.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/DialogScreens/DialogSuccess.dart';
-import 'package:transportationapp/MyConstants.dart';
-import 'package:transportationapp/PostMethodResult.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/Models/TruckCategory.dart';
 
 class HTTPHandler {
   String baseURLDriver =

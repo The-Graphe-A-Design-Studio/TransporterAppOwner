@@ -1,12 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:transportationapp/CommonPages/LoadingBody.dart';
-import 'package:transportationapp/DialogScreens/DialogImageTruckDocsOwner.dart';
-import 'package:transportationapp/HttpHandler.dart';
-import 'package:transportationapp/Models/Truck.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/BottomSheets/AccountBottomSheetLoggedIn.dart';
-import 'package:transportationapp/Models/User.dart';
-import 'package:transportationapp/MyConstants.dart';
+import 'package:ownerapp/BottomSheets/AccountBottomSheetLoggedIn.dart';
+import 'package:ownerapp/CommonPages/LoadingBody.dart';
+import 'package:ownerapp/DialogScreens/DialogImageTruckDocsOwner.dart';
+import 'package:ownerapp/HttpHandler.dart';
+import 'package:ownerapp/Models/Truck.dart';
+import 'package:ownerapp/Models/User.dart';
+import 'package:ownerapp/MyConstants.dart';
 
 class ViewTrucksOwner extends StatefulWidget {
   final UserOwner userOwner;

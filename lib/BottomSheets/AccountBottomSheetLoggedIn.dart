@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:transportationapp/HttpHandler.dart';
-import 'package:transportationapp/MyConstants.dart';
+import 'package:ownerapp/HttpHandler.dart';
+import 'package:ownerapp/MyConstants.dart';
 
 class AccountBottomSheetLoggedIn extends StatefulWidget {
   final ScrollController scrollController;

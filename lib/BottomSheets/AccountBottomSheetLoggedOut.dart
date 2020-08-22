@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:transportationapp/MyConstants.dart';
+import 'package:ownerapp/MyConstants.dart';
 
 class AccountBottomSheetLoggedOut extends StatefulWidget {
   final ScrollController scrollController;
