@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/BottomSheets/AccountBottomSheetDummy.dart';
+// import 'file:///C:/Users/LENOVO/Desktop/transporter-app/lib/BottomSheets/AccountBottomSheetDummy.dart';
 
 class EmiCalculator extends StatefulWidget {
   EmiCalculator({Key key, this.title}) : super(key: key);
@@ -185,7 +185,7 @@ class _EmiCalculatorState extends State<EmiCalculator> {
                         topLeft: Radius.circular(30.0),
                         topRight: Radius.circular(30.0)),
                   ),
-                  child: AccountBottomSheetDummy(),
+                  // child: AccountBottomSheetDummy(),
                 ),
               );
             },

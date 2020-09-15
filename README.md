@@ -1,6 +1,6 @@
 # transportationapp
 
-FLutter Project for The Graphe
+Flutter Project for The Graphe
 
 ## Getting Started
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
@@ -8,9 +9,13 @@ import 'package:ownerapp/Models/TruckCategory.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/PostMethodResult.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Models/SubscriptionPlan.dart';
 
 class HTTPHandler {
+  final _random = new Random();
+
   String baseURLDriver =
       'https://developers.thegraphe.com/transport/api/drivers';
   String baseURLOwner = 'https://truckwale.co.in/api/truck_owner';
@@ -279,7 +284,8 @@ class HTTPHandler {
   /*-------------------------- Customer API's ---------------------------*/
   Future<PostResultOne> registerLoginCustomer(List data) async {
     try {
-      var result = await http.post("$baseURLCustomer/register-login-logout", body: {
+      var result =
+          await http.post("$baseURLCustomer/register-login-logout", body: {
         'cu_phone_code': data[0],
         'cu_phone': data[1],
       });
@@ -291,7 +297,8 @@ class HTTPHandler {
 
   Future<PostResultOne> logoutCustomer(List data) async {
     try {
-      var result = await http.post("$baseURLCustomer/register-login-logout", body: {
+      var result =
+          await http.post("$baseURLCustomer/register-login-logout", body: {
         'logout_number': data[0],
       });
       return PostResultOne.fromJson(json.decode(result.body));
@@ -306,7 +313,8 @@ class HTTPHandler {
       var request = http.MultipartRequest('POST', Uri.parse(url));
 
       request.fields['cu_phone'] = data[0];
-      request.files.add(await http.MultipartFile.fromPath('${data[1]}', data[2]));
+      request.files
+          .add(await http.MultipartFile.fromPath('${data[1]}', data[2]));
       var result = await request.send();
       var finalResult = await http.Response.fromStream(result);
       return PostResultOne.fromJson(json.decode(finalResult.body));
@@ -322,7 +330,8 @@ class HTTPHandler {
 
       request.fields['cu_phone'] = data[0];
       request.fields['cu_co_name'] = data[1];
-      request.files.add(await http.MultipartFile.fromPath('co_office_address', data[2]));
+      request.files
+          .add(await http.MultipartFile.fromPath('co_office_address', data[2]));
       var result = await request.send();
       var finalResult = await http.Response.fromStream(result);
       return PostResultOne.fromJson(json.decode(finalResult.body));
@@ -426,6 +435,89 @@ class HTTPHandler {
       }
     } catch (error) {
       throw error;
+    }
+  }
+
+  // RISHAV
+
+  Future<List<SubscriptionPlan>> getSubscriptionPlans() async {
+    try {
+      var result = await http
+          .get('https://truckwale.co.in/api/truck_owner_subscription_plan');
+
+      var ret = json.decode(result.body);
+      List<SubscriptionPlan> list = [];
+      for (var i in ret) {
+        list.add(SubscriptionPlan.fromJson(i));
+      }
+      return list;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<String> generateRazorpayOrderId(int amount) async {
+    try {
+      String basicAuth =
+          'Basic ' + base64Encode(utf8.encode('$RAZORPAY_ID:$RAZORPAY_SECRET'));
+
+      Map<String, dynamic> orderData = {
+        'amount': amount,
+        'currency': 'INR',
+        'receipt': 'AATA_${1000 + _random.nextInt(9999 - 1000)}',
+        'payment_capture': 1,
+        'notes': {
+          'notes_key_1': 'Aatawala is developed by Graphe',
+        },
+      };
+
+      print(1000 + _random.nextInt(9999 - 1000));
+
+      http.Response response = await http.post(
+        'https://api.razorpay.com/v1/orders',
+        headers: <String, String>{
+          'Authorization': basicAuth,
+          'Content-Type': 'application/json'
+        },
+        body: json.encode(orderData),
+      );
+
+      print(json.decode(response.body));
+
+      if ((json.decode(response.body)).containsKey('error')) {
+        return null;
+      } else {
+        return (json.decode(response.body))['id'];
+      }
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<PostResultOne> storeData(
+    UserOwner user,
+    SubscriptionPlan plan,
+    PaymentSuccessResponse paymentResponse,
+  ) async {
+    try {
+      var response = await http.post(
+        'https://truckwale.co.in/api/subscription_payment',
+        body: {
+          'user_type': '2',
+          'user_id': user.oId,
+          'amount': plan.planSellingPrice.toString(),
+          'duration': plan.duration[0],
+          'razorpay_order_id': paymentResponse.orderId ?? 'graphe123',
+          'razorpay_payment_id': paymentResponse.paymentId,
+          'razorpay_signature': paymentResponse.signature ?? 'graphe123',
+        },
+      );
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
     }
   }
 }

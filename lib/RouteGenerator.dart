@@ -10,6 +10,7 @@ import 'package:ownerapp/OwnerPages/AddTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/EditTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/HomePageOwner.dart';
 import 'package:ownerapp/OwnerPages/OwnerOptionsPage.dart';
+import 'package:ownerapp/OwnerPages/SubscriptionOwner.dart';
 import 'package:ownerapp/OwnerPages/ViewProfileOwner.dart';
 import 'package:ownerapp/OwnerPages/ViewTrucksOwner.dart';
 import 'package:ownerapp/SplashScreen.dart';
@@ -29,7 +30,7 @@ class RouteGenerator {
       case ownerOptionPage:
         return FadeRoute(page: OwnerOptionsPage());
 
-    //Pages which don't need LoggedIn User
+      //Pages which don't need LoggedIn User
       case emiCalculatorPage:
         return FadeRoute(page: EmiCalculator());
       case freightCalculatorPage:
@@ -39,7 +40,7 @@ class RouteGenerator {
       case tripPlannerPage:
         return FadeRoute(page: TripPlanner());
 
-    //Pages once the user is LoggedIn - Owner
+      //Pages once the user is LoggedIn - Owner
       case homePageOwner:
         return FadeRoute(page: HomePageOwner(userOwner: args));
       case addTruckOwner:
@@ -57,6 +58,11 @@ class RouteGenerator {
       case viewProfileOwner:
         return FadeRoute(
             page: ViewProfileOwner(
+          userOwner: args,
+        ));
+      case subscriptionOwner:
+        return FadeRoute(
+            page: SubscriptionOwner(
           userOwner: args,
         ));
 

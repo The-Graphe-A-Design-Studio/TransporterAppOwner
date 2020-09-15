@@ -1,16 +1,22 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:ownerapp/HttpHandler.dart';
+import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 
 class AccountBottomSheetLoggedIn extends StatefulWidget {
   final ScrollController scrollController;
+  final UserOwner userOwner;
 
-  AccountBottomSheetLoggedIn({Key key, @required this.scrollController})
-      : super(key: key);
+  AccountBottomSheetLoggedIn({
+    Key key,
+    @required this.scrollController,
+    @required this.userOwner,
+  }) : super(key: key);
 
   @override
-  _AccountBottomSheetLoggedInState createState() => _AccountBottomSheetLoggedInState();
+  _AccountBottomSheetLoggedInState createState() =>
+      _AccountBottomSheetLoggedInState();
 }
 
 final List<String> imgList = [
@@ -21,7 +27,8 @@ final List<String> imgList = [
   'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
 ];
 
-class _AccountBottomSheetLoggedInState extends State<AccountBottomSheetLoggedIn> {
+class _AccountBottomSheetLoggedInState
+    extends State<AccountBottomSheetLoggedIn> {
   @override
   void initState() {
     super.initState();
@@ -73,412 +80,456 @@ class _AccountBottomSheetLoggedInState extends State<AccountBottomSheetLoggedIn>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 16.0, right: 16.0),
+      padding: EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        top: 10.0,
+      ),
       child: ListView(
         controller: widget.scrollController,
         children: <Widget>[
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              width: 60.0,
-              height: 4.0,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(30.0),
+          ListTile(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                subscriptionOwner,
+                arguments: widget.userOwner,
+              );
+            },
+            leading: Icon(Icons.toc),
+            title: Text(
+              'Your Subscription',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            subtitle: Text(
+              'View Plan',
+              style: TextStyle(color: Colors.black87),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              // HTTPHandler().signOut(
+              //   context,
+              //   userMobile: widget.userTransporter.mobileNumber,
+              // );
+            },
+            leading: Icon(Icons.logout),
+            title: Text(
+              'Logout',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          SizedBox(
-            height: 40.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Material(
-              child: Text(
-                "Plan Your Trip",
-                style: TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Container(
-            height: 150.0,
-            child: ListView(
-              padding: EdgeInsets.only(right: 16.0, left: 16.0),
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                Material(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, tripPlannerPage);
-                    },
-                    child: Container(
-                      width: 160,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border:
-                              Border.all(color: Color(0xff252427), width: 3.0),
-                          color: Colors.transparent),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CircleAvatar(
-                              radius: 30.0,
-                              backgroundColor: Color(0xff252427),
-                              child: Icon(
-                                Icons.link,
-                                color: Colors.white,
-                                size: 30.0,
-                              ),
-                            ),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Material(
-                              child: Text(
-                                "Trip Planner",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff252427),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 16.0,
-                ),
-                Material(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, freightCalculatorPage);
-                    },
-                    child: Container(
-                      width: 160,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border:
-                              Border.all(color: Color(0xff252427), width: 3.0),
-                          color: Colors.transparent),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CircleAvatar(
-                              radius: 30.0,
-                              backgroundColor: Color(0xff252427),
-                              child: Icon(
-                                Icons.link,
-                                color: Colors.white,
-                                size: 30.0,
-                              ),
-                            ),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Material(
-                              child: Text(
-                                "Freight Calculator",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff252427),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 16.0,
-                ),
-                Material(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, tollCalculatorPage);
-                    },
-                    child: Container(
-                      width: 160,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border:
-                              Border.all(color: Color(0xff252427), width: 3.0),
-                          color: Colors.transparent),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CircleAvatar(
-                              radius: 30.0,
-                              backgroundColor: Color(0xff252427),
-                              child: Icon(
-                                Icons.link,
-                                color: Colors.white,
-                                size: 30.0,
-                              ),
-                            ),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Material(
-                              child: Text(
-                                "Toll Calculator",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff252427),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 16.0,
-                ),
-                Material(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, emiCalculatorPage);
-                    },
-                    child: Container(
-                      width: 160,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border:
-                              Border.all(color: Color(0xff252427), width: 3.0),
-                          color: Colors.transparent),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CircleAvatar(
-                              radius: 30.0,
-                              backgroundColor: Color(0xff252427),
-                              child: Icon(
-                                Icons.link,
-                                color: Colors.white,
-                                size: 30.0,
-                              ),
-                            ),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Material(
-                              child: Text(
-                                "EMI Calculator",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff252427),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Material(
-              child: Text(
-                "Upcoming Orders",
-                style: TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 5.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Material(
-              child: Text(
-                "Select an Order to view",
-                style: TextStyle(
-                  color: Colors.black12,
-                  fontSize: 18.0,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Container(
-            child: Column(
-              children: <Widget>[
-                CarouselSlider(
-                  options: CarouselOptions(
-                    autoPlay: false,
-                    enableInfiniteScroll: false,
-                    aspectRatio: 2.0,
-                    enlargeCenterPage: true,
-                  ),
-                  items: imageSliders,
-                ),
-              ],
-            ),
-          ),
+          // return Padding(
+          //   padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          //   child: ListView(
+          //     controller: widget.scrollController,
+          //     children: <Widget>[
+          //       Align(
+          //         alignment: Alignment.topCenter,
+          //         child: Container(
+          //           width: 60.0,
+          //           height: 4.0,
+          //           decoration: BoxDecoration(
+          //             color: Colors.grey,
+          //             borderRadius: BorderRadius.circular(30.0),
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         height: 40.0,
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.only(left: 16.0),
+          //         child: Material(
+          //           child: Text(
+          //             "Plan Your Trip",
+          //             style: TextStyle(
+          //               fontSize: 23.0,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.black,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         height: 15.0,
+          //       ),
+          //       Container(
+          //         height: 150.0,
+          //         child: ListView(
+          //           padding: EdgeInsets.only(right: 16.0, left: 16.0),
+          //           scrollDirection: Axis.horizontal,
+          //           children: <Widget>[
+          //             Material(
+          //               child: InkWell(
+          //                 onTap: () {
+          //                   Navigator.pushNamed(context, tripPlannerPage);
+          //                 },
+          //                 child: Container(
+          //                   width: 160,
+          //                   decoration: BoxDecoration(
+          //                       borderRadius: BorderRadius.circular(10.0),
+          //                       border:
+          //                           Border.all(color: Color(0xff252427), width: 3.0),
+          //                       color: Colors.transparent),
+          //                   child: Column(
+          //                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                     children: [
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: CircleAvatar(
+          //                           radius: 30.0,
+          //                           backgroundColor: Color(0xff252427),
+          //                           child: Icon(
+          //                             Icons.link,
+          //                             color: Colors.white,
+          //                             size: 30.0,
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: Material(
+          //                           child: Text(
+          //                             "Trip Planner",
+          //                             style: TextStyle(
+          //                               fontSize: 16.0,
+          //                               fontWeight: FontWeight.bold,
+          //                               color: Color(0xff252427),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(
+          //                         height: 10.0,
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               width: 16.0,
+          //             ),
+          //             Material(
+          //               child: InkWell(
+          //                 onTap: () {
+          //                   Navigator.pushNamed(context, freightCalculatorPage);
+          //                 },
+          //                 child: Container(
+          //                   width: 160,
+          //                   decoration: BoxDecoration(
+          //                       borderRadius: BorderRadius.circular(10.0),
+          //                       border:
+          //                           Border.all(color: Color(0xff252427), width: 3.0),
+          //                       color: Colors.transparent),
+          //                   child: Column(
+          //                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                     children: [
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: CircleAvatar(
+          //                           radius: 30.0,
+          //                           backgroundColor: Color(0xff252427),
+          //                           child: Icon(
+          //                             Icons.link,
+          //                             color: Colors.white,
+          //                             size: 30.0,
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: Material(
+          //                           child: Text(
+          //                             "Freight Calculator",
+          //                             style: TextStyle(
+          //                               fontSize: 16.0,
+          //                               fontWeight: FontWeight.bold,
+          //                               color: Color(0xff252427),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(
+          //                         height: 10.0,
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               width: 16.0,
+          //             ),
+          //             Material(
+          //               child: InkWell(
+          //                 onTap: () {
+          //                   Navigator.pushNamed(context, tollCalculatorPage);
+          //                 },
+          //                 child: Container(
+          //                   width: 160,
+          //                   decoration: BoxDecoration(
+          //                       borderRadius: BorderRadius.circular(10.0),
+          //                       border:
+          //                           Border.all(color: Color(0xff252427), width: 3.0),
+          //                       color: Colors.transparent),
+          //                   child: Column(
+          //                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                     children: [
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: CircleAvatar(
+          //                           radius: 30.0,
+          //                           backgroundColor: Color(0xff252427),
+          //                           child: Icon(
+          //                             Icons.link,
+          //                             color: Colors.white,
+          //                             size: 30.0,
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: Material(
+          //                           child: Text(
+          //                             "Toll Calculator",
+          //                             style: TextStyle(
+          //                               fontSize: 16.0,
+          //                               fontWeight: FontWeight.bold,
+          //                               color: Color(0xff252427),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(
+          //                         height: 10.0,
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               width: 16.0,
+          //             ),
+          //             Material(
+          //               child: InkWell(
+          //                 onTap: () {
+          //                   Navigator.pushNamed(context, emiCalculatorPage);
+          //                 },
+          //                 child: Container(
+          //                   width: 160,
+          //                   decoration: BoxDecoration(
+          //                       borderRadius: BorderRadius.circular(10.0),
+          //                       border:
+          //                           Border.all(color: Color(0xff252427), width: 3.0),
+          //                       color: Colors.transparent),
+          //                   child: Column(
+          //                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                     children: [
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: CircleAvatar(
+          //                           radius: 30.0,
+          //                           backgroundColor: Color(0xff252427),
+          //                           child: Icon(
+          //                             Icons.link,
+          //                             color: Colors.white,
+          //                             size: 30.0,
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       Spacer(),
+          //                       Align(
+          //                         alignment: Alignment.center,
+          //                         child: Material(
+          //                           child: Text(
+          //                             "EMI Calculator",
+          //                             style: TextStyle(
+          //                               fontSize: 16.0,
+          //                               fontWeight: FontWeight.bold,
+          //                               color: Color(0xff252427),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(
+          //                         height: 10.0,
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         height: 20.0,
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.only(left: 16.0),
+          //         child: Material(
+          //           child: Text(
+          //             "Upcoming Orders",
+          //             style: TextStyle(
+          //               fontSize: 23.0,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.black,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         height: 5.0,
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.only(left: 16.0),
+          //         child: Material(
+          //           child: Text(
+          //             "Select an Order to view",
+          //             style: TextStyle(
+          //               color: Colors.black12,
+          //               fontSize: 18.0,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         height: 15.0,
+          //       ),
+          //       Container(
+          //         child: Column(
+          //           children: <Widget>[
+          //             CarouselSlider(
+          //               options: CarouselOptions(
+          //                 autoPlay: false,
+          //                 enableInfiniteScroll: false,
+          //                 aspectRatio: 2.0,
+          //                 enlargeCenterPage: true,
+          //               ),
+          //               items: imageSliders,
+          //             ),
+          //           ],
+          //         ),
+          //       ),
 
-          SizedBox(
-            height: 20.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Material(
-              child: Text(
-                "Temporary Links",
-                style: TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Row(
-            children: [
-              Text(
-                  "Sign Out"
-              ),
-              Spacer(),
-              FlatButton(
-                onPressed: () {
-                  HTTPHandler().signOut(context);
-                },
-                child: Text("Link"),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
-          Row(
-            children: [
-              Text(
-                "Driver Upcoming Order"
-              ),
-              Spacer(),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, driverUpcomingOrderPage);
-                },
-                child: Text("Link"),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
-          Row(
-            children: [
-              Text(
-                  "New Transporting Order"
-              ),
-              Spacer(),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, newTransportingOrderPage);
-                },
-                child: Text("Link"),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
-          Row(
-            children: [
-              Text(
-                  "Order Summary Page"
-              ),
-              Spacer(),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, orderSummaryPage);
-                },
-                child: Text("Link"),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
-          Row(
-            children: [
-              Text(
-                  "Request Transport"
-              ),
-              Spacer(),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, requestTransportPage);
-                },
-                child: Text("Link"),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 40.0,
-          ),
+          //       SizedBox(
+          //         height: 20.0,
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.only(left: 16.0),
+          //         child: Material(
+          //           child: Text(
+          //             "Temporary Links",
+          //             style: TextStyle(
+          //               fontSize: 23.0,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.black,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         height: 15.0,
+          //       ),
+          //       Row(
+          //         children: [
+          //           Text(
+          //               "Sign Out"
+          //           ),
+          //           Spacer(),
+          //           FlatButton(
+          //             onPressed: () {
+          //               HTTPHandler().signOut(context);
+          //             },
+          //             child: Text("Link"),
+          //           )
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 8.0,
+          //       ),
+          //       Row(
+          //         children: [
+          //           Text(
+          //             "Driver Upcoming Order"
+          //           ),
+          //           Spacer(),
+          //           FlatButton(
+          //             onPressed: () {
+          //               Navigator.pushNamed(context, driverUpcomingOrderPage);
+          //             },
+          //             child: Text("Link"),
+          //           )
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 8.0,
+          //       ),
+          //       Row(
+          //         children: [
+          //           Text(
+          //               "New Transporting Order"
+          //           ),
+          //           Spacer(),
+          //           FlatButton(
+          //             onPressed: () {
+          //               Navigator.pushNamed(context, newTransportingOrderPage);
+          //             },
+          //             child: Text("Link"),
+          //           )
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 8.0,
+          //       ),
+          //       Row(
+          //         children: [
+          //           Text(
+          //               "Order Summary Page"
+          //           ),
+          //           Spacer(),
+          //           FlatButton(
+          //             onPressed: () {
+          //               Navigator.pushNamed(context, orderSummaryPage);
+          //             },
+          //             child: Text("Link"),
+          //           )
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 8.0,
+          //       ),
+          //       Row(
+          //         children: [
+          //           Text(
+          //               "Request Transport"
+          //           ),
+          //           Spacer(),
+          //           FlatButton(
+          //             onPressed: () {
+          //               Navigator.pushNamed(context, requestTransportPage);
+          //             },
+          //             child: Text("Link"),
+          //           )
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 40.0,
+          //       ),
         ],
       ),
     );

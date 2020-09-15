@@ -1,6 +1,10 @@
 //API Key
 const GoogleApiKey = "AIzaSyCSdJNFravZ9yjzisUAhLgohy_MWbS41XI";
-const autoCompleteLink = "https://maps.googleapis.com/maps/api/place/autocomplete/json?key=$GoogleApiKey&components=country:in&types=(cities)&input=";
+const autoCompleteLink =
+    "https://maps.googleapis.com/maps/api/place/autocomplete/json?key=$GoogleApiKey&components=country:in&types=(cities)&input=";
+
+const RAZORPAY_ID = "rzp_test_Ox9H2BWMViEG65";
+const RAZORPAY_SECRET = "2rOaeIWZt4iOJUjMJGXRk5dw";
 
 //Basic Pages
 const String splashPage = "/";
@@ -37,3 +41,4 @@ const String addTruckOwner = "/addTruckOwner";
 const String viewTrucksOwner = "/viewTrucksOwner";
 const String editTrucksOwner = "/editTrucksOwner";
 const String viewProfileOwner = "/viewProfileOwner";
+const String subscriptionOwner = "/subscriptionOwner";

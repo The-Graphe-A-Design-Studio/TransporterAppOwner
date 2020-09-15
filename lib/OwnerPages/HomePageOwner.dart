@@ -120,7 +120,9 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                           topRight: Radius.circular(30.0)),
                     ),
                     child: AccountBottomSheetLoggedIn(
-                        scrollController: scrollController)),
+                      scrollController: scrollController,
+                      userOwner: widget.userOwner,
+                    )),
               );
             },
           ),
