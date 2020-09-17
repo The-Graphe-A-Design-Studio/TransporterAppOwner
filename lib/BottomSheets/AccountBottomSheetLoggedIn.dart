@@ -110,10 +110,10 @@ class _AccountBottomSheetLoggedInState
           ),
           ListTile(
             onTap: () {
-              // HTTPHandler().signOut(
-              //   context,
-              //   userMobile: widget.userTransporter.mobileNumber,
-              // );
+              HTTPHandler().signOut(
+                context,
+                widget.userOwner.oPhone,
+              );
             },
             leading: Icon(Icons.logout),
             title: Text(

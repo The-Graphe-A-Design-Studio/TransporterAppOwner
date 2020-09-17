@@ -21,18 +21,21 @@ class HTTPHandler {
   String baseURLOwner = 'https://truckwale.co.in/api/truck_owner';
   String baseURLCustomer = 'https://truckwale.co.in/api/customer';
 
-  void signOut(BuildContext context) async {
+  void signOut(BuildContext context, var mobileNo) async {
     DialogProcessing().showCustomDialog(context,
         title: "Sign Out", text: "Processing, Please Wait!");
-    await SharedPreferences.getInstance()
-        .then((value) => value.setBool("rememberMe", false));
-    await Future.delayed(Duration(seconds: 1), () {});
-    Navigator.pop(context);
-    DialogSuccess().showCustomDialog(context, title: "Sign Out");
-    await Future.delayed(Duration(seconds: 1), () {});
-    Navigator.pop(context);
-    Navigator.pushNamedAndRemoveUntil(
-        context, introLoginOptionPage, (route) => false);
+    http.post('$baseURLOwner/register-login-logout',
+        body: {'logout_number': mobileNo}).then((_) async {
+      await SharedPreferences.getInstance()
+          .then((value) => value.setBool("rememberMe", false));
+      await Future.delayed(Duration(seconds: 1), () {});
+      Navigator.pop(context);
+      DialogSuccess().showCustomDialog(context, title: "Sign Out");
+      await Future.delayed(Duration(seconds: 1), () {});
+      Navigator.pop(context);
+      Navigator.pushNamedAndRemoveUntil(
+          context, introLoginOptionPage, (route) => false);
+    }).catchError((e) => throw e);
   }
 
   void saveLocalChangesOwner(UserOwner userOwner) async {

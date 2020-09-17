@@ -174,7 +174,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
             title: "Change Password", text: value.message);
         await Future.delayed(Duration(seconds: 1), () {});
         Navigator.pop(context);
-        HTTPHandler().signOut(context);
+        HTTPHandler().signOut(context, widget.userOwner.oPhone);
       } else {
         DialogFailed().showCustomDialog(context,
             title: "Change Password", text: value.message);
