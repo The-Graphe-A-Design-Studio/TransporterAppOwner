@@ -63,16 +63,16 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.userOwner.oName;
-    mobileNumberController.text = widget.userOwner.oPhone;
-    emailController.text = widget.userOwner.oEmail;
-    addressController.text = widget.userOwner.oAddress;
-    cityController.text = widget.userOwner.oCity;
-    operatingRoutesController.text = widget.userOwner.oOperatingRoute;
-    permitStatesController.text = widget.userOwner.oPermitStates;
-    panCardNumberController.text = widget.userOwner.oPan;
-    bankAccountNumberController.text = widget.userOwner.oBank;
-    ifscCodeController.text = widget.userOwner.oIfsc;
+    // nameController.text = widget.userOwner.oName;
+    // mobileNumberController.text = widget.userOwner.oPhone;
+    // emailController.text = widget.userOwner.oEmail;
+    // addressController.text = widget.userOwner.oAddress;
+    // cityController.text = widget.userOwner.oCity;
+    // operatingRoutesController.text = widget.userOwner.oOperatingRoute;
+    // permitStatesController.text = widget.userOwner.oPermitStates;
+    // panCardNumberController.text = widget.userOwner.oPan;
+    // bankAccountNumberController.text = widget.userOwner.oBank;
+    // ifscCodeController.text = widget.userOwner.oIfsc;
   }
 
   @override
@@ -123,17 +123,17 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
             selectedWidgetMarker = WidgetMarker.verifyOTP;
           });
         } else {
-          widget.userOwner.oName = nameController.text.toString();
-          widget.userOwner.oPhone = mobileNumberController.text;
-          widget.userOwner.oEmail = emailController.text;
-          widget.userOwner.oAddress = addressController.text;
-          widget.userOwner.oCity = cityController.text;
-          widget.userOwner.oOperatingRoute = operatingRoutesController.text;
-          widget.userOwner.oPermitStates = permitStatesController.text;
-          widget.userOwner.oPan = panCardNumberController.text;
-          widget.userOwner.oBank = bankAccountNumberController.text;
-          widget.userOwner.oIfsc = ifscCodeController.text;
-          HTTPHandler().saveLocalChangesOwner(widget.userOwner);
+          // widget.userOwner.oName = nameController.text.toString();
+          // widget.userOwner.oPhone = mobileNumberController.text;
+          // widget.userOwner.oEmail = emailController.text;
+          // widget.userOwner.oAddress = addressController.text;
+          // widget.userOwner.oCity = cityController.text;
+          // widget.userOwner.oOperatingRoute = operatingRoutesController.text;
+          // widget.userOwner.oPermitStates = permitStatesController.text;
+          // widget.userOwner.oPan = panCardNumberController.text;
+          // widget.userOwner.oBank = bankAccountNumberController.text;
+          // widget.userOwner.oIfsc = ifscCodeController.text;
+          // HTTPHandler().saveLocalChangesOwner(widget.userOwner);
         }
         Navigator.pop(context);
         Scaffold.of(_context).showSnackBar(SnackBar(

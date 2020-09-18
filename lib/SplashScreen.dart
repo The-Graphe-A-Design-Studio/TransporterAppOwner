@@ -32,7 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
         userDriver =
             UserDriver.fromJson(json.decode(prefs.getString("userData")));
       } else if (userType == transporterUser) {
-        userCustomerCompany = UserCustomerCompany.fromJson(json.decode(prefs.getString("userData")));
+        userCustomerCompany = UserCustomerCompany.fromJson(
+            json.decode(prefs.getString("userData")));
       }
     }
     return Future.value(rememberMe);
@@ -44,13 +45,15 @@ class _SplashScreenState extends State<SplashScreen> {
     doSomeAction().then((value) {
       if (value == true) {
         if (userType == truckOwnerUser) {
+          print(userOwner.oName);
           Navigator.pushReplacementNamed(context, homePageOwner,
               arguments: userOwner);
         } else if (userType == driverUser) {
           Navigator.pushReplacementNamed(context, homePageDriver,
               arguments: userDriver);
         } else if (userType == transporterUser) {
-          Navigator.pushReplacementNamed(context, homePageTransporter, arguments: userCustomerCompany);
+          Navigator.pushReplacementNamed(context, homePageTransporter,
+              arguments: userCustomerCompany);
         } else {
           Navigator.pushReplacementNamed(context, introLoginOptionPage);
         }

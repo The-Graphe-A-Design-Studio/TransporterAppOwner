@@ -66,8 +66,8 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                         ),
                         FlatButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, viewTrucksOwner,
-                                arguments: widget.userOwner);
+                            // Navigator.pushNamed(context, viewTrucksOwner,
+                            //     arguments: widget.userOwner);
                           },
                           child: Text(
                             "View My Trucks",
@@ -82,8 +82,8 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                         ),
                         FlatButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, viewProfileOwner,
-                                arguments: widget.userOwner);
+                            // Navigator.pushNamed(context, viewProfileOwner,
+                            //     arguments: widget.userOwner);
                           },
                           child: Text(
                             "View My Profile",
@@ -112,17 +112,18 @@ class _HomePageOwnerState extends State<HomePageOwner> {
               return Hero(
                 tag: 'AnimeBottom',
                 child: Container(
-                    margin: EdgeInsets.only(bottom: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.0),
-                          topRight: Radius.circular(30.0)),
-                    ),
-                    child: AccountBottomSheetLoggedIn(
-                      scrollController: scrollController,
-                      userOwner: widget.userOwner,
-                    )),
+                  margin: EdgeInsets.only(bottom: 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0)),
+                  ),
+                  child: AccountBottomSheetLoggedIn(
+                    scrollController: scrollController,
+                    userOwner: widget.userOwner,
+                  ),
+                ),
               );
             },
           ),

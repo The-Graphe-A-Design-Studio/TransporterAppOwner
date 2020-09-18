@@ -46,32 +46,57 @@ class HTTPHandler {
   /*-------------------------- Owner API's ---------------------------*/
   Future<PostResultOne> registerOwner(List data) async {
     try {
-      var result = await http.post("$baseURLOwner/register", body: {
-        'to_name': data[0],
-        'to_phone_code': data[1],
-        'to_phone': data[2],
-        'to_email': data[3],
-        'to_address': data[4],
-        'to_city': data[5],
-        'to_password': data[6],
-        'to_cnf_password': data[7],
-        'to_operating_routes': data[8],
-        'to_state_permits': data[9],
-        'to_pan': data[10],
-        'to_bank': data[11],
-        'to_ifsc': data[12]
+      // var result = await http.post("$baseURLOwner/register", body: {
+      //   'to_name': data[0],
+      //   'to_phone_code': data[1],
+      //   'to_phone': data[2],
+      //   'to_email': data[3],
+      //   'to_address': data[4],
+      //   'to_city': data[5],
+      //   'to_password': data[6],
+      //   'to_cnf_password': data[7],
+      //   'to_operating_routes': data[8],
+      //   'to_state_permits': data[9],
+      //   'to_pan': data[10],
+      //   'to_bank': data[11],
+      //   'to_ifsc': data[12]
+      // });
+
+      print('sending request');
+
+      var result =
+          await http.post('$baseURLOwner/register-login-logout', body: {
+        'to_phone_code': data[0],
+        'to_phone': data[1],
+        'to_token': data[2],
       });
+
+      print(result);
+
       return PostResultOne.fromJson(json.decode(result.body));
     } catch (error) {
+      print(error);
       throw error;
     }
   }
 
-  Future<PostResultOne> registerVerifyOtpOwner(List data) async {
+  Future<UserOwner> registerVerifyOtpOwner(List data) async {
     try {
-      var result = await http.post("$baseURLOwner/register",
+      var result = await http.post("$baseURLOwner/verification",
           body: {'phone_number': data[0], 'otp': data[1]});
-      return PostResultOne.fromJson(json.decode(result.body));
+      print(result.body);
+      UserOwner owner = UserOwner.fromJson(json.decode(result.body));
+      print(data[2]);
+      if (owner.success) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('rememberMe', data[2]);
+        prefs.setString('userType', truckOwnerUser);
+        prefs.setString('userData', result.body);
+      } else {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('rememberMe', false);
+      }
+      return owner;
     } catch (error) {
       throw error;
     }
@@ -88,24 +113,16 @@ class HTTPHandler {
     }
   }
 
-  Future<List> loginOwner(List data) async {
+  Future<PostResultOne> loginOwner(List data) async {
     try {
-      var result = await http.post("$baseURLOwner/login",
-          body: {'phone_code': data[0], 'phone': data[1], 'password': data[2]});
-      var jsonResult = json.decode(result.body);
-      if (jsonResult['success'] == '1') {
-        UserOwner userOwner = UserOwner.fromJson(jsonResult);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('rememberMe', data[3]);
-        prefs.setString('userType', truckOwnerUser);
-        prefs.setString('userData', result.body);
-        return [true, userOwner];
-      } else {
-        PostResultOne postResultOne = PostResultOne.fromJson(jsonResult);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('rememberMe', false);
-        return [false, postResultOne];
-      }
+      var result =
+          await http.post('$baseURLOwner/register-login-logout', body: {
+        'to_phone_code': data[0],
+        'to_phone': data[1],
+        'to_token': '',
+      });
+
+      return PostResultOne.fromJson(json.decode(result.body));
     } catch (error) {
       throw error;
     }
