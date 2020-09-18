@@ -82,8 +82,8 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                         ),
                         FlatButton(
                           onPressed: () {
-                            // Navigator.pushNamed(context, viewProfileOwner,
-                            //     arguments: widget.userOwner);
+                            Navigator.pushNamed(context, viewProfileOwner,
+                                arguments: widget.userOwner);
                           },
                           child: Text(
                             "View My Profile",

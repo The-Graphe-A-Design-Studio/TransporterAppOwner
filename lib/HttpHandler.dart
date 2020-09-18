@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -533,6 +534,51 @@ class HTTPHandler {
           'razorpay_signature': paymentResponse.signature ?? 'graphe123',
         },
       );
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<PostResultOne> updatePanCardImage(List data) async {
+    try {
+      var request =
+          http.MultipartRequest('POST', Uri.parse('$baseURLOwner/owner_docs'));
+
+      request.fields['to_phone'] = data[0];
+      request.files.add(await http.MultipartFile.fromPath(
+        'to_pan_card',
+        data[1],
+        filename: 'temp.jpeg',
+      ));
+      var result = await request.send();
+      var finalResult = await http.Response.fromStream(result);
+      print(finalResult.body);
+      return PostResultOne.fromJson(json.decode(finalResult.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<PostResultOne> updateBankAndNameDetails(List data) async {
+    try {
+      var response = await http.post(
+        '$baseURLOwner/owner_docs',
+        body: {
+          'to_phone': data[0],
+          'to_name': data[1],
+          'to_bank': data[2],
+          'to_ifsc': data[3],
+        },
+      );
+
+      loginOwner([
+        '91',
+        data[0],
+      ]);
 
       return PostResultOne.fromJson(json.decode(response.body));
     } catch (e) {

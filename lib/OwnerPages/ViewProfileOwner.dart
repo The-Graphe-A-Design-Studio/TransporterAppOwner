@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ownerapp/DialogScreens/DialogFailed.dart';
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/User.dart';
+import 'dart:io';
+
+import 'package:ownerapp/MyConstants.dart';
 
 class ViewProfileOwner extends StatefulWidget {
   final UserOwner userOwner;
@@ -17,16 +21,15 @@ class ViewProfileOwner extends StatefulWidget {
 
 enum WidgetMarker {
   viewProfile,
-  changePassword,
   verifyOTP,
 }
 
 class _ViewProfileOwnerState extends State<ViewProfileOwner> {
   WidgetMarker selectedWidgetMarker = WidgetMarker.viewProfile;
 
-  final GlobalKey<FormState> _formKeyProfile = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKeyChangePassword = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKeyOtp = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKeyProfile = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKeyChangePassword = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKeyOtp = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
   final mobileNumberController = TextEditingController();
@@ -48,31 +51,56 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
   final FocusNode _name = FocusNode();
   final FocusNode _mobileNumber = FocusNode();
   final FocusNode _email = FocusNode();
-  final FocusNode _address = FocusNode();
-  final FocusNode _city = FocusNode();
-  final FocusNode _operatingRoutes = FocusNode();
-  final FocusNode _permitStatesRoute = FocusNode();
-  final FocusNode _panCardNumber = FocusNode();
   final FocusNode _bankAccountNumber = FocusNode();
   final FocusNode _ifscCode = FocusNode();
 
-  final FocusNode _currPassword = FocusNode();
-  final FocusNode _newPassword = FocusNode();
-  final FocusNode _confirmPassword = FocusNode();
+  Future<File> imageFile;
+
+  pickImageFromSystem(ImageSource source) {
+    setState(() {
+      imageFile = ImagePicker.pickImage(
+        source: source,
+        imageQuality: 50,
+      );
+    });
+  }
+
+  Widget _imagePreview() => (imageFile != null)
+      ? FutureBuilder<File>(
+          future: imageFile,
+          builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+            panCardNumberController.text = snapshot.data.path;
+            return GestureDetector(
+              onTap: () => pickImageFromSystem(ImageSource.gallery),
+              child: Container(
+                height: 250.0,
+                width: double.infinity,
+                decoration: (imageFile != null && snapshot.data != null)
+                    ? BoxDecoration(
+                        image: DecorationImage(
+                          image: FileImage(snapshot.data),
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : BoxDecoration(),
+              ),
+            );
+          },
+        )
+      : Container();
 
   @override
   void initState() {
     super.initState();
-    // nameController.text = widget.userOwner.oName;
-    // mobileNumberController.text = widget.userOwner.oPhone;
-    // emailController.text = widget.userOwner.oEmail;
-    // addressController.text = widget.userOwner.oAddress;
-    // cityController.text = widget.userOwner.oCity;
-    // operatingRoutesController.text = widget.userOwner.oOperatingRoute;
-    // permitStatesController.text = widget.userOwner.oPermitStates;
-    // panCardNumberController.text = widget.userOwner.oPan;
-    // bankAccountNumberController.text = widget.userOwner.oBank;
-    // ifscCodeController.text = widget.userOwner.oIfsc;
+    nameController.text = widget.userOwner.oName;
+    mobileNumberController.text = widget.userOwner.oPhone;
+    bankAccountNumberController.text =
+        (widget.userOwner.oBank == '0') ? '' : widget.userOwner.oBank;
+    ifscCodeController.text =
+        (widget.userOwner.oIfsc == '0') ? '' : widget.userOwner.oIfsc;
+    panCardNumberController.text = (widget.userOwner.oPanCard == null)
+        ? ''
+        : 'https://truckwale.co.in/${widget.userOwner.oPanCard}';
   }
 
   @override
@@ -97,121 +125,120 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     super.dispose();
   }
 
-  void postUpdateRequest(BuildContext _context) {
+  void postUpdateRequest(BuildContext _context) async {
     DialogProcessing().showCustomDialog(context,
         title: "Update Profile", text: "Processing, Please Wait!");
-    HTTPHandler().editOwnerInfo([
-      widget.userOwner.oId.toString(),
-      nameController.text.toString(),
-      '91',
-      mobileNumberController.text.toString(),
-      emailController.text.toString(),
-      addressController.text.toString(),
-      cityController.text.toString(),
-      operatingRoutesController.text.toString(),
-      permitStatesController.text.toString(),
-      panCardNumberController.text.toString(),
-      bankAccountNumberController.text.toString(),
-      ifscCodeController.text.toString()
-    ]).then((value) async {
-      Navigator.pop(context);
-      if (value.success) {
-        DialogSuccess().showCustomDialog(context, title: "Update Profile");
-        await Future.delayed(Duration(seconds: 1), () {});
-        if (widget.userOwner.oPhone != mobileNumberController.text.toString()) {
+
+    if (imageFile != null) {
+      HTTPHandler().updatePanCardImage([
+        widget.userOwner.oPhone,
+        panCardNumberController.text,
+      ]).then((value) async {
+        HTTPHandler().saveLocalChangesOwner(widget.userOwner);
+        if (bankAccountNumberController.text == '' &&
+            ifscCodeController.text == '') {
+          Navigator.pop(context);
+          if (value.success) {
+            DialogSuccess().showCustomDialog(context, title: "Update Profile");
+            await Future.delayed(Duration(seconds: 1), () {});
+
+            setState(() {
+              selectedWidgetMarker = WidgetMarker.verifyOTP;
+            });
+            Navigator.pop(context);
+          } else {
+            DialogFailed().showCustomDialog(context,
+                title: "Update Profile", text: value.message);
+            await Future.delayed(Duration(seconds: 3), () {});
+            Navigator.pop(context);
+          }
+        } else {
+          print('update sustem as well');
+          HTTPHandler().updateBankAndNameDetails([
+            widget.userOwner.oPhone,
+            widget.userOwner.oName,
+            (bankAccountNumberController.text == '')
+                ? '0'
+                : bankAccountNumberController.text,
+            (ifscCodeController.text == '') ? '0' : ifscCodeController.text,
+          ]).then((v) async {
+            Navigator.pop(context);
+            if (v.success) {
+              DialogSuccess()
+                  .showCustomDialog(context, title: "Update Profile");
+              await Future.delayed(Duration(seconds: 1), () {});
+
+              setState(() {
+                selectedWidgetMarker = WidgetMarker.verifyOTP;
+              });
+              Navigator.pop(context);
+            } else {
+              DialogFailed().showCustomDialog(context,
+                  title: "Update Profile", text: v.message);
+              await Future.delayed(Duration(seconds: 3), () {});
+              Navigator.pop(context);
+            }
+          });
+        }
+      });
+    } else if (bankAccountNumberController.text != '' ||
+        ifscCodeController.text != '') {
+      HTTPHandler().updateBankAndNameDetails([
+        widget.userOwner.oPhone,
+        widget.userOwner.oName,
+        (bankAccountNumberController.text == '')
+            ? '0'
+            : bankAccountNumberController.text,
+        (ifscCodeController.text == '') ? '0' : ifscCodeController.text,
+      ]).then((v) async {
+        Navigator.pop(context);
+        if (v.success) {
+          DialogSuccess().showCustomDialog(context, title: "Update Profile");
+          await Future.delayed(Duration(seconds: 1), () {});
+
           setState(() {
             selectedWidgetMarker = WidgetMarker.verifyOTP;
           });
+          Navigator.pop(context);
         } else {
-          // widget.userOwner.oName = nameController.text.toString();
-          // widget.userOwner.oPhone = mobileNumberController.text;
-          // widget.userOwner.oEmail = emailController.text;
-          // widget.userOwner.oAddress = addressController.text;
-          // widget.userOwner.oCity = cityController.text;
-          // widget.userOwner.oOperatingRoute = operatingRoutesController.text;
-          // widget.userOwner.oPermitStates = permitStatesController.text;
-          // widget.userOwner.oPan = panCardNumberController.text;
-          // widget.userOwner.oBank = bankAccountNumberController.text;
-          // widget.userOwner.oIfsc = ifscCodeController.text;
-          // HTTPHandler().saveLocalChangesOwner(widget.userOwner);
+          DialogFailed().showCustomDialog(context,
+              title: "Update Profile", text: v.message);
+          await Future.delayed(Duration(seconds: 3), () {});
+          Navigator.pop(context);
         }
-        Navigator.pop(context);
-        Scaffold.of(_context).showSnackBar(SnackBar(
-          backgroundColor: Colors.black,
-          content: Text(
-            value.message,
-            style: TextStyle(color: Colors.white),
-          ),
-        ));
-      } else {
-        DialogFailed().showCustomDialog(context,
-            title: "Update Profile", text: value.message);
-        await Future.delayed(Duration(seconds: 3), () {});
-        Navigator.pop(context);
-      }
-    }).catchError((error) async {
-      print(error);
-      Navigator.pop(context);
-      DialogFailed().showCustomDialog(context,
-          title: "Update Profile", text: "Network Error");
-      await Future.delayed(Duration(seconds: 3), () {});
-      Navigator.pop(context);
-    });
-  }
-
-  void postChangePasswordRequest(BuildContext _context) {
-    DialogProcessing().showCustomDialog(context,
-        title: "Change Password", text: "Processing, Please Wait!");
-    HTTPHandler().editOwnerInfoChangePassword([
-      widget.userOwner.oId.toString(),
-      currPasswordController.text.toString(),
-      newPasswordController.text.toString(),
-      confirmPasswordController.text.toString()
-    ]).then((value) async {
-      Navigator.pop(context);
-      if (value.success) {
-        DialogSuccess().showCustomDialog(context,
-            title: "Change Password", text: value.message);
-        await Future.delayed(Duration(seconds: 1), () {});
-        Navigator.pop(context);
-        HTTPHandler().signOut(context, widget.userOwner.oPhone);
-      } else {
-        DialogFailed().showCustomDialog(context,
-            title: "Change Password", text: value.message);
-        await Future.delayed(Duration(seconds: 3), () {});
-        Navigator.pop(context);
-      }
-    }).catchError((error) async {
-      Navigator.pop(context);
-      DialogFailed().showCustomDialog(context,
-          title: "Change Password", text: "Network Error");
-      await Future.delayed(Duration(seconds: 3), () {});
-      Navigator.pop(context);
-    });
+      });
+    }
   }
 
   void postOtpVerificationRequest(BuildContext _context) {
     DialogProcessing().showCustomDialog(context,
         title: "OTP Verification", text: "Processing, Please Wait!");
-    HTTPHandler().editOwnerInfoVerifyOTP([
-      widget.userOwner.oId.toString(),
+    HTTPHandler().registerVerifyOtpOwner([
       mobileNumberController.text,
-      otpController.text
+      otpController.text,
+      true,
     ]).then((value) async {
       Navigator.pop(context);
       if (value.success) {
+        widget.userOwner.oBank = bankAccountNumberController.text;
+        widget.userOwner.oIfsc = ifscCodeController.text;
         DialogSuccess().showCustomDialog(context,
-            title: "OTP Verification", text: value.message);
+            title: "OTP Verification", text: 'Successful');
         await Future.delayed(Duration(seconds: 1), () {});
         Navigator.pop(context);
-        Navigator.pop(context);
+        Navigator.popAndPushNamed(
+          context,
+          homePageOwner,
+          arguments: widget.userOwner,
+        );
       } else {
         DialogFailed().showCustomDialog(context,
-            title: "OTP Verification", text: value.message);
+            title: "OTP Verification", text: 'OTP Verification Failed!');
         await Future.delayed(Duration(seconds: 3), () {});
         Navigator.pop(context);
       }
     }).catchError((error) async {
+      print(error);
       Navigator.pop(context);
       DialogFailed().showCustomDialog(context,
           title: "OTP Verification", text: "Network Error");
@@ -274,86 +301,60 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          key: _formKeyProfile,
+          // key: _formKeyProfile,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: Color(0xff252427),
-                          ),
-                        ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Color(0xff252427),
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedWidgetMarker = WidgetMarker.changePassword;
-                          });
-                        },
-                        child: Text(
-                          "Change Password",
-                          style: TextStyle(
-                              color: Colors.black12,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 26.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                ],
+                ),
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                controller: nameController,
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                focusNode: _name,
-                onFieldSubmitted: (term) {
-                  _name.unfocus();
-                  FocusScope.of(context).requestFocus(_mobileNumber);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.person),
-                  labelText: "Full Name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
+              Material(
+                child: TextFormField(
+                  controller: nameController,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.words,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _name,
+                  onFieldSubmitted: (term) {
+                    _name.unfocus();
+                    FocusScope.of(context).requestFocus(_mobileNumber);
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.person),
+                    labelText: "Full Name",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(
+                        color: Colors.amber,
+                        style: BorderStyle.solid,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "This Field is Required";
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 16.0,
@@ -361,16 +362,18 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
               Row(
                 children: [
                   SizedBox(
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.dialpad),
-                        hintText: "+91",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                      child: TextFormField(
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.dialpad),
+                          hintText: "+91",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
                       ),
@@ -379,33 +382,35 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                   ),
                   SizedBox(width: 16.0),
                   Flexible(
-                    child: TextFormField(
-                      controller: mobileNumberController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      focusNode: _mobileNumber,
-                      onFieldSubmitted: (term) {
-                        _mobileNumber.unfocus();
-                        FocusScope.of(context).requestFocus(_email);
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Mobile Number",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                      child: TextFormField(
+                        controller: mobileNumberController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _mobileNumber,
+                        onFieldSubmitted: (term) {
+                          _mobileNumber.unfocus();
+                          FocusScope.of(context).requestFocus(_email);
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Mobile Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "This Field is Required";
+                          } else if (value.length < 10) {
+                            return "Enter Valid Mobile Number";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "This Field is Required";
-                        } else if (value.length < 10) {
-                          return "Enter Valid Mobile Number";
-                        }
-                        return null;
-                      },
                     ),
                   )
                 ],
@@ -413,239 +418,111 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                focusNode: _email,
-                onFieldSubmitted: (term) {
-                  _email.unfocus();
-                  FocusScope.of(context).requestFocus(_address);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.mail),
-                  labelText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
+              Material(
+                child: TextFormField(
+                  controller: bankAccountNumberController,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _bankAccountNumber,
+                  onFieldSubmitted: (term) {
+                    _bankAccountNumber.unfocus();
+                    FocusScope.of(context).requestFocus(_ifscCode);
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.credit_card),
+                    labelText: "Bank Account Number",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(
+                        color: Colors.amber,
+                        style: BorderStyle.solid,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "This Field is Required";
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                controller: addressController,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                focusNode: _address,
-                onFieldSubmitted: (term) {
-                  _address.unfocus();
-                  FocusScope.of(context).requestFocus(_city);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.location_on),
-                  labelText: "Your Address",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
+              Material(
+                child: TextFormField(
+                  controller: ifscCodeController,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.characters,
+                  textInputAction: TextInputAction.done,
+                  focusNode: _ifscCode,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.code),
+                    labelText: "IFSC Code",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(
+                        color: Colors.amber,
+                        style: BorderStyle.solid,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "This Field is Required";
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                controller: cityController,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                focusNode: _city,
-                onFieldSubmitted: (term) {
-                  _city.unfocus();
-                  FocusScope.of(context).requestFocus(_operatingRoutes);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.location_on),
-                  labelText: "Your City",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
+              GestureDetector(
+                onTap: () => pickImageFromSystem(ImageSource.gallery),
+                child: Material(
+                  child: TextFormField(
+                    controller: panCardNumberController,
+                    enabled: false,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.characters,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.dialpad),
+                      labelText: "PAN Card",
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                controller: operatingRoutesController,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                focusNode: _operatingRoutes,
-                onFieldSubmitted: (term) {
-                  _operatingRoutes.unfocus();
-                  FocusScope.of(context).requestFocus(_permitStatesRoute);
-                },
-                decoration: InputDecoration(
-                  labelText: "Operating Routes",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: permitStatesController,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                focusNode: _permitStatesRoute,
-                onFieldSubmitted: (term) {
-                  _permitStatesRoute.unfocus();
-                  FocusScope.of(context).requestFocus(_panCardNumber);
-                },
-                decoration: InputDecoration(
-                  labelText: "Permit States",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: panCardNumberController,
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.characters,
-                textInputAction: TextInputAction.next,
-                focusNode: _panCardNumber,
-                onFieldSubmitted: (term) {
-                  _panCardNumber.unfocus();
-                  FocusScope.of(context).requestFocus(_bankAccountNumber);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.dialpad),
-                  labelText: "PAN Card Number",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: bankAccountNumberController,
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.next,
-                focusNode: _bankAccountNumber,
-                onFieldSubmitted: (term) {
-                  _bankAccountNumber.unfocus();
-                  FocusScope.of(context).requestFocus(_ifscCode);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.credit_card),
-                  labelText: "Bank Account Number",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: ifscCodeController,
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.characters,
-                textInputAction: TextInputAction.done,
-                focusNode: _ifscCode,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.code),
-                  labelText: "IFSC Code",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
-              ),
+              (imageFile != null)
+                  ? _imagePreview()
+                  : (panCardNumberController.text != null)
+                      ? GestureDetector(
+                          onTap: () => pickImageFromSystem(ImageSource.gallery),
+                          child: Container(
+                            height: 250.0,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image:
+                                    NetworkImage(panCardNumberController.text),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
               SizedBox(
                 height: 16.0,
               ),
@@ -654,9 +531,10 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                 child: InkWell(
                   splashColor: Colors.transparent,
                   onTap: () {
-                    if (_formKeyProfile.currentState.validate()) {
-                      postUpdateRequest(context);
-                    }
+                    // if (_formKeyProfile.currentState.validate()) {
+                    //   postUpdateRequest(context);
+                    // }
+                    postUpdateRequest(context);
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -685,198 +563,12 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     ]);
   }
 
-  Widget getChangePasswordBottomSheetWidget(
-      context, ScrollController scrollController) {
-    return ListView(controller: scrollController, children: <Widget>[
-      SingleChildScrollView(
-        child: Form(
-          key: _formKeyChangePassword,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedWidgetMarker = WidgetMarker.viewProfile;
-                          });
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: Color(0xff252427),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.viewProfile;
-                          });
-                        },
-                        child: Text(
-                          "Skip",
-                          style: TextStyle(
-                              color: Colors.black12,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 26.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: currPasswordController,
-                obscureText: true,
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.next,
-                focusNode: _currPassword,
-                onFieldSubmitted: (term) {
-                  _currPassword.unfocus();
-                  FocusScope.of(context).requestFocus(_newPassword);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.vpn_key),
-                  labelText: "Current Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                  controller: newPasswordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  textInputAction: TextInputAction.next,
-                  focusNode: _newPassword,
-                  onFieldSubmitted: (term) {
-                    _newPassword.unfocus();
-                    FocusScope.of(context).requestFocus(_confirmPassword);
-                  },
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.vpn_key),
-                    labelText: "New Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.amber,
-                        style: BorderStyle.solid,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return "This Field is Required";
-                    }
-                    return null;
-                  }),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: confirmPasswordController,
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.done,
-                focusNode: _confirmPassword,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.vpn_key),
-                  labelText: "Confirm New Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  } else if (value.toString() !=
-                      newPasswordController.text.toString()) {
-                    return "Passwords Don't Match";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  onTap: () {
-                    if (_formKeyChangePassword.currentState.validate()) {
-                      postChangePasswordRequest(context);
-                    }
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 50.0,
-                    child: Center(
-                      child: Text(
-                        "Change Password",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xff252427),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(width: 2.0, color: Color(0xff252427)),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ]);
-  }
-
   Widget getOtpVerificationBottomSheetWidget(
       context, ScrollController scrollController) {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          key: _formKeyOtp,
+          // key: _formKeyOtp,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -987,7 +679,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                 child: InkWell(
                   splashColor: Colors.transparent,
                   onTap: () {
-                    if (_formKeyOtp.currentState.validate()) {
+                    if (otpController.text.length == 6) {
                       postOtpVerificationRequest(context);
                     }
                   },
@@ -1130,8 +822,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
         return getProfileWidget(context);
-      case WidgetMarker.changePassword:
-        return getChangePasswordWidget(context);
       case WidgetMarker.verifyOTP:
         return getOtpVerificationWidget(context);
     }
@@ -1143,8 +833,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
         return getCredentialsBottomSheetWidget(context, scrollController);
-      case WidgetMarker.changePassword:
-        return getChangePasswordBottomSheetWidget(context, scrollController);
       case WidgetMarker.verifyOTP:
         return getOtpVerificationBottomSheetWidget(context, scrollController);
     }
@@ -1155,11 +843,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
         return Future.value(true);
-      case WidgetMarker.changePassword:
-        setState(() {
-          selectedWidgetMarker = WidgetMarker.viewProfile;
-        });
-        return Future.value(false);
       case WidgetMarker.verifyOTP:
         setState(() {
           selectedWidgetMarker = WidgetMarker.viewProfile;
