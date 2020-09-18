@@ -88,38 +88,64 @@ class _AccountBottomSheetLoggedInState
       child: ListView(
         controller: widget.scrollController,
         children: <Widget>[
-          ListTile(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                subscriptionOwner,
-                arguments: widget.userOwner,
-              );
-            },
-            leading: Icon(Icons.toc),
-            title: Text(
-              'Your Subscription',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
+          Material(
+            child: ListTile(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  subscriptionOwner,
+                  arguments: widget.userOwner,
+                );
+              },
+              leading: Icon(Icons.toc),
+              title: Text(
+                'Your Subscription',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                'View Plan',
+                style: TextStyle(color: Colors.black87),
               ),
             ),
-            subtitle: Text(
-              'View Plan',
-              style: TextStyle(color: Colors.black87),
+          ),
+          Material(
+            child: ListTile(
+              onTap: () {
+                // Navigator.pushNamed(
+                //   context,
+                //   subscriptionOwner,
+                //   arguments: widget.userOwner,
+                // );
+              },
+              leading: Icon(Icons.ac_unit),
+              title: Text(
+                'View Posts',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                'Lorem Ipsum',
+                style: TextStyle(color: Colors.black87),
+              ),
             ),
           ),
-          ListTile(
-            onTap: () {
-              HTTPHandler().signOut(
-                context,
-                widget.userOwner.oPhone,
-              );
-            },
-            leading: Icon(Icons.logout),
-            title: Text(
-              'Logout',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
+          Material(
+            child: ListTile(
+              onTap: () {
+                HTTPHandler().signOut(
+                  context,
+                  widget.userOwner.oPhone,
+                );
+              },
+              leading: Icon(Icons.logout),
+              title: Text(
+                'Logout',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

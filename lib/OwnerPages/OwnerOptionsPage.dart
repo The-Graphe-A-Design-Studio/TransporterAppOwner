@@ -30,7 +30,6 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
   WidgetMarker selectedBottomSheetWidgetMarker = WidgetMarker.options;
   UserOwner userOwner;
 
-  final GlobalKey<FormState> _formKeyCredentials = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeyOwnerDetails = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeyOtp = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeySignIn = GlobalKey<FormState>();
@@ -56,16 +55,6 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
   final mobileNumberControllerSignIn = TextEditingController();
 
   bool rememberMe = true;
-
-  // final FocusNode _name = FocusNode();
-  // final FocusNode _mobileNumber = FocusNode();
-  // final FocusNode _email = FocusNode();
-  // final FocusNode _address = FocusNode();
-  // final FocusNode _city = FocusNode();
-  // final FocusNode _operatingRoutes = FocusNode();
-  // final FocusNode _permitStatesRoute = FocusNode();
-  // final FocusNode _password = FocusNode();
-  // final FocusNode _confirmPassword = FocusNode();
 
   final FocusNode _mobileNumberSignIn = FocusNode();
   final FocusNode _passwordSignIn = FocusNode();
@@ -171,25 +160,20 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
       if (value.success) {
         DialogSuccess().showCustomDialog(context, title: "OTP Verification");
         await Future.delayed(Duration(seconds: 1), () {});
-        // if (!isLogin) {
-        //   setState(() {
-        //     selectedWidgetMarker = WidgetMarker.signIn;
-        //   });
-
-        //   Navigator.pop(context);
-        //   Scaffold.of(_context).showSnackBar(SnackBar(
-        //     backgroundColor: Colors.black,
-        //     content: Text(
-        //       "You may now Sign In to your Account.",
-        //       style: TextStyle(color: Colors.white),
-        //     ),
-        //   ));
-        // } else {
         Navigator.pop(context);
-        Navigator.pushNamedAndRemoveUntil(
-            _context, homePageOwner, (route) => false,
-            arguments: userOwner);
-        // }
+        if (userOwner.oName == '' ||
+            userOwner.oBank == '0' ||
+            userOwner.oIfsc == '0' ||
+            userOwner.oPanCard == '')
+          Navigator.pushReplacementNamed(
+            context,
+            viewProfileOwner,
+            arguments: userOwner,
+          );
+        else
+          Navigator.pushNamedAndRemoveUntil(
+              _context, homePageOwner, (route) => false,
+              arguments: userOwner);
       } else {
         DialogFailed().showCustomDialog(context,
             title: "OTP Verification", text: 'OTP Verification Failed');

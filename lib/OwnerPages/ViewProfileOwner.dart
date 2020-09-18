@@ -70,20 +70,17 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
           future: imageFile,
           builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
             panCardNumberController.text = snapshot.data.path;
-            return GestureDetector(
-              onTap: () => pickImageFromSystem(ImageSource.gallery),
-              child: Container(
-                height: 250.0,
-                width: double.infinity,
-                decoration: (imageFile != null && snapshot.data != null)
-                    ? BoxDecoration(
-                        image: DecorationImage(
-                          image: FileImage(snapshot.data),
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    : BoxDecoration(),
-              ),
+            return Container(
+              height: 250.0,
+              width: double.infinity,
+              decoration: (imageFile != null && snapshot.data != null)
+                  ? BoxDecoration(
+                      image: DecorationImage(
+                        image: FileImage(snapshot.data),
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  : BoxDecoration(),
             );
           },
         )
@@ -301,7 +298,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          // key: _formKeyProfile,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -311,7 +307,11 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        homePageOwner,
+                        arguments: widget.userOwner,
+                      );
                     },
                     child: CircleAvatar(
                       backgroundColor: Colors.transparent,
@@ -508,17 +508,13 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
               (imageFile != null)
                   ? _imagePreview()
                   : (panCardNumberController.text != null)
-                      ? GestureDetector(
-                          onTap: () => pickImageFromSystem(ImageSource.gallery),
-                          child: Container(
-                            height: 250.0,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image:
-                                    NetworkImage(panCardNumberController.text),
-                                fit: BoxFit.contain,
-                              ),
+                      ? Container(
+                          height: 250.0,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(panCardNumberController.text),
+                              fit: BoxFit.contain,
                             ),
                           ),
                         )
@@ -855,7 +851,12 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: onBackPressed,
+      // onWillPop: onBackPressed,
+      onWillPop: () => Navigator.pushReplacementNamed(
+        context,
+        homePageOwner,
+        arguments: widget.userOwner,
+      ),
       child: Scaffold(
         backgroundColor: Color(0xff252427),
         body: Stack(children: <Widget>[

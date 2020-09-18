@@ -45,9 +45,21 @@ class _SplashScreenState extends State<SplashScreen> {
     doSomeAction().then((value) {
       if (value == true) {
         if (userType == truckOwnerUser) {
-          print(userOwner.oName);
-          Navigator.pushReplacementNamed(context, homePageOwner,
-              arguments: userOwner);
+          if (userOwner.oName == '' ||
+              userOwner.oBank == '0' ||
+              userOwner.oIfsc == '0' ||
+              userOwner.oPanCard == '')
+            Navigator.pushReplacementNamed(
+              context,
+              viewProfileOwner,
+              arguments: userOwner,
+            );
+          else
+            Navigator.pushReplacementNamed(
+              context,
+              homePageOwner,
+              arguments: userOwner,
+            );
         } else if (userType == driverUser) {
           Navigator.pushReplacementNamed(context, homePageDriver,
               arguments: userDriver);
