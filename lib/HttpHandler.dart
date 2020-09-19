@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -47,26 +46,7 @@ class HTTPHandler {
   /*-------------------------- Owner API's ---------------------------*/
   Future<PostResultOne> registerOwner(List data) async {
     try {
-      // var result = await http.post("$baseURLOwner/register", body: {
-      //   'to_name': data[0],
-      //   'to_phone_code': data[1],
-      //   'to_phone': data[2],
-      //   'to_email': data[3],
-      //   'to_address': data[4],
-      //   'to_city': data[5],
-      //   'to_password': data[6],
-      //   'to_cnf_password': data[7],
-      //   'to_operating_routes': data[8],
-      //   'to_state_permits': data[9],
-      //   'to_pan': data[10],
-      //   'to_bank': data[11],
-      //   'to_ifsc': data[12]
-      // });
-
-      print('sending request');
-
-      var result =
-          await http.post('$baseURLOwner/register-login-logout', body: {
+      var result = await http.post('$baseURLOwner/owner_enter_exit', body: {
         'to_phone_code': data[0],
         'to_phone': data[1],
         'to_token': data[2],
@@ -83,7 +63,7 @@ class HTTPHandler {
 
   Future<UserOwner> registerVerifyOtpOwner(List data) async {
     try {
-      var result = await http.post("$baseURLOwner/verification",
+      var result = await http.post("$baseURLOwner/owner_verification",
           body: {'phone_number': data[0], 'otp': data[1]});
       print(result.body);
       UserOwner owner = UserOwner.fromJson(json.decode(result.body));
@@ -105,7 +85,7 @@ class HTTPHandler {
 
   Future<PostResultOne> registerResendOtpOwner(List data) async {
     try {
-      var result = await http.post("$baseURLOwner/register", body: {
+      var result = await http.post("$baseURLOwner/owner_verification", body: {
         'resend_otp': data[0],
       });
       return PostResultOne.fromJson(json.decode(result.body));
@@ -116,8 +96,7 @@ class HTTPHandler {
 
   Future<PostResultOne> loginOwner(List data) async {
     try {
-      var result =
-          await http.post('$baseURLOwner/register-login-logout', body: {
+      var result = await http.post('$baseURLOwner/owner_enter_exit', body: {
         'to_phone_code': data[0],
         'to_phone': data[1],
         'to_token': '',

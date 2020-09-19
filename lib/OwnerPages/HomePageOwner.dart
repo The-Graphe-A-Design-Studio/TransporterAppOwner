@@ -66,8 +66,8 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                         ),
                         FlatButton(
                           onPressed: () {
-                            // Navigator.pushNamed(context, viewTrucksOwner,
-                            //     arguments: widget.userOwner);
+                            Navigator.pushNamed(context, viewTrucksOwner,
+                                arguments: widget.userOwner);
                           },
                           child: Text(
                             "View My Trucks",
