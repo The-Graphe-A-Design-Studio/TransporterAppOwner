@@ -34,6 +34,7 @@ const String uploadDocsTransporter = "/uploadDocsTransporter";
 const String newTransportingOrderPage = "/newTransportingOrderPage";
 const String orderSummaryPage = "/orderSummaryPage";
 const String requestTransportPage = "/requestTransportPage";
+const String viewPosts = "/viewPosts";
 
 //Pages once the user is LoggedIn - Owner
 const String homePageOwner = "/homePageOwner";

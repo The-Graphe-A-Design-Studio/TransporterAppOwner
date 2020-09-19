@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
+import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/TruckCategory.dart';
 import 'package:ownerapp/Models/User.dart';
@@ -24,7 +25,7 @@ class HTTPHandler {
   void signOut(BuildContext context, var mobileNo) async {
     DialogProcessing().showCustomDialog(context,
         title: "Sign Out", text: "Processing, Please Wait!");
-    http.post('$baseURLOwner/register-login-logout',
+    http.post('$baseURLOwner/owner_enter_exit',
         body: {'logout_number': mobileNo}).then((_) async {
       await SharedPreferences.getInstance()
           .then((value) => value.setBool("rememberMe", false));
@@ -440,6 +441,7 @@ class HTTPHandler {
 
   // RISHAV
 
+  /// get available subscription plans
   Future<List<SubscriptionPlan>> getSubscriptionPlans() async {
     try {
       var result = await http
@@ -456,6 +458,7 @@ class HTTPHandler {
     }
   }
 
+  /// generating razorpay payment receipt
   Future<String> generateRazorpayOrderId(int amount) async {
     try {
       String basicAuth =
@@ -464,10 +467,10 @@ class HTTPHandler {
       Map<String, dynamic> orderData = {
         'amount': amount,
         'currency': 'INR',
-        'receipt': 'AATA_${1000 + _random.nextInt(9999 - 1000)}',
+        'receipt': 'TRANSPORT_${1000 + _random.nextInt(9999 - 1000)}',
         'payment_capture': 1,
         'notes': {
-          'notes_key_1': 'Aatawala is developed by Graphe',
+          'notes_key_1': 'Transporter is developed by TheGraphe',
         },
       };
 
@@ -495,6 +498,7 @@ class HTTPHandler {
     }
   }
 
+  /// UPDATING SUBSCRIPTION DATA
   Future<PostResultOne> storeData(
     UserOwner user,
     SubscriptionPlan plan,
@@ -507,10 +511,10 @@ class HTTPHandler {
           'user_type': '2',
           'user_id': user.oId,
           'amount': plan.planSellingPrice.toString(),
-          'duration': plan.duration[0],
-          'razorpay_order_id': paymentResponse.orderId ?? 'graphe123',
+          'duration': plan.duration.split(' ')[0],
+          'razorpay_order_id': paymentResponse.orderId,
           'razorpay_payment_id': paymentResponse.paymentId,
-          'razorpay_signature': paymentResponse.signature ?? 'graphe123',
+          'razorpay_signature': paymentResponse.signature,
         },
       );
 
@@ -521,6 +525,7 @@ class HTTPHandler {
     }
   }
 
+  /// update pan card image
   Future<PostResultOne> updatePanCardImage(List data) async {
     try {
       var request =
@@ -542,6 +547,7 @@ class HTTPHandler {
     }
   }
 
+  // update band nad name details owner
   Future<PostResultOne> updateBankAndNameDetails(List data) async {
     try {
       var response = await http.post(
@@ -560,6 +566,24 @@ class HTTPHandler {
       ]);
 
       return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<List<Post>> getPosts() async {
+    try {
+      var response = await http.get('$baseURLOwner/get_all_posts');
+
+      List<Post> posts = [];
+
+      for (var i = 0; i < json.decode(response.body).length; i++) {
+        posts.add(Post.fromJson(json.decode(response.body)[i]));
+      }
+
+      print(posts.toString());
+      return posts;
     } catch (e) {
       print(e);
       throw e;

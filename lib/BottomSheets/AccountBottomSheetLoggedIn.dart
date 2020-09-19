@@ -112,11 +112,11 @@ class _AccountBottomSheetLoggedInState
           Material(
             child: ListTile(
               onTap: () {
-                // Navigator.pushNamed(
-                //   context,
-                //   subscriptionOwner,
-                //   arguments: widget.userOwner,
-                // );
+                HTTPHandler().getPosts().then((value) => Navigator.pushNamed(
+                      context,
+                      viewPosts,
+                      arguments: [widget.userOwner, value],
+                    ));
               },
               leading: Icon(Icons.ac_unit),
               title: Text(

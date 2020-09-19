@@ -4,6 +4,7 @@ import 'package:ownerapp/Models/User.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/HttpHandler.dart';
+import 'package:toast/toast.dart';
 
 class SubscriptionOwner extends StatefulWidget {
   final UserOwner userOwner;
@@ -62,12 +63,19 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
     print('Order Id => ${response.orderId}');
     print('Signature => ${response.signature}');
 
-    HTTPHandler()
-        .storeData(widget.userOwner, selected, response)
-        .then((value) {
-      if (value.success)
-        Navigator.pop(context);
-      else
+    HTTPHandler().storeData(widget.userOwner, selected, response).then((value) {
+      if (value.success) {
+        Toast.show(
+          'You will be logged once your subscription is verified. Please login again!',
+          context,
+          gravity: Toast.CENTER,
+          duration: Toast.LENGTH_LONG,
+        );
+        Future.delayed(
+          Duration(milliseconds: 900),
+          () => HTTPHandler().signOut(context, widget.userOwner.oPhone),
+        );
+      } else
         print('error');
     });
   }

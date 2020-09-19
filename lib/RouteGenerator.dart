@@ -10,6 +10,7 @@ import 'package:ownerapp/OwnerPages/AddTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/EditTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/HomePageOwner.dart';
 import 'package:ownerapp/OwnerPages/OwnerOptionsPage.dart';
+import 'package:ownerapp/OwnerPages/PostsPage.dart';
 import 'package:ownerapp/OwnerPages/SubscriptionOwner.dart';
 import 'package:ownerapp/OwnerPages/ViewProfileOwner.dart';
 import 'package:ownerapp/OwnerPages/ViewTrucksOwner.dart';
@@ -64,6 +65,12 @@ class RouteGenerator {
         return FadeRoute(
             page: SubscriptionOwner(
           userOwner: args,
+        ));
+      case viewPosts:
+        return FadeRoute(
+            page: PostPage(
+          userOwner: (args as List)[0],
+          posts: (args as List)[1],
         ));
 
       default:
