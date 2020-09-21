@@ -633,4 +633,19 @@ class HTTPHandler {
       throw e;
     }
   }
+
+  Future<PostResultOne> updateBid(String bidId, String updatedPrice) async {
+    try {
+      var response =
+          await http.post('https://truckwale.co.in/api/bidding', body: {
+        'bid_id': bidId,
+        'edit_expected_price': updatedPrice,
+      });
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
 }

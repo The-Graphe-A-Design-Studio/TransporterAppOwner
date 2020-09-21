@@ -8,6 +8,11 @@ import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:toast/toast.dart';
 
+enum BidStatus {
+  newBid,
+  updateBid,
+}
+
 class PostPage extends StatefulWidget {
   final UserOwner userOwner;
 
@@ -71,6 +76,103 @@ class _PostPageState extends State<PostPage> {
 
     return null;
   }
+
+  void _updateBid(Bid b) {
+    DialogProcessing().showCustomDialog(context,
+        title: "Updating Bid", text: "Processing, Please Wait!");
+    HTTPHandler().updateBid(b.bidId, _bidController.text).then((value) async {
+      Navigator.pop(context);
+      if (value.success) {
+        DialogSuccess().showCustomDialog(context, title: "Posting Bid");
+        await Future.delayed(Duration(seconds: 1), () {});
+        Navigator.pop(context);
+        Navigator.pop(context);
+        DialogProcessing().showCustomDialog(context,
+            title: "Refreshing Bids", text: "Processing, Please Wait!");
+        HTTPHandler().getBids(widget.userOwner.oId).then((value1) async {
+          DialogSuccess().showCustomDialog(context, title: "Refreshing Bid");
+          await Future.delayed(Duration(seconds: 1), () {});
+          Navigator.pop(context);
+          Navigator.pop(context);
+          setState(() {
+            bids = value1;
+          });
+        });
+      } else {
+        DialogFailed().showCustomDialog(context,
+            title: "Refreshing Bid", text: value.message);
+        await Future.delayed(Duration(seconds: 3), () {});
+        Navigator.pop(context);
+      }
+    }).catchError((error) async {
+      print(error);
+      Navigator.pop(context);
+      DialogFailed().showCustomDialog(context,
+          title: "Refreshing Bid", text: "Network Error");
+      await Future.delayed(Duration(seconds: 3), () {});
+      Navigator.pop(context);
+    });
+  }
+
+  void modal(Post e, BidStatus b, {Bid bid}) => showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        builder: (BuildContext context) => SizedBox(
+          height: 170.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: _bidController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.dialpad),
+                    labelText: "Expected Price",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              GestureDetector(
+                onTap: () =>
+                    (b == BidStatus.newBid) ? _postBid(e) : _updateBid(bid),
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    left: 15.0,
+                    right: 15.0,
+                    bottom: 30.0,
+                  ),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Text(
+                    'BID',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
 
   @override
   void initState() {
@@ -257,7 +359,41 @@ class _PostPageState extends State<PostPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('Your Bid'),
+                                            Row(
+                                              children: [
+                                                Text('Your Bid'),
+                                                SizedBox(width: 10.0),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    _bidController.text = bids[
+                                                            bids.indexWhere(
+                                                                (element) =>
+                                                                    element
+                                                                        .loadId ==
+                                                                    e.postId)]
+                                                        .price;
+                                                    modal(
+                                                      e,
+                                                      BidStatus.updateBid,
+                                                      bid: bids[bids.indexWhere(
+                                                          (element) =>
+                                                              element.loadId ==
+                                                              e.postId)],
+                                                    );
+                                                  },
+                                                  child: Icon(
+                                                    Icons.edit,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10.0),
+                                                Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                              ],
+                                            ),
                                             Text(
                                               '${b.price}',
                                               style: TextStyle(
@@ -279,102 +415,7 @@ class _PostPageState extends State<PostPage> {
                                               );
                                             else {
                                               print('start');
-                                              showModalBottomSheet(
-                                                context: context,
-                                                backgroundColor: Colors.white,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        SizedBox(
-                                                  height: 170.0,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Container(
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10.0),
-                                                        child: TextField(
-                                                          controller:
-                                                              _bidController,
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .number,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            prefixIcon: Icon(
-                                                                Icons.dialpad),
-                                                            labelText:
-                                                                "Expected Price",
-                                                            border:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5.0),
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color:
-                                                                    Colors.grey,
-                                                                style:
-                                                                    BorderStyle
-                                                                        .solid,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 10.0),
-                                                      GestureDetector(
-                                                        onTap: () =>
-                                                            _postBid(e),
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                            left: 15.0,
-                                                            right: 15.0,
-                                                            bottom: 30.0,
-                                                          ),
-                                                          width:
-                                                              double.infinity,
-                                                          alignment:
-                                                              Alignment.center,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10.0),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color:
-                                                                Colors.black87,
-                                                            shape: BoxShape
-                                                                .rectangle,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5.0),
-                                                          ),
-                                                          child: Text(
-                                                            'BID',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 24.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
+                                              modal(e, BidStatus.newBid);
                                             }
                                           },
                                           child: Container(
