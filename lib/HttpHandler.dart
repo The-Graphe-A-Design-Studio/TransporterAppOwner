@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
+import 'package:ownerapp/Models/Bid.dart';
 import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/TruckCategory.dart';
@@ -584,6 +585,49 @@ class HTTPHandler {
 
       print(posts.toString());
       return posts;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<PostResultOne> postBid(
+    String userId,
+    String loadId,
+    String expectedPrice,
+  ) async {
+    try {
+      var response = await http.post(
+        'https://truckwale.co.in/api/bidding',
+        body: {
+          'user_type': '1',
+          'user_id': userId,
+          'load_id': loadId,
+          'expected_price': expectedPrice,
+        },
+      );
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<List<Bid>> getBids(String userId) async {
+    try {
+      var response =
+          await http.post('https://truckwale.co.in/api/bidding', body: {
+        'get_user_type': '1',
+        'get_user_id': userId,
+      });
+
+      List<Bid> bids = [];
+      for (var i = 0; i < json.decode(response.body).length; i++)
+        bids.add(Bid.fromJson(json.decode(response.body)[i]));
+
+      print(bids.toString());
+      return bids;
     } catch (e) {
       print(e);
       throw e;

@@ -69,8 +69,7 @@ class RouteGenerator {
       case viewPosts:
         return FadeRoute(
             page: PostPage(
-          userOwner: (args as List)[0],
-          posts: (args as List)[1],
+          userOwner: args,
         ));
 
       default:
