@@ -388,9 +388,99 @@ class _PostPageState extends State<PostPage> {
                                                   ),
                                                 ),
                                                 SizedBox(width: 10.0),
-                                                Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    DialogProcessing()
+                                                        .showCustomDialog(
+                                                            context,
+                                                            title:
+                                                                "Deleting Bid",
+                                                            text:
+                                                                "Processing, Please Wait!");
+                                                    HTTPHandler()
+                                                        .deleteBid(bids[
+                                                                bids.indexWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .loadId ==
+                                                                        e.postId)]
+                                                            .bidId)
+                                                        .then((value) async {
+                                                      Navigator.pop(context);
+                                                      if (value.success) {
+                                                        DialogSuccess()
+                                                            .showCustomDialog(
+                                                                context,
+                                                                title:
+                                                                    "Deleting Bid");
+                                                        await Future.delayed(
+                                                            Duration(
+                                                                seconds: 1),
+                                                            () {});
+                                                        Navigator.pop(context);
+                                                        DialogProcessing()
+                                                            .showCustomDialog(
+                                                                context,
+                                                                title:
+                                                                    "Refreshing Bids",
+                                                                text:
+                                                                    "Processing, Please Wait!");
+                                                        HTTPHandler()
+                                                            .getBids(widget
+                                                                .userOwner.oId)
+                                                            .then(
+                                                                (value1) async {
+                                                          DialogSuccess()
+                                                              .showCustomDialog(
+                                                                  context,
+                                                                  title:
+                                                                      "Refreshing Bid");
+                                                          await Future.delayed(
+                                                              Duration(
+                                                                  seconds: 1),
+                                                              () {});
+                                                          Navigator.pop(
+                                                              context);
+                                                          Navigator.pop(
+                                                              context);
+                                                          setState(() {
+                                                            bids = value1;
+                                                          });
+                                                        });
+                                                      } else {
+                                                        DialogFailed()
+                                                            .showCustomDialog(
+                                                                context,
+                                                                title:
+                                                                    "Deleting Bid",
+                                                                text: value
+                                                                    .message);
+                                                        await Future.delayed(
+                                                            Duration(
+                                                                seconds: 3),
+                                                            () {});
+                                                        Navigator.pop(context);
+                                                      }
+                                                    }).catchError((error) async {
+                                                      print(error);
+                                                      Navigator.pop(context);
+                                                      DialogFailed()
+                                                          .showCustomDialog(
+                                                              context,
+                                                              title:
+                                                                  "Deleting Bid",
+                                                              text:
+                                                                  "Network Error");
+                                                      await Future.delayed(
+                                                          Duration(seconds: 3),
+                                                          () {});
+                                                      Navigator.pop(context);
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
                                                 ),
                                               ],
                                             ),

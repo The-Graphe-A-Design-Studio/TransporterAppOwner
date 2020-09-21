@@ -648,4 +648,18 @@ class HTTPHandler {
       throw e;
     }
   }
+
+  Future<PostResultOne> deleteBid(String bidId) async {
+    try {
+      var response =
+          await http.post('https://truckwale.co.in/api/bidding', body: {
+        'delete_bid_id': bidId,
+      });
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
 }
