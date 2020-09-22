@@ -134,6 +134,28 @@ class _AccountBottomSheetLoggedInState
           Material(
             child: ListTile(
               onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  myBidsOwner,
+                  arguments: widget.userOwner,
+                );
+              },
+              leading: Icon(Icons.access_alarm),
+              title: Text(
+                'View Bids',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                'Lorem Ipsum',
+                style: TextStyle(color: Colors.black87),
+              ),
+            ),
+          ),
+          Material(
+            child: ListTile(
+              onTap: () {
                 HTTPHandler().signOut(
                   context,
                   widget.userOwner.oPhone,

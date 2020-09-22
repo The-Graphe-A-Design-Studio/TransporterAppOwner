@@ -9,6 +9,7 @@ import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/OwnerPages/AddTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/EditTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/HomePageOwner.dart';
+import 'package:ownerapp/OwnerPages/MyBidsPage.dart';
 import 'package:ownerapp/OwnerPages/OwnerOptionsPage.dart';
 import 'package:ownerapp/OwnerPages/PostsPage.dart';
 import 'package:ownerapp/OwnerPages/SubscriptionOwner.dart';
@@ -69,6 +70,12 @@ class RouteGenerator {
       case viewPosts:
         return FadeRoute(
             page: PostPage(
+          userOwner: args,
+        ));
+
+      case myBidsOwner:
+        return FadeRoute(
+            page: MyBidspage(
           userOwner: args,
         ));
 

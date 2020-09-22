@@ -548,7 +548,7 @@ class HTTPHandler {
     }
   }
 
-  // update band nad name details owner
+  /// update band nad name details owner
   Future<PostResultOne> updateBankAndNameDetails(List data) async {
     try {
       var response = await http.post(
@@ -573,6 +573,7 @@ class HTTPHandler {
     }
   }
 
+  /// getting all posts for truck owner
   Future<List<Post>> getPosts() async {
     try {
       var response = await http.get('$baseURLOwner/get_all_posts');
@@ -591,6 +592,7 @@ class HTTPHandler {
     }
   }
 
+  /// post bid
   Future<PostResultOne> postBid(
     String userId,
     String loadId,
@@ -614,6 +616,7 @@ class HTTPHandler {
     }
   }
 
+  /// getting current users bid for posts
   Future<List<Bid>> getBids(String userId) async {
     try {
       var response =
@@ -634,6 +637,7 @@ class HTTPHandler {
     }
   }
 
+  /// updating bid
   Future<PostResultOne> updateBid(String bidId, String updatedPrice) async {
     try {
       var response =
@@ -649,6 +653,7 @@ class HTTPHandler {
     }
   }
 
+  /// delete bid
   Future<PostResultOne> deleteBid(String bidId) async {
     try {
       var response =
@@ -657,6 +662,24 @@ class HTTPHandler {
       });
 
       return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  /// getting all current userd bid
+  Future<List<Bid1>> getMyBids(String ownerId) async {
+    try {
+      var response = await http
+          .post('$baseURLOwner/my_biddings', body: {'owner_id': ownerId});
+
+      List<Bid1> bids = [];
+      for (var i = 0; i < json.decode(response.body).length; i++)
+        bids.add(Bid1.fromJson(json.decode(response.body)[i]));
+
+      print(bids.toString());
+      return bids;
     } catch (e) {
       print(e);
       throw e;

@@ -43,3 +43,4 @@ const String viewTrucksOwner = "/viewTrucksOwner";
 const String editTrucksOwner = "/editTrucksOwner";
 const String viewProfileOwner = "/viewProfileOwner";
 const String subscriptionOwner = "/subscriptionOwner";
+const String myBidsOwner = "/myBids";
