@@ -625,6 +625,8 @@ class HTTPHandler {
         'get_user_id': userId,
       });
 
+      if (response.body == 'null') return [];
+
       List<Bid> bids = [];
       for (var i = 0; i < json.decode(response.body).length; i++)
         bids.add(Bid.fromJson(json.decode(response.body)[i]));
