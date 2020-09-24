@@ -153,7 +153,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
           print('update sustem as well');
           HTTPHandler().updateBankAndNameDetails([
             widget.userOwner.oPhone,
-            widget.userOwner.oName,
+            nameController.text,
             (bankAccountNumberController.text == '')
                 ? '0'
                 : bankAccountNumberController.text,
@@ -182,7 +182,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
         ifscCodeController.text != '') {
       HTTPHandler().updateBankAndNameDetails([
         widget.userOwner.oPhone,
-        widget.userOwner.oName,
+        nameController.text,
         (bankAccountNumberController.text == '')
             ? '0'
             : bankAccountNumberController.text,
@@ -513,7 +513,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(panCardNumberController.text),
+                              image: NetworkImage('https://truckwale.co.in/${panCardNumberController.text}'),
                               fit: BoxFit.contain,
                             ),
                           ),
