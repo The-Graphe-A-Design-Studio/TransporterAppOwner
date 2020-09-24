@@ -26,8 +26,8 @@ enum WidgetMarker {
 class _AddTruckOwnerState extends State<AddTruckOwner> {
   WidgetMarker selectedWidgetMarker = WidgetMarker.credentials;
 
-  final GlobalKey<FormState> _formKeyCredentials = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKeyDocuments = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKeyCredentials = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKeyDocuments = GlobalKey<FormState>();
 
   final truckNumberController = TextEditingController();
   final truckLoadController = TextEditingController();
@@ -123,7 +123,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          key: _formKeyCredentials,
+          // key: _formKeyCredentials,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -174,69 +174,43 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               SizedBox(
                 height: 16.0,
               ),
-              DropdownButton(
-                isExpanded: true,
-                hint: Text("Select Truck Category"),
-                value: selectedTruckCategory,
-                onChanged: (TruckCategory value) {
-                  setState(() {
-                    selectedTruckCategory = value;
-                  });
-                },
-                dropdownColor: Colors.white,
-                items: listOfCat.map((TruckCategory item) {
-                  return DropdownMenuItem(
-                    value: item,
-                    child: Text(item.truckCatName),
-                  );
-                }).toList(),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                controller: truckNumberController,
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                focusNode: _truckNumber,
-                onFieldSubmitted: (term) {
-                  _truckNumber.unfocus();
-                  FocusScope.of(context).requestFocus(_truckLoad);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.person),
-                  labelText: "Truck Number",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
+              Material(
+                child: DropdownButton(
+                  isExpanded: true,
+                  hint: Text("Select Truck Category"),
+                  value: selectedTruckCategory,
+                  onChanged: (TruckCategory value) {
+                    setState(() {
+                      selectedTruckCategory = value;
+                    });
+                  },
+                  dropdownColor: Colors.white,
+                  items: listOfCat.map((TruckCategory item) {
+                    return DropdownMenuItem(
+                        value: item,
+                        child: Text(
+                          item.truckCatName
+                        ));
+                  }).toList(),
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                  controller: truckLoadController,
-                  keyboardType: TextInputType.visiblePassword,
+              Material(
+                child: TextFormField(
+                  controller: truckNumberController,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
-                  focusNode: _truckLoad,
+                  focusNode: _truckNumber,
                   onFieldSubmitted: (term) {
-                    _truckLoad.unfocus();
-                    FocusScope.of(context).requestFocus(_truckDriverName);
+                    _truckNumber.unfocus();
+                    FocusScope.of(context).requestFocus(_truckLoad);
                   },
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.event_seat),
-                    labelText: "Truck Capacity (In Tons)",
+                    prefixIcon: Icon(Icons.person),
+                    labelText: "Truck Number",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                       borderSide: BorderSide(
@@ -250,36 +224,71 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
                       return "This Field is Required";
                     }
                     return null;
-                  }),
+                  },
+                ),
+              ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                controller: truckDriverNameController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                focusNode: _truckDriverName,
-                onFieldSubmitted: (term) {
-                  _truckDriverName.unfocus();
-                  FocusScope.of(context).requestFocus(_truckDriverNumber);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.person),
-                  labelText: "Driver Name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
+              Material(
+                child: TextFormField(
+                    controller: truckLoadController,
+                    keyboardType: TextInputType.visiblePassword,
+                    textInputAction: TextInputAction.next,
+                    focusNode: _truckLoad,
+                    onFieldSubmitted: (term) {
+                      _truckLoad.unfocus();
+                      FocusScope.of(context).requestFocus(_truckDriverName);
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.event_seat),
+                      labelText: "Truck Capacity (In Tons)",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.amber,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return "This Field is Required";
+                      }
+                      return null;
+                    }),
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Material(
+                child: TextFormField(
+                  controller: truckDriverNameController,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  focusNode: _truckDriverName,
+                  onFieldSubmitted: (term) {
+                    _truckDriverName.unfocus();
+                    FocusScope.of(context).requestFocus(_truckDriverNumber);
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.person),
+                    labelText: "Driver Name",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(
+                        color: Colors.amber,
+                        style: BorderStyle.solid,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "This Field is Required";
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 16.0,
@@ -287,16 +296,18 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               Row(
                 children: [
                   SizedBox(
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.dialpad),
-                        hintText: "+91",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                      child: TextFormField(
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.dialpad),
+                          hintText: "+91",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
                       ),
@@ -305,29 +316,31 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
                   ),
                   SizedBox(width: 16.0),
                   Flexible(
-                    child: TextFormField(
-                      controller: truckDriverMobileNumberController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      focusNode: _truckDriverNumber,
-                      decoration: InputDecoration(
-                        labelText: "Driver Mobile Number",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                      child: TextFormField(
+                        controller: truckDriverMobileNumberController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        focusNode: _truckDriverNumber,
+                        decoration: InputDecoration(
+                          labelText: "Driver Mobile Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "This Field is Required";
+                          } else if (value.length < 10) {
+                            return "Enter Valid Mobile Number";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "This Field is Required";
-                        } else if (value.length < 10) {
-                          return "Enter Valid Mobile Number";
-                        }
-                        return null;
-                      },
                     ),
                   )
                 ],
@@ -341,11 +354,11 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
                   splashColor: Colors.transparent,
                   onTap: () {
                     if (selectedTruckCategory != null) {
-                      if (_formKeyCredentials.currentState.validate()) {
-                        setState(() {
-                          selectedWidgetMarker = WidgetMarker.documents;
-                        });
-                      }
+                      // if (_formKeyCredentials.currentState.validate()) {
+                      //   setState(() {
+                      //     selectedWidgetMarker = WidgetMarker.documents;
+                      //   });
+                      // }
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         backgroundColor: Colors.black,
@@ -433,7 +446,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          key: _formKeyDocuments,
+          // key: _formKeyDocuments,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -489,81 +502,91 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                readOnly: true,
-                onTap: () => getRcFile(),
-                decoration: InputDecoration(
-                  suffixIcon: Icon(
-                    rcDone ? Icons.check_box : Icons.add_box,
-                    size: 35.0,
-                    color: rcDone ? Colors.green : Color(0xff252427),
+              Material(
+                child: TextFormField(
+                  readOnly: true,
+                  onTap: () => getRcFile(),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      rcDone ? Icons.check_box : Icons.add_box,
+                      size: 35.0,
+                      color: rcDone ? Colors.green : Color(0xff252427),
+                    ),
+                    border: InputBorder.none,
+                    hintText: "Upload RC Book",
                   ),
-                  border: InputBorder.none,
-                  hintText: "Upload RC Book",
                 ),
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                readOnly: true,
-                onTap: () => getLicenceFile(),
-                decoration: InputDecoration(
-                  suffixIcon: Icon(
-                    licenceDone ? Icons.check_box : Icons.add_box,
-                    size: 35.0,
-                    color: licenceDone ? Colors.green : Color(0xff252427),
+              Material(
+                child: TextFormField(
+                  readOnly: true,
+                  onTap: () => getLicenceFile(),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      licenceDone ? Icons.check_box : Icons.add_box,
+                      size: 35.0,
+                      color: licenceDone ? Colors.green : Color(0xff252427),
+                    ),
+                    border: InputBorder.none,
+                    hintText: "Upload Driver's License",
                   ),
-                  border: InputBorder.none,
-                  hintText: "Upload Driver's License",
                 ),
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                readOnly: true,
-                onTap: () => getInsuranceFile(),
-                decoration: InputDecoration(
-                  suffixIcon: Icon(
-                    insuranceDone ? Icons.check_box : Icons.add_box,
-                    size: 35.0,
-                    color: insuranceDone ? Colors.green : Color(0xff252427),
+              Material(
+                child: TextFormField(
+                  readOnly: true,
+                  onTap: () => getInsuranceFile(),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      insuranceDone ? Icons.check_box : Icons.add_box,
+                      size: 35.0,
+                      color: insuranceDone ? Colors.green : Color(0xff252427),
+                    ),
+                    border: InputBorder.none,
+                    hintText: "Upload Insurance",
                   ),
-                  border: InputBorder.none,
-                  hintText: "Upload Insurance",
                 ),
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                readOnly: true,
-                onTap: () => getRoadTaxFile(),
-                decoration: InputDecoration(
-                  suffixIcon: Icon(
-                    roadTaxDone ? Icons.check_box : Icons.add_box,
-                    size: 35.0,
-                    color: roadTaxDone ? Colors.green : Color(0xff252427),
+              Material(
+                child: TextFormField(
+                  readOnly: true,
+                  onTap: () => getRoadTaxFile(),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      roadTaxDone ? Icons.check_box : Icons.add_box,
+                      size: 35.0,
+                      color: roadTaxDone ? Colors.green : Color(0xff252427),
+                    ),
+                    border: InputBorder.none,
+                    hintText: "Upload Road Tax Certificate",
                   ),
-                  border: InputBorder.none,
-                  hintText: "Upload Road Tax Certificate",
                 ),
               ),
               SizedBox(
                 height: 16.0,
               ),
-              TextFormField(
-                readOnly: true,
-                onTap: () => getRtoPassingFile(),
-                decoration: InputDecoration(
-                  suffixIcon: Icon(
-                    rtoPassingDone ? Icons.check_box : Icons.add_box,
-                    size: 35.0,
-                    color: rtoPassingDone ? Colors.green : Color(0xff252427),
+              Material(
+                child: TextFormField(
+                  readOnly: true,
+                  onTap: () => getRtoPassingFile(),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      rtoPassingDone ? Icons.check_box : Icons.add_box,
+                      size: 35.0,
+                      color: rtoPassingDone ? Colors.green : Color(0xff252427),
+                    ),
+                    border: InputBorder.none,
+                    hintText: "Upload RTO Passing",
                   ),
-                  border: InputBorder.none,
-                  hintText: "Upload RTO Passing",
                 ),
               ),
               SizedBox(

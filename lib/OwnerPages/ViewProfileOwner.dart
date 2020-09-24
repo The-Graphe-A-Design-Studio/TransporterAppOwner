@@ -97,7 +97,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
         (widget.userOwner.oIfsc == '0') ? '' : widget.userOwner.oIfsc;
     panCardNumberController.text = (widget.userOwner.oPanCard == null)
         ? ''
-        : 'https://truckwale.co.in/${widget.userOwner.oPanCard}';
+        : widget.userOwner.oPanCard;
   }
 
   @override

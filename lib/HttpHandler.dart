@@ -173,7 +173,7 @@ class HTTPHandler {
   /*-------------------------- Truck API's ---------------------------*/
   Future<List<TruckCategory>> getTruckCategory() async {
     try {
-      var result = await http.get("$baseURLOwner/truck_categories");
+      var result = await http.get("https://truckwale.co.in/api/truck_categories");
       var ret = json.decode(result.body);
       List<TruckCategory> list = [];
       for (var i in ret) {
