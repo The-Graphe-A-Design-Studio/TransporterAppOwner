@@ -552,8 +552,6 @@ class HTTPHandler {
   /// update band nad name details owner
   Future<PostResultOne> updateBankAndNameDetails(List data) async {
     try {
-      print('name => ${data[1]}');
-
       var response = await http.post(
         '$baseURLOwner/owner_docs',
         body: {
@@ -580,6 +578,8 @@ class HTTPHandler {
   Future<List<Post>> getPosts() async {
     try {
       var response = await http.get('$baseURLOwner/get_all_posts');
+
+      if (json.decode(response.body)[0]['success'] == '0') return null;
 
       List<Post> posts = [];
 
@@ -678,6 +678,8 @@ class HTTPHandler {
     try {
       var response = await http
           .post('$baseURLOwner/my_biddings', body: {'owner_id': ownerId});
+
+      if (response.body == 'null') return [];
 
       List<Bid1> bids = [];
       for (var i = 0; i < json.decode(response.body).length; i++)
