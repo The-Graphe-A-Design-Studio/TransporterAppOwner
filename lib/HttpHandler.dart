@@ -8,6 +8,7 @@ import 'package:ownerapp/Models/Bid.dart';
 import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/TruckCategory.dart';
+import 'package:ownerapp/Models/TruckCategoryType.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/PostMethodResult.dart';
@@ -186,6 +187,26 @@ class HTTPHandler {
     }
   }
 
+  Future<List<TruckCategoryType>> getTruckCategoryType(
+      String truckCategory) async {
+    try {
+      var result = await http.post(
+        "https://truckwale.co.in/api/truck_category_type",
+        body: {'truck_cat_id': truckCategory},
+      );
+
+      var ret = json.decode(result.body);
+      List<TruckCategoryType> list = [];
+      for (var i in ret) {
+        list.add(TruckCategoryType.fromJson(i));
+      }
+      return list;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
   Future<PostResultOne> addTrucksOwner(List data) async {
     try {
       var url = "$baseURLOwner/trucks";
@@ -193,19 +214,17 @@ class HTTPHandler {
 
       request.fields['trk_owner'] = data[0];
       request.fields['trk_cat'] = data[1];
-      request.fields['trk_num'] = data[2];
-      request.fields['trk_load'] = data[3];
+      request.fields['trk_cat_type'] = data[2];
+      request.fields['trk_num'] = data[3];
       request.fields['trk_dr_name'] = data[4];
       request.fields['trk_dr_phone_code'] = data[5];
       request.fields['trk_dr_phone'] = data[6];
       request.files.add(await http.MultipartFile.fromPath('trk_rc', data[7]));
       request.files
-          .add(await http.MultipartFile.fromPath('trk_dr_license', data[8]));
+          .add(await http.MultipartFile.fromPath('trk_insurance', data[8]));
       request.files
-          .add(await http.MultipartFile.fromPath('trk_insurance', data[9]));
-      request.files
-          .add(await http.MultipartFile.fromPath('trk_road_tax', data[10]));
-      request.files.add(await http.MultipartFile.fromPath('trk_rto', data[11]));
+          .add(await http.MultipartFile.fromPath('trk_road_tax', data[9]));
+      request.files.add(await http.MultipartFile.fromPath('trk_rto', data[10]));
 
       var result = await request.send();
       var finalResult = await http.Response.fromStream(result);

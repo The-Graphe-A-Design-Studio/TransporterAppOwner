@@ -7,6 +7,7 @@ import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/TruckCategory.dart';
+import 'package:ownerapp/Models/TruckCategoryType.dart';
 import 'package:ownerapp/Models/User.dart';
 
 class AddTruckOwner extends StatefulWidget {
@@ -36,6 +37,8 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
   TruckCategory selectedTruckCategory;
   List<TruckCategory> listOfCat = [];
   bool loadCat = true;
+  TruckCategoryType selectedTruckCategoryType;
+  List<TruckCategoryType> listOfCatType;
 
   File rcFile, licenceFile, insuranceFile, roadTaxFile, rtoPassingFile;
   bool rcDone, licenceDone, insuranceDone, roadTaxDone, rtoPassingDone;
@@ -85,13 +88,12 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
     HTTPHandler().addTrucksOwner([
       widget.userOwner.oId.toString(),
       selectedTruckCategory.truckCatID.toString(),
+      selectedTruckCategoryType.id,
       truckNumberController.text.toString(),
-      truckLoadController.text.toString(),
       truckDriverNameController.text.toString(),
       '91',
       truckDriverMobileNumberController.text.toString(),
       rcFile.path.toString(),
-      licenceFile.path.toString(),
       insuranceFile.path.toString(),
       roadTaxFile.path.toString(),
       rtoPassingFile.path.toString()
@@ -115,6 +117,16 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
           title: "Adding Truck", text: "Network Error");
       await Future.delayed(Duration(seconds: 3), () {});
       Navigator.pop(context);
+    });
+  }
+
+  void _getType() {
+    HTTPHandler()
+        .getTruckCategoryType(selectedTruckCategory.truckCatID)
+        .then((value) {
+      setState(() {
+        listOfCatType = value;
+      });
     });
   }
 
@@ -174,29 +186,49 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               SizedBox(
                 height: 16.0,
               ),
-              Material(
-                child: DropdownButton(
-                  isExpanded: true,
-                  hint: Text("Select Truck Category"),
-                  value: selectedTruckCategory,
-                  onChanged: (TruckCategory value) {
-                    setState(() {
-                      selectedTruckCategory = value;
-                    });
-                  },
-                  dropdownColor: Colors.white,
-                  items: listOfCat.map((TruckCategory item) {
-                    return DropdownMenuItem(
-                        value: item,
-                        child: Text(
-                          item.truckCatName
-                        ));
-                  }).toList(),
-                ),
+              DropdownButton(
+                isExpanded: true,
+                hint: Text("Select Truck Category"),
+                value: selectedTruckCategory,
+                onChanged: (TruckCategory value) {
+                  setState(() {
+                    selectedTruckCategory = value;
+                    _getType();
+                  });
+                },
+                dropdownColor: Colors.white,
+                items: listOfCat.map((TruckCategory item) {
+                  return DropdownMenuItem(
+                      value: item, child: Text(item.truckCatName));
+                }).toList(),
               ),
               SizedBox(
                 height: 16.0,
               ),
+              if (selectedTruckCategory != null)
+                (listOfCatType == null)
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : DropdownButton(
+                        isExpanded: true,
+                        hint: Text("Select Truck Category Type"),
+                        value: selectedTruckCategoryType,
+                        onChanged: (TruckCategoryType value) {
+                          setState(() {
+                            selectedTruckCategoryType = value;
+                          });
+                        },
+                        dropdownColor: Colors.white,
+                        items: listOfCatType.map((TruckCategoryType item) {
+                          return DropdownMenuItem(
+                              value: item, child: Text(item.name));
+                        }).toList(),
+                      ),
+              if (selectedTruckCategory != null)
+                SizedBox(
+                  height: 16.0,
+                ),
               Material(
                 child: TextFormField(
                   controller: truckNumberController,
@@ -226,37 +258,6 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
                     return null;
                   },
                 ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Material(
-                child: TextFormField(
-                    controller: truckLoadController,
-                    keyboardType: TextInputType.visiblePassword,
-                    textInputAction: TextInputAction.next,
-                    focusNode: _truckLoad,
-                    onFieldSubmitted: (term) {
-                      _truckLoad.unfocus();
-                      FocusScope.of(context).requestFocus(_truckDriverName);
-                    },
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.event_seat),
-                      labelText: "Truck Capacity (In Tons)",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.amber,
-                          style: BorderStyle.solid,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return "This Field is Required";
-                      }
-                      return null;
-                    }),
               ),
               SizedBox(
                 height: 16.0,
@@ -355,9 +356,9 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
                   onTap: () {
                     if (selectedTruckCategory != null) {
                       // if (_formKeyCredentials.currentState.validate()) {
-                      //   setState(() {
-                      //     selectedWidgetMarker = WidgetMarker.documents;
-                      //   });
+                      setState(() {
+                        selectedWidgetMarker = WidgetMarker.documents;
+                      });
                       // }
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(
@@ -401,15 +402,6 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
     if (rcFile.existsSync()) {
       setState(() {
         rcDone = true;
-      });
-    }
-  }
-
-  Future<void> getLicenceFile() async {
-    licenceFile = await FilePicker.getFile();
-    if (licenceFile.existsSync()) {
-      setState(() {
-        licenceDone = true;
       });
     }
   }
@@ -523,24 +515,6 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               Material(
                 child: TextFormField(
                   readOnly: true,
-                  onTap: () => getLicenceFile(),
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(
-                      licenceDone ? Icons.check_box : Icons.add_box,
-                      size: 35.0,
-                      color: licenceDone ? Colors.green : Color(0xff252427),
-                    ),
-                    border: InputBorder.none,
-                    hintText: "Upload Driver's License",
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Material(
-                child: TextFormField(
-                  readOnly: true,
                   onTap: () => getInsuranceFile(),
                   decoration: InputDecoration(
                     suffixIcon: Icon(
@@ -598,7 +572,6 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
                   splashColor: Colors.transparent,
                   onTap: () {
                     if (rcDone &&
-                        licenceDone &&
                         insuranceDone &&
                         roadTaxDone &&
                         rtoPassingDone) {
@@ -747,19 +720,21 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
             maxChildSize: 0.9,
             builder: (BuildContext context, ScrollController scrollController) {
               return Hero(
-                  tag: 'AnimeBottom',
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30.0),
-                            topRight: Radius.circular(30.0)),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: getCustomBottomSheetWidget(
-                            context, scrollController),
-                      )));
+                tag: 'AnimeBottom',
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child:
+                        getCustomBottomSheetWidget(context, scrollController),
+                  ),
+                ),
+              );
             },
           ),
         ]),
