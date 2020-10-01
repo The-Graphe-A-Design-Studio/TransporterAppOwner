@@ -256,24 +256,24 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                                     Text(truck.truckDriverName),
                                                   ],
                                                 ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Capacity",
-                                                      style: TextStyle(
-                                                          color: Colors.blueGrey
-                                                              .withOpacity(
-                                                                  0.9)),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 8.0,
-                                                    ),
-                                                    Text(truck.truckLoad +
-                                                        " Tons"),
-                                                  ],
-                                                ),
+                                                // Column(
+                                                //   crossAxisAlignment:
+                                                //       CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text(
+                                                //       "Capacity",
+                                                //       style: TextStyle(
+                                                //           color: Colors.blueGrey
+                                                //               .withOpacity(
+                                                //                   0.9)),
+                                                //     ),
+                                                //     SizedBox(
+                                                //       height: 8.0,
+                                                //     ),
+                                                //     Text(truck.truckLoad +
+                                                //         " Tons"),
+                                                //   ],
+                                                // ),
                                                 SizedBox(
                                                   width: 1.0,
                                                 ),

@@ -692,7 +692,7 @@ class HTTPHandler {
     }
   }
 
-  /// getting all current userd bid
+  /// Getting all current userd bid
   Future<List<Bid1>> getMyBids(String ownerId) async {
     try {
       var response = await http
@@ -706,6 +706,34 @@ class HTTPHandler {
 
       print(bids.toString());
       return bids;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  /// Accepting bid
+  Future<PostResultOne> acceptBid(String bidId) async {
+    try {
+      var response = await http.post('$baseURLOwner/my_biddings', body: {
+        'bid_id_for_accepting': bidId,
+      });
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  /// Removing bid
+  Future<PostResultOne> removeBid(String bidId) async {
+    try {
+      var response = await http.post('$baseURLOwner/my_biddings', body: {
+        'bid_id_for_removing': bidId,
+      });
+
+      return PostResultOne.fromJson(json.decode(response.body));
     } catch (e) {
       print(e);
       throw e;
