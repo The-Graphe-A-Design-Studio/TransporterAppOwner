@@ -156,6 +156,28 @@ class _AccountBottomSheetLoggedInState
           Material(
             child: ListTile(
               onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  myDeliveriesOwner,
+                  arguments: widget.userOwner,
+                );
+              },
+              leading: Icon(Icons.motorcycle),
+              title: Text(
+                'View Deliveries',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                'Lorem Ipsum',
+                style: TextStyle(color: Colors.black87),
+              ),
+            ),
+          ),
+          Material(
+            child: ListTile(
+              onTap: () {
                 HTTPHandler().signOut(
                   context,
                   widget.userOwner.oPhone,

@@ -10,7 +10,7 @@ class Post {
   String truckPreferences;
   List<String> truckTypes;
   String expectedPrice;
-  String paymentMode;
+  var paymentMode;
   String createdOn;
   String expiredOn;
   String contactPerson;

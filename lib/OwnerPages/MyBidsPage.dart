@@ -5,6 +5,7 @@ import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/Bid.dart';
 import 'package:ownerapp/Models/User.dart';
+import 'package:ownerapp/MyConstants.dart';
 
 class MyBidspage extends StatefulWidget {
   final UserOwner userOwner;
@@ -131,8 +132,10 @@ class _MyBidspageState extends State<MyBidspage> {
                                               await Future.delayed(
                                                   Duration(seconds: 1), () {});
                                               Navigator.pop(context);
-                                              // getBids();
-                                              Navigator.pop(context);
+                                              // Navigator.pop(context);
+                                              Navigator.popAndPushNamed(
+                                                  context, myDeliveriesOwner,
+                                                  arguments: widget.userOwner);
                                             } else {
                                               DialogFailed().showCustomDialog(
                                                   context,

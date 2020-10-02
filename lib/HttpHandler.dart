@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/Models/Bid.dart';
+import 'package:ownerapp/Models/Deliveries.dart';
 import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/TruckCategory.dart';
@@ -731,6 +732,56 @@ class HTTPHandler {
     try {
       var response = await http.post('$baseURLOwner/my_biddings', body: {
         'bid_id_for_removing': bidId,
+      });
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  /// Getting all deliveries
+  Future<List<Delivery>> getMyDeliveries(List data) async {
+    try {
+      var response = await http.post(
+        '$baseURLOwner/my_deliveries',
+        body: {'owner_id': data[0]},
+      );
+
+      if (response.body == 'null') return [];
+
+      List<Delivery> delivery = [];
+      for (var i = 0; i < json.decode(response.body).length; i++)
+        delivery.add(Delivery.fromJson(json.decode(response.body)[i]));
+
+      print(delivery.toString());
+      return delivery;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  /// Assign truck for delivery
+  Future<PostResultOne> assignTruckForDelivery(List data) async {
+    try {
+      var response = await http.post('$baseURLOwner/my_deliveries', body: {
+        'delivery_id': data[0],
+        'truck_id': data[1],
+      });
+
+      return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<PostResultOne> removeTruck(List data) async {
+    try {
+      var response = await http.post('$baseURLOwner/my_deliveries', body: {
+        'del_id_remove_truck': data[0],
       });
 
       return PostResultOne.fromJson(json.decode(response.body));
