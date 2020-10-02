@@ -186,21 +186,23 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               SizedBox(
                 height: 16.0,
               ),
-              DropdownButton(
-                isExpanded: true,
-                hint: Text("Select Truck Category"),
-                value: selectedTruckCategory,
-                onChanged: (TruckCategory value) {
-                  setState(() {
-                    selectedTruckCategory = value;
-                    _getType();
-                  });
-                },
-                dropdownColor: Colors.white,
-                items: listOfCat.map((TruckCategory item) {
-                  return DropdownMenuItem(
-                      value: item, child: Text(item.truckCatName));
-                }).toList(),
+              Material(
+                child: DropdownButton(
+                  isExpanded: true,
+                  hint: Text("Select Truck Category"),
+                  value: selectedTruckCategory,
+                  onChanged: (TruckCategory value) {
+                    setState(() {
+                      selectedTruckCategory = value;
+                      _getType();
+                    });
+                  },
+                  dropdownColor: Colors.white,
+                  items: listOfCat.map((TruckCategory item) {
+                    return DropdownMenuItem(
+                        value: item, child: Text(item.truckCatName));
+                  }).toList(),
+                ),
               ),
               SizedBox(
                 height: 16.0,
@@ -699,7 +701,11 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
   }
 
   void getCategories() async {
-    listOfCat = await HTTPHandler().getTruckCategory();
+    HTTPHandler().getTruckCategory().then((value) {
+      setState(() {
+        listOfCat = value;
+      });
+    });
   }
 
   @override
