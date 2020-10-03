@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
@@ -100,10 +101,15 @@ class HTTPHandler {
 
   Future<PostResultOne> loginOwner(List data) async {
     try {
+      final fcm = FirebaseMessaging();
+      fcm.requestNotificationPermissions();
+      fcm.configure();
+      var token = await fcm.getToken();
+      print('token => $token');
       var result = await http.post('$baseURLOwner/owner_enter_exit', body: {
         'to_phone_code': data[0],
         'to_phone': data[1],
-        'to_token': '',
+        'to_token': token,
       });
 
       return PostResultOne.fromJson(json.decode(result.body));

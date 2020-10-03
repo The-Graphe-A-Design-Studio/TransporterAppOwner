@@ -1,4 +1,4 @@
-package com.example.ownerapp
+package com.graphe.ownerapp
 
 import io.flutter.embedding.android.FlutterActivity
 
