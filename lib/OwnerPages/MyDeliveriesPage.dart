@@ -20,6 +20,7 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
   List<Delivery> myDeliveries;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   var selectedTruck = '';
+  List<Truck> trucks = [];
 
   Widget item(String title, String value) => Column(
         children: [
@@ -37,63 +38,136 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
         ],
       );
 
-  void assignTruck(BuildContext context, Delivery d) {
-    List<Truck> trucks = [];
+  void getTrucks() {
     HTTPHandler().viewAllTrucks([widget.userOwner.oId]).then((value) {
-      trucks = value;
-      print('sheet');
-      scaffoldKey.currentState.showBottomSheet(
-        (BuildContext context) => Container(
+      setState(() {
+        trucks = value;
+      });
+    });
+  }
+
+  bool canAssign(Delivery d) {
+    print('running');
+    if (d.priceUnit != 'number of trucks')
+      return true;
+    else {
+      int trucksRequired = int.parse(d.quantity);
+      int availableTrucks = 0;
+
+      for (Truck t in trucks) {
+        if (t.truckActive && !t.truckOnTrip) availableTrucks++;
+      }
+
+      print('reqd => $trucksRequired');
+      print('ava => $availableTrucks');
+
+      return (trucksRequired <= availableTrucks) ? true : false;
+    }
+  }
+
+  void assignTruck(BuildContext context, Delivery d) {
+    List<int> trucksSelected;
+
+    trucksSelected = List.generate(trucks.length, (index) => -1);
+
+    print('sheet');
+    scaffoldKey.currentState.showBottomSheet(
+      (BuildContext context) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter state) => Container(
           child: SingleChildScrollView(
             child: Column(
-                children: value
-                    .map((e) => RadioListTile(
-                        value: e.truckId,
-                        groupValue: selectedTruck,
-                        title: Text(e.truckNumber),
-                        onChanged: (String newVal) {
-                          print(newVal);
-
-                          DialogProcessing().showCustomDialog(context,
-                              title: "Assigning Truck",
-                              text: "Processing, Please Wait!");
-                          HTTPHandler().assignTruckForDelivery([
-                            d.deliveryId,
-                            newVal,
-                          ]).then((value) async {
-                            Navigator.pop(context);
-                            if (value.success) {
-                              DialogSuccess().showCustomDialog(context,
-                                  title: "Assigning Truck");
-                              await Future.delayed(Duration(seconds: 1), () {});
-                              Navigator.pop(context);
-                              Navigator.of(context).pop();
-                              getDeliveries();
-                            } else {
-                              DialogFailed().showCustomDialog(context,
-                                  title: "Assigning Truck",
-                                  text: value.message);
-                              await Future.delayed(Duration(seconds: 3), () {});
-                              Navigator.pop(context);
-                              Navigator.of(context).pop();
-                            }
-                          }).catchError((error) async {
-                            print(error);
-                            Navigator.pop(context);
-                            DialogFailed().showCustomDialog(context,
-                                title: "Assigning Truck",
-                                text: "Network Error");
-                            await Future.delayed(Duration(seconds: 3), () {});
-                            Navigator.pop(context);
-                            Navigator.of(context).pop();
-                          });
-                        }))
-                    .toList()),
+              children: [
+                Column(
+                    children: trucks
+                        .map((e) => (e.truckOnTrip)
+                            ? Container()
+                            : CheckboxListTile(
+                                title: Text(
+                                  e.truckNumber,
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                value: trucksSelected[trucks.indexOf(e)] == -1
+                                    ? false
+                                    : true,
+                                onChanged: (bool val) {
+                                  print('value => $val');
+                                  state(() {
+                                    trucksSelected[trucks.indexOf(e)] =
+                                        val ? int.parse(e.truckId) : -1;
+                                  });
+                                },
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                checkColor: Colors.black,
+                              ))
+                        .toList()),
+                GestureDetector(
+                  onTap: () {
+                    print('assign now');
+                    String ids = '';
+                    for (int b in trucksSelected) {
+                      if (b != -1) ids += '$b* ';
+                    }
+                    print(ids);
+                    String filterdIds = ids.substring(0, ids.length - 2);
+                    print(filterdIds);
+                    DialogProcessing().showCustomDialog(context,
+                        title: "Assigning Truck",
+                        text: "Processing, Please Wait!");
+                    HTTPHandler().assignTruckForDelivery([
+                      d.deliveryId,
+                      filterdIds,
+                    ]).then((value) async {
+                      Navigator.pop(context);
+                      if (value.success) {
+                        DialogSuccess().showCustomDialog(context,
+                            title: "Assigning Truck");
+                        await Future.delayed(Duration(seconds: 1), () {});
+                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                        getDeliveries();
+                      } else {
+                        DialogFailed().showCustomDialog(context,
+                            title: "Assigning Truck", text: value.message);
+                        await Future.delayed(Duration(seconds: 3), () {});
+                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                      }
+                    }).catchError((error) async {
+                      print(error);
+                      Navigator.pop(context);
+                      DialogFailed().showCustomDialog(context,
+                          title: "Assigning Truck", text: "Network Error");
+                      await Future.delayed(Duration(seconds: 3), () {});
+                      Navigator.pop(context);
+                      Navigator.of(context).pop();
+                    });
+                  },
+                  child: Container(
+                    height: 50.0,
+                    margin: const EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'ASSIGN',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-        backgroundColor: Colors.white,
-      );
-    });
+      ),
+      backgroundColor: Colors.white,
+    );
   }
 
   void deleteTruck(Delivery d) {
@@ -134,6 +208,7 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
   void initState() {
     super.initState();
     getDeliveries();
+    getTrucks();
   }
 
   @override
@@ -172,50 +247,63 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                 e.load.contactPersonPhone),
                             Divider(),
                             (e.deliveryTrucksStatus == '0')
-                                ? Align(
-                                    alignment: Alignment.centerRight,
-                                    child: RaisedButton.icon(
-                                      color: Colors.black,
-                                      icon: Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      ),
-                                      label: Text(
-                                        'Add Truck',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      onPressed: () {
-                                        assignTruck(context, e);
-                                      },
-                                    ),
-                                  )
+                                ? (canAssign(e))
+                                    ? Align(
+                                        alignment: Alignment.centerRight,
+                                        child: RaisedButton.icon(
+                                          color: Colors.black,
+                                          icon: Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                          ),
+                                          label: Text(
+                                            'Add Truck',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          onPressed: () {
+                                            assignTruck(context, e);
+                                          },
+                                        ),
+                                      )
+                                    : item(
+                                        "Sufficient Trucks not available!", '')
                                 : Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
+                                    children: e.deliveryTrucks
+                                        .map(
+                                          (d) => Column(
                                             children: [
-                                              Text('Truck Assigned'),
-                                              GestureDetector(
-                                                onTap: () => deleteTruck(e),
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text('Truck Assigned'),
+                                                      GestureDetector(
+                                                        onTap: () =>
+                                                            deleteTruck(e),
+                                                        child: Icon(
+                                                          Icons.delete,
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    '${d.driverName} (${d.truckNumber})',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  )
+                                                ],
                                               ),
+                                              SizedBox(height: 5.0),
                                             ],
                                           ),
-                                          Text(
-                                            '${e.deliveryTrucks[0].driverName} (${e.deliveryTrucks[0].truckNumber})',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500),
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(height: 5.0),
-                                    ],
+                                        )
+                                        .toList(),
                                   ),
                           ],
                         ),

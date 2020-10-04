@@ -755,6 +755,8 @@ class HTTPHandler {
         body: {'owner_id': data[0]},
       );
 
+      // if (json.decode(response.body)['success'] == '0') return [];
+
       if (response.body == 'null') return [];
 
       List<Delivery> delivery = [];
