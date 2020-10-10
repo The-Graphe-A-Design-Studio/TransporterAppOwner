@@ -7,6 +7,7 @@ import 'package:ownerapp/Models/Bid.dart';
 import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:toast/toast.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 enum BidStatus {
   newBid,
@@ -236,155 +237,130 @@ class _PostPageState extends State<PostPage> {
                             ),
                             padding: const EdgeInsets.all(10.0),
                             width: MediaQuery.of(context).size.width,
-                            height: 310.0,
+                            // height: 310.0,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.rectangle,
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text('From'),
+                                    Container(
+                                      width: 15.0,
+                                      height: 15.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.green[600],
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10.0),
                                     Text(
-                                      '${e.sources[0].source.substring(0, 20)}...',
+                                      '${e.sources[0].city}, ${e.sources[0].state}',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                SizedBox(height: 5.0),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 5.0,
+                                    vertical: 3.0,
+                                  ),
+                                  height: 5.0,
+                                  width: 1.5,
+                                  color: Colors.grey,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 5.0,
+                                    vertical: 3.0,
+                                  ),
+                                  height: 5.0,
+                                  width: 1.5,
+                                  color: Colors.grey,
+                                ),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text('To'),
+                                    Container(
+                                      width: 15.0,
+                                      height: 15.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.red[600],
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10.0),
                                     Text(
-                                      '${e.destinations[e.destinations.length - 1].destination.substring(0, 20)}...',
+                                      '${e.destinations[e.destinations.length - 1].city}, ${e.destinations[e.destinations.length - 1].state}',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                SizedBox(height: 5.0),
+                                SizedBox(height: 30.0),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text('Material'),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Truck Type',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.truckPreferences}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 30.0),
                                     Text(
-                                      '${e.material}',
+                                      '${e.truckTypes[0]}',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Tonnage'),
-                                    Text(
-                                      '${e.tonnage}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
+                                SizedBox(height: 20.0),
+                                Text(
+                                  'Products',
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    color: Colors.black54,
+                                  ),
                                 ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Truck Preferences'),
-                                    Text(
-                                      '${e.truckPreferences}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Expected Price'),
-                                    Text(
-                                      '${e.expectedPrice}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Payment Mode'),
-                                    Text(
-                                      '${e.paymentMode}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Created On'),
-                                    Text(
-                                      '${e.createdOn}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Expired On'),
-                                    Text(
-                                      '${e.expiredOn}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Contact Person'),
-                                    Text(
-                                      '${e.contactPerson}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Contact Person Phone No.'),
-                                    Text(
-                                      '${e.contactPersonPhone}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
+                                SizedBox(height: 8.0),
+                                Text(
+                                  '${e.material}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                                 Divider(),
                                 Container(
@@ -551,42 +527,78 @@ class _PostPageState extends State<PostPage> {
                                                 )
                                               ],
                                             )
-                                          : GestureDetector(
-                                              onTap: () {
-                                                print('bid now');
-                                                if (widget.userOwner
-                                                        .oSubscriptionStatus ==
-                                                    'Not on subcsription')
-                                                  Toast.show(
-                                                    'You need an active Subscription Plan',
-                                                    context,
-                                                    duration: Toast.LENGTH_LONG,
-                                                    gravity: Toast.CENTER,
-                                                  );
-                                                else {
-                                                  print('start');
-                                                  modal(e, BidStatus.newBid);
-                                                }
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  vertical: 8.0,
-                                                  horizontal: 40.0,
+                                          : Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    if (widget.userOwner
+                                                            .oSubscriptionStatus ==
+                                                        'In subscription period') {
+                                                      print('call');
+                                                      UrlLauncher.launch(
+                                                          "tel:${e.contactPersonPhone}");
+                                                    } else {
+                                                      Toast.show(
+                                                        'Active Subscription Plan Required',
+                                                        context,
+                                                        gravity: Toast.CENTER,
+                                                        duration:
+                                                            Toast.LENGTH_SHORT,
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons.call),
+                                                      SizedBox(width: 5.0),
+                                                      Text(
+                                                          '${e.contactPerson}'),
+                                                    ],
+                                                  ),
                                                 ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black87,
-                                                  shape: BoxShape.rectangle,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.0),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    print('bid now');
+                                                    if (widget.userOwner
+                                                            .oSubscriptionStatus ==
+                                                        'Not on subcsription')
+                                                      Toast.show(
+                                                        'You need an active Subscription Plan',
+                                                        context,
+                                                        duration:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity: Toast.CENTER,
+                                                      );
+                                                    else {
+                                                      print('start');
+                                                      modal(
+                                                          e, BidStatus.newBid);
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 40.0,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black87,
+                                                      shape: BoxShape.rectangle,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.0),
+                                                    ),
+                                                    child: Text(
+                                                      'Bid',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
                                                 ),
-                                                child: Text(
-                                                  'Bid',
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
+                                              ],
                                             ),
                                 )
                               ],

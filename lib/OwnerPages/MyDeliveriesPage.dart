@@ -170,10 +170,10 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
     );
   }
 
-  void deleteTruck(Delivery d) {
+  void deleteTruck(DeliveryTruck d) {
     DialogProcessing().showCustomDialog(context,
         title: "Deleting Truck", text: "Processing, Please Wait!");
-    HTTPHandler().removeTruck([d.deliveryId]).then((value) async {
+    HTTPHandler().removeTruck([d.deleteTruckId]).then((value) async {
       Navigator.pop(context);
       if (value.success) {
         DialogSuccess().showCustomDialog(context, title: "Deleting Truck");
@@ -235,16 +235,175 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            item('Delivery ID', e.deliveryId),
-                            item('Price Unit', e.priceUnit),
-                            item('Quantity', e.quantity),
-                            item('Deal Price', e.dealPrice),
-                            item('Total Price', e.totalPrice),
-                            item('Load material', e.load.material),
-                            item('Contact Person', e.load.contactPerson),
-                            item('Contact Person Phone No.',
-                                e.load.contactPersonPhone),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 15.0,
+                                  height: 15.0,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.green[600],
+                                      width: 3.0,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10.0),
+                                Text(
+                                  '${e.load.sources[0].city}, ${e.load.sources[0].state}',
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 5.0,
+                                vertical: 3.0,
+                              ),
+                              height: 5.0,
+                              width: 1.5,
+                              color: Colors.grey,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 5.0,
+                                vertical: 3.0,
+                              ),
+                              height: 5.0,
+                              width: 1.5,
+                              color: Colors.grey,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 15.0,
+                                  height: 15.0,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.red[600],
+                                      width: 3.0,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10.0),
+                                Text(
+                                  '${e.load.destinations[e.load.destinations.length - 1].city}, ${e.load.destinations[e.load.destinations.length - 1].state}',
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 30.0),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Truck Type',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      '${e.load.truckPreferences}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 30.0),
+                                Text(
+                                  '${e.load.truckTypes[0]}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Products',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      '${e.load.material}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Delivery Status',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      (e.deliveryStatus == '0')
+                                          ? 'Set'
+                                          : (e.deliveryStatus == '1')
+                                              ? 'Started'
+                                              : 'Completed',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Deal Price',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      '${e.dealPrice}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                             Divider(),
                             (e.deliveryTrucksStatus == '0')
                                 ? (canAssign(e))
@@ -283,7 +442,7 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                                       Text('Truck Assigned'),
                                                       GestureDetector(
                                                         onTap: () =>
-                                                            deleteTruck(e),
+                                                            deleteTruck(d),
                                                         child: Icon(
                                                           Icons.delete,
                                                           color: Colors.red,

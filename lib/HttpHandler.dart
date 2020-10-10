@@ -786,6 +786,7 @@ class HTTPHandler {
     }
   }
 
+  /// Remove truck from delivery
   Future<PostResultOne> removeTruck(List data) async {
     try {
       var response = await http.post('$baseURLOwner/my_deliveries', body: {

@@ -19,22 +19,6 @@ class MyBidspage extends StatefulWidget {
 class _MyBidspageState extends State<MyBidspage> {
   List<Bid1> bids;
 
-  Widget item(String title, String value) => Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title),
-              Text(
-                value,
-                style: TextStyle(fontWeight: FontWeight.w500),
-              )
-            ],
-          ),
-          SizedBox(height: 5.0),
-        ],
-      );
-
   void getBids() {
     HTTPHandler().getMyBids(widget.userOwner.oId).then((value) {
       setState(() {
@@ -82,28 +66,175 @@ class _MyBidspageState extends State<MyBidspage> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                item('From',
-                                    '${e.load.sources[0].source.substring(0, 20)}...'),
-                                item('To',
-                                    '${e.load.destinations[e.load.destinations.length - 1].destination.substring(0, 20)}...'),
-                                item('Material', '${e.load.material}'),
-                                item('Tonnage', '${e.load.tonnage}'),
-                                item('Truck Preferences',
-                                    '${e.load.truckPreferences}'),
-                                item('Expected Price',
-                                    '${e.load.expectedPrice}'),
-                                item('Payment Mode', '${e.load.paymentMode}'),
-                                item('Created On', '${e.load.createdOn}'),
-                                item('Expired On', '${e.load.expiredOn}'),
-                                item('Contact Person',
-                                    '${e.load.contactPerson}'),
-                                item('Contact Person Phone No.',
-                                    '${e.load.contactPersonPhone}'),
-                                Divider(),
-                                item('Bid Status', '${e.bidStatusMessage}'),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 15.0,
+                                      height: 15.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.green[600],
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10.0),
+                                    Text(
+                                      '${e.load.sources[0].city}, ${e.load.sources[0].state}',
+                                      style: TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 5.0,
+                                    vertical: 3.0,
+                                  ),
+                                  height: 5.0,
+                                  width: 1.5,
+                                  color: Colors.grey,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 5.0,
+                                    vertical: 3.0,
+                                  ),
+                                  height: 5.0,
+                                  width: 1.5,
+                                  color: Colors.grey,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 15.0,
+                                      height: 15.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.red[600],
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10.0),
+                                    Text(
+                                      '${e.load.destinations[e.load.destinations.length - 1].city}, ${e.load.destinations[e.load.destinations.length - 1].state}',
+                                      style: TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 30.0),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Truck Type',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.load.truckPreferences}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 30.0),
+                                    Text(
+                                      '${e.load.truckTypes[0]}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 20.0),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Products',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.load.material}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Bid Status',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.bidStatusMessage}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Bid Price',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.bidPrice}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Divider(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     if (e.bidStatus == '2')
                                       FlatButton.icon(
@@ -158,7 +289,7 @@ class _MyBidspageState extends State<MyBidspage> {
                                           });
                                         },
                                       ),
-                                    SizedBox(width: 30.0),
+                                    SizedBox(width: 10.0),
                                     FlatButton.icon(
                                       color: Colors.black87,
                                       icon: Icon(
