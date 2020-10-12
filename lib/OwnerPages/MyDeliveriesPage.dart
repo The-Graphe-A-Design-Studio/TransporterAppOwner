@@ -253,11 +253,13 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                   ),
                                 ),
                                 SizedBox(width: 10.0),
-                                Text(
-                                  '${e.load.sources[0].city}, ${e.load.sources[0].state}',
-                                  style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w500,
+                                Flexible(
+                                  child: Text(
+                                    '${e.load.sources[0].source}',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -267,16 +269,7 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                 horizontal: 5.0,
                                 vertical: 3.0,
                               ),
-                              height: 5.0,
-                              width: 1.5,
-                              color: Colors.grey,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 5.0,
-                                vertical: 3.0,
-                              ),
-                              height: 5.0,
+                              height: 16.0,
                               width: 1.5,
                               color: Colors.grey,
                             ),
@@ -296,11 +289,13 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                   ),
                                 ),
                                 SizedBox(width: 10.0),
-                                Text(
-                                  '${e.load.destinations[e.load.destinations.length - 1].city}, ${e.load.destinations[e.load.destinations.length - 1].state}',
-                                  style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w500,
+                                Flexible(
+                                  child: Text(
+                                    '${e.load.destinations[e.load.destinations.length - 1].destination}',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -339,7 +334,7 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                             ),
                             SizedBox(height: 20.0),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,6 +355,7 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(width: 30.0),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -383,6 +379,12 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                     ),
                                   ],
                                 ),
+                              ],
+                            ),
+                            SizedBox(height: 20.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -396,6 +398,209 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                     SizedBox(height: 8.0),
                                     Text(
                                       '${e.dealPrice}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 30.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'GST',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      '${e.gst}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 30.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Total Price',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      '${e.totalPrice}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Payment Method',
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                SizedBox(height: 8.0),
+                                Text(
+                                  '${e.paymentMode['mode name']}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (e.paymentMode['mode name'] == 'Advance Pay')
+                              SizedBox(height: 20.0),
+                            if (e.paymentMode['mode name'] == 'Advance Pay')
+                              Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Name',
+                                        style: TextStyle(
+                                          fontSize: 13.0,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Text(
+                                        'Advance',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: 25.0),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Amount',
+                                        style: TextStyle(
+                                          fontSize: 13.0,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Text(
+                                        '${e.paymentMode['payment']['advance amount']['amount']}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: 25.0),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Status',
+                                        style: TextStyle(
+                                          fontSize: 13.0,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      Text(
+                                        (e.paymentMode['payment']
+                                                        ['advance amount']
+                                                    ['status'] ==
+                                                '0')
+                                            ? 'Due'
+                                            : 'Paid',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            SizedBox(height: 20.0),
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Name',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      'Remaining',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 25.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Amount',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      '${e.paymentMode['payment']['remaining amount']['amount']}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 25.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Status',
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      (e.paymentMode['payment']
+                                                      ['remaining amount']
+                                                  ['status'] ==
+                                              '0')
+                                          ? 'Due'
+                                          : 'Paid',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                       ),

@@ -34,6 +34,7 @@ class Delivery {
   List<DeliveryTruck> deliveryTrucks;
   String deliveryStatus;
   Post load;
+  var paymentMode;
 
   Delivery({
     this.deliveryId,
@@ -46,6 +47,7 @@ class Delivery {
     this.deliveryTrucks,
     this.deliveryStatus,
     this.load,
+    this.paymentMode,
   });
 
   factory Delivery.fromJson(Map<String, dynamic> parsedJson) {
@@ -65,6 +67,7 @@ class Delivery {
       deliveryTrucks: tempTrucks,
       deliveryStatus: parsedJson['delivery status'],
       load: Post.fromJson(parsedJson['load details']),
+      paymentMode: parsedJson['load details']['payment mode'],
     );
   }
 }
