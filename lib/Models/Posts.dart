@@ -7,6 +7,7 @@ class Post {
   List<Location> destinations;
   String material;
   String tonnage;
+  String noOfTrucks;
   String truckPreferences;
   List<String> truckTypes;
   String expectedPrice;
@@ -23,6 +24,7 @@ class Post {
     this.destinations,
     this.material,
     this.tonnage,
+    this.noOfTrucks,
     this.truckPreferences,
     this.truckTypes,
     this.expectedPrice,
@@ -54,6 +56,7 @@ class Post {
       destinations: tempD,
       material: parsedJson['material'],
       tonnage: parsedJson['tonnage'],
+      noOfTrucks: parsedJson['number of trucks'],
       truckPreferences: parsedJson['truck preference'],
       truckTypes: tempP,
       expectedPrice: parsedJson['expected price'],
