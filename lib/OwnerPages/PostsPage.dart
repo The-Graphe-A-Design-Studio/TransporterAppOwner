@@ -262,11 +262,13 @@ class _PostPageState extends State<PostPage> {
                                       ),
                                     ),
                                     SizedBox(width: 10.0),
-                                    Text(
-                                      '${e.sources[0].city}, ${e.sources[0].state}',
-                                      style: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w500,
+                                    Flexible(
+                                      child: Text(
+                                        '${e.sources[0].source}',
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -276,16 +278,7 @@ class _PostPageState extends State<PostPage> {
                                     horizontal: 5.0,
                                     vertical: 3.0,
                                   ),
-                                  height: 5.0,
-                                  width: 1.5,
-                                  color: Colors.grey,
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 5.0,
-                                    vertical: 3.0,
-                                  ),
-                                  height: 5.0,
+                                  height: 16.0,
                                   width: 1.5,
                                   color: Colors.grey,
                                 ),
@@ -305,11 +298,13 @@ class _PostPageState extends State<PostPage> {
                                       ),
                                     ),
                                     SizedBox(width: 10.0),
-                                    Text(
-                                      '${e.destinations[e.destinations.length - 1].city}, ${e.destinations[e.destinations.length - 1].state}',
-                                      style: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w500,
+                                    Flexible(
+                                      child: Text(
+                                        '${e.destinations[e.destinations.length - 1].destination}',
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -348,19 +343,124 @@ class _PostPageState extends State<PostPage> {
                                   ],
                                 ),
                                 SizedBox(height: 20.0),
-                                Text(
-                                  'Products',
-                                  style: TextStyle(
-                                    fontSize: 13.0,
-                                    color: Colors.black54,
-                                  ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Products',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.material}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 8.0),
-                                Text(
-                                  '${e.material}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                SizedBox(height: 20.0),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Expected Price',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.expectedPrice}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 30.0),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Payment Mode',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.paymentMode}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 20.0),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Created On',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.createdOn}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 30.0),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Expires On',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.expiredOn}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                                 Divider(),
                                 Container(

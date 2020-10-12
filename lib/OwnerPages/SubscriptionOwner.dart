@@ -146,31 +146,39 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                         Container(
                           width: MediaQuery.of(context).size.width / 2,
                           alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                // width: 100.0,
-                                height: 30.0,
-                                alignment: Alignment.center,
-                                child: Text(
+                          child: (subscriptionStatus == 'Not on subscription')
+                              ? Text(
                                   subscriptionStatus,
                                   style: TextStyle(color: Colors.grey),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      // width: 100.0,
+                                      height: 30.0,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        subscriptionStatus,
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5.0),
+                                    Text(
+                                      '${subscriptionEnd.difference(DateTime.now()).inDays} days left',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    )
+                                  ],
                                 ),
-                              ),
-                              SizedBox(height: 5.0),
-                              Text(
-                                '${subscriptionEnd.difference(DateTime.now()).inDays} days left',
-                                style: TextStyle(fontWeight: FontWeight.w500),
-                              )
-                            ],
-                          ),
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width / 2 - 20,
                           alignment: Alignment.center,
                           child: Text(
-                            'Ends on \n${subscriptionEnd.day} - ${subscriptionEnd.month} - ${subscriptionEnd.year}',
+                            (subscriptionStatus == 'Not on subscription')
+                                ? 'Ends on 0-0-0'
+                                : 'Ends on \n${subscriptionEnd.day} - ${subscriptionEnd.month} - ${subscriptionEnd.year}',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.red,
