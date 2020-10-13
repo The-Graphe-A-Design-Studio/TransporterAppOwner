@@ -6,6 +6,7 @@ import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/Bid.dart';
 import 'package:ownerapp/Models/Posts.dart';
 import 'package:ownerapp/Models/User.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
@@ -33,6 +34,9 @@ class _PostPageState extends State<PostPage> {
   Bid b;
   bool gotValue1 = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   void _postBid(Post post) {
     print('posting bid');
@@ -183,10 +187,7 @@ class _PostPageState extends State<PostPage> {
         backgroundColor: Colors.white,
       );
 
-  @override
-  void initState() {
-    super.initState();
-    _bidController = TextEditingController();
+  getBids() {
     HTTPHandler().getPosts().then((value) {
       setState(() {
         gotValue1 = true;
@@ -198,6 +199,22 @@ class _PostPageState extends State<PostPage> {
         });
       });
     });
+  }
+
+  void _onRefresh(BuildContext context) async {
+    // monitor network fetch
+    print('working properly');
+    getBids();
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _bidController = TextEditingController();
+    getBids();
   }
 
   @override
@@ -222,159 +239,114 @@ class _PostPageState extends State<PostPage> {
               ),
             )
           : (posts == null)
-              ? Center(
-                  child: Text(
-                    'No Posts Yet!',
-                    style: TextStyle(color: Colors.white),
+              ? SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: () => _onRefresh(context),
+                  child: Center(
+                    child: Text(
+                      'No Posts Yet!',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: posts
-                        .map((e) => Container(
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 5.0,
-                                horizontal: 10.0,
-                              ),
-                              padding: const EdgeInsets.all(10.0),
-                              width: MediaQuery.of(context).size.width,
-                              // height: 310.0,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 15.0,
-                                        height: 15.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.green[600],
-                                            width: 3.0,
+              : SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: () => _onRefresh(context),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: posts
+                          .map((e) => Container(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 5.0,
+                                  horizontal: 10.0,
+                                ),
+                                padding: const EdgeInsets.all(10.0),
+                                width: MediaQuery.of(context).size.width,
+                                // height: 310.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 15.0,
+                                          height: 15.0,
+                                          decoration: BoxDecoration(
+                                            color: Colors.transparent,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.green[600],
+                                              width: 3.0,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: 10.0),
-                                      Flexible(
-                                        child: Text(
-                                          '${e.sources[0].source}',
-                                          style: TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.w500,
+                                        SizedBox(width: 10.0),
+                                        Flexible(
+                                          child: Text(
+                                            '${e.sources[0].source}',
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 5.0,
-                                      vertical: 3.0,
+                                      ],
                                     ),
-                                    height: 16.0,
-                                    width: 1.5,
-                                    color: Colors.grey,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 15.0,
-                                        height: 15.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.red[600],
-                                            width: 3.0,
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 5.0,
+                                        vertical: 3.0,
+                                      ),
+                                      height: 16.0,
+                                      width: 1.5,
+                                      color: Colors.grey,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 15.0,
+                                          height: 15.0,
+                                          decoration: BoxDecoration(
+                                            color: Colors.transparent,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.red[600],
+                                              width: 3.0,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: 10.0),
-                                      Flexible(
-                                        child: Text(
-                                          '${e.destinations[e.destinations.length - 1].destination}',
-                                          style: TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.w500,
+                                        SizedBox(width: 10.0),
+                                        Flexible(
+                                          child: Text(
+                                            '${e.destinations[e.destinations.length - 1].destination}',
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 30.0),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Truck Type',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8.0),
-                                          Text(
-                                            '${e.truckPreferences}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(width: 30.0),
-                                      Text(
-                                        '${e.truckTypes[0]}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20.0),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Products',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8.0),
-                                          Text(
-                                            '${e.material}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(width: 30.0),
-                                      if (e.expectedPrice.contains('ton'))
+                                      ],
+                                    ),
+                                    SizedBox(height: 30.0),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Tonnage',
+                                              'Truck Type',
                                               style: TextStyle(
                                                 fontSize: 13.0,
                                                 color: Colors.black54,
@@ -382,19 +354,33 @@ class _PostPageState extends State<PostPage> {
                                             ),
                                             SizedBox(height: 8.0),
                                             Text(
-                                              '${e.tonnage}',
+                                              '${e.truckPreferences}',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
                                           ],
                                         ),
-                                      if (e.expectedPrice.contains('truck')) Column(
+                                        SizedBox(width: 30.0),
+                                        Text(
+                                          '${e.truckTypes[0]}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20.0),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'No. of Trucks',
+                                              'Products',
                                               style: TextStyle(
                                                 fontSize: 13.0,
                                                 color: Colors.black54,
@@ -402,206 +388,230 @@ class _PostPageState extends State<PostPage> {
                                             ),
                                             SizedBox(height: 8.0),
                                             Text(
-                                              '${e.noOfTrucks}',
+                                              '${e.material}',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
                                           ],
                                         ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20.0),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Expected Price',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Colors.black54,
-                                            ),
+                                        SizedBox(width: 30.0),
+                                        if (e.expectedPrice.contains('ton'))
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Tonnage',
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              SizedBox(height: 8.0),
+                                              Text(
+                                                '${e.tonnage}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(height: 8.0),
-                                          Text(
-                                            '${e.expectedPrice}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        if (e.expectedPrice.contains('truck'))
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'No. of Trucks',
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              SizedBox(height: 8.0),
+                                              Text(
+                                                '${e.noOfTrucks}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(width: 30.0),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Payment Mode',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Colors.black54,
+                                      ],
+                                    ),
+                                    SizedBox(height: 20.0),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Expected Price',
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black54,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(height: 8.0),
-                                          Text(
-                                            '${e.paymentMode}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
+                                            SizedBox(height: 8.0),
+                                            Text(
+                                              '${e.expectedPrice}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20.0),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Created On',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Colors.black54,
+                                          ],
+                                        ),
+                                        SizedBox(width: 30.0),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Payment Mode',
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black54,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(height: 8.0),
-                                          Text(
-                                            '${e.createdOn}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
+                                            SizedBox(height: 8.0),
+                                            Text(
+                                              '${e.paymentMode}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(width: 30.0),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Expires On',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Colors.black54,
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20.0),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Created On',
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black54,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(height: 8.0),
-                                          Text(
-                                            '${e.expiredOn}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
+                                            SizedBox(height: 8.0),
+                                            Text(
+                                              '${e.createdOn}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(),
-                                  Container(
-                                    width: double.infinity,
-                                    alignment: Alignment.centerRight,
-                                    child: (bids == null)
-                                        ? CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<
-                                                    Color>(
-                                                Theme.of(context).primaryColor),
-                                          )
-                                        : ((b = checkBid(e)) != null)
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text('Your Bid'),
-                                                      SizedBox(width: 10.0),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          _bidController
-                                                              .text = bids[bids
-                                                                  .indexWhere((element) =>
+                                          ],
+                                        ),
+                                        SizedBox(width: 30.0),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Expires On',
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8.0),
+                                            Text(
+                                              '${e.expiredOn}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Divider(),
+                                    Container(
+                                      width: double.infinity,
+                                      alignment: Alignment.centerRight,
+                                      child: (bids == null)
+                                          ? CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Theme.of(context)
+                                                          .primaryColor),
+                                            )
+                                          : ((b = checkBid(e)) != null)
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text('Your Bid'),
+                                                        SizedBox(width: 10.0),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            _bidController
+                                                                .text = bids[bids.indexWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .loadId ==
+                                                                        e.postId)]
+                                                                .price;
+                                                            modal(
+                                                              e,
+                                                              BidStatus
+                                                                  .updateBid,
+                                                              bid: bids[bids.indexWhere(
+                                                                  (element) =>
                                                                       element
                                                                           .loadId ==
-                                                                      e.postId)]
-                                                              .price;
-                                                          modal(
-                                                            e,
-                                                            BidStatus.updateBid,
-                                                            bid: bids[bids.indexWhere(
-                                                                (element) =>
-                                                                    element
-                                                                        .loadId ==
-                                                                    e.postId)],
-                                                          );
-                                                        },
-                                                        child: Icon(
-                                                          Icons.edit,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
+                                                                      e.postId)],
+                                                            );
+                                                          },
+                                                          child: Icon(
+                                                            Icons.edit,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      SizedBox(width: 10.0),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          DialogProcessing()
-                                                              .showCustomDialog(
-                                                                  context,
-                                                                  title:
-                                                                      "Deleting Bid",
-                                                                  text:
-                                                                      "Processing, Please Wait!");
-                                                          HTTPHandler()
-                                                              .deleteBid(bids[bids.indexWhere((element) =>
-                                                                      element
-                                                                          .loadId ==
-                                                                      e.postId)]
-                                                                  .bidId)
-                                                              .then(
-                                                                  (value) async {
-                                                            Navigator.pop(
-                                                                context);
-                                                            if (value.success) {
-                                                              DialogSuccess()
-                                                                  .showCustomDialog(
-                                                                      context,
-                                                                      title:
-                                                                          "Deleting Bid");
-                                                              await Future.delayed(
-                                                                  Duration(
-                                                                      seconds:
-                                                                          1),
-                                                                  () {});
+                                                        SizedBox(width: 10.0),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            DialogProcessing()
+                                                                .showCustomDialog(
+                                                                    context,
+                                                                    title:
+                                                                        "Deleting Bid",
+                                                                    text:
+                                                                        "Processing, Please Wait!");
+                                                            HTTPHandler()
+                                                                .deleteBid(bids[bids.indexWhere((element) =>
+                                                                        element
+                                                                            .loadId ==
+                                                                        e
+                                                                            .postId)]
+                                                                    .bidId)
+                                                                .then(
+                                                                    (value) async {
                                                               Navigator.pop(
                                                                   context);
-                                                              DialogProcessing()
-                                                                  .showCustomDialog(
-                                                                      context,
-                                                                      title:
-                                                                          "Refreshing Bids",
-                                                                      text:
-                                                                          "Processing, Please Wait!");
-                                                              HTTPHandler()
-                                                                  .getBids(widget
-                                                                      .userOwner
-                                                                      .oId)
-                                                                  .then(
-                                                                      (value1) async {
+                                                              if (value
+                                                                  .success) {
                                                                 DialogSuccess()
                                                                     .showCustomDialog(
                                                                         context,
                                                                         title:
-                                                                            "Refreshing Bid");
+                                                                            "Deleting Bid");
                                                                 await Future.delayed(
                                                                     Duration(
                                                                         seconds:
@@ -609,20 +619,65 @@ class _PostPageState extends State<PostPage> {
                                                                     () {});
                                                                 Navigator.pop(
                                                                     context);
+                                                                DialogProcessing()
+                                                                    .showCustomDialog(
+                                                                        context,
+                                                                        title:
+                                                                            "Refreshing Bids",
+                                                                        text:
+                                                                            "Processing, Please Wait!");
+                                                                HTTPHandler()
+                                                                    .getBids(widget
+                                                                        .userOwner
+                                                                        .oId)
+                                                                    .then(
+                                                                        (value1) async {
+                                                                  DialogSuccess()
+                                                                      .showCustomDialog(
+                                                                          context,
+                                                                          title:
+                                                                              "Refreshing Bid");
+                                                                  await Future.delayed(
+                                                                      Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                      () {});
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  setState(() {
+                                                                    bids =
+                                                                        value1;
+                                                                  });
+                                                                });
+                                                              } else {
+                                                                DialogFailed().showCustomDialog(
+                                                                    context,
+                                                                    title:
+                                                                        "Deleting Bid",
+                                                                    text: value
+                                                                        .message);
+                                                                await Future.delayed(
+                                                                    Duration(
+                                                                        seconds:
+                                                                            3),
+                                                                    () {});
                                                                 Navigator.pop(
                                                                     context);
-                                                                setState(() {
-                                                                  bids = value1;
-                                                                });
-                                                              });
-                                                            } else {
+                                                              }
+                                                            }).catchError(
+                                                                    (error) async {
+                                                              print(error);
+                                                              Navigator.pop(
+                                                                  context);
                                                               DialogFailed()
                                                                   .showCustomDialog(
                                                                       context,
                                                                       title:
                                                                           "Deleting Bid",
-                                                                      text: value
-                                                                          .message);
+                                                                      text:
+                                                                          "Network Error");
                                                               await Future.delayed(
                                                                   Duration(
                                                                       seconds:
@@ -630,124 +685,109 @@ class _PostPageState extends State<PostPage> {
                                                                   () {});
                                                               Navigator.pop(
                                                                   context);
-                                                            }
-                                                          }).catchError(
-                                                                  (error) async {
-                                                            print(error);
-                                                            Navigator.pop(
-                                                                context);
-                                                            DialogFailed()
-                                                                .showCustomDialog(
-                                                                    context,
-                                                                    title:
-                                                                        "Deleting Bid",
-                                                                    text:
-                                                                        "Network Error");
-                                                            await Future
-                                                                .delayed(
-                                                                    Duration(
-                                                                        seconds:
-                                                                            3),
-                                                                    () {});
-                                                            Navigator.pop(
-                                                                context);
-                                                          });
-                                                        },
-                                                        child: Icon(
-                                                          Icons.delete,
-                                                          color: Colors.red,
+                                                            });
+                                                          },
+                                                          child: Icon(
+                                                            Icons.delete,
+                                                            color: Colors.red,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    '${b.price}',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )
-                                                ],
-                                              )
-                                            : Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      if (widget.userOwner
-                                                              .oSubscriptionStatus ==
-                                                          'In subscription period') {
-                                                        print('call');
-                                                        UrlLauncher.launch(
-                                                            "tel:${e.contactPersonPhone}");
-                                                      } else {
-                                                        Toast.show(
-                                                          'Active Subscription Plan Required',
-                                                          context,
-                                                          gravity: Toast.CENTER,
-                                                          duration: Toast
-                                                              .LENGTH_SHORT,
-                                                        );
-                                                      }
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons.call),
-                                                        SizedBox(width: 5.0),
-                                                        Text(
-                                                            '${e.contactPerson}'),
                                                       ],
                                                     ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      print('bid now');
-                                                      if (widget.userOwner
-                                                              .oSubscriptionStatus ==
-                                                          'Not on subcsription')
-                                                        Toast.show(
-                                                          'You need an active Subscription Plan',
-                                                          context,
-                                                          duration:
-                                                              Toast.LENGTH_LONG,
-                                                          gravity: Toast.CENTER,
-                                                        );
-                                                      else {
-                                                        print('start');
-                                                        modal(e,
-                                                            BidStatus.newBid);
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        vertical: 8.0,
-                                                        horizontal: 40.0,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black87,
-                                                        shape:
-                                                            BoxShape.rectangle,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5.0),
-                                                      ),
-                                                      child: Text(
-                                                        'Bid',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
+                                                    Text(
+                                                      '${b.price}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    )
+                                                  ],
+                                                )
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        if (widget.userOwner
+                                                                .oSubscriptionStatus ==
+                                                            'In subscription period') {
+                                                          print('call');
+                                                          UrlLauncher.launch(
+                                                              "tel:${e.contactPersonPhone}");
+                                                        } else {
+                                                          Toast.show(
+                                                            'Active Subscription Plan Required',
+                                                            context,
+                                                            gravity:
+                                                                Toast.CENTER,
+                                                            duration: Toast
+                                                                .LENGTH_SHORT,
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(Icons.call),
+                                                          SizedBox(width: 5.0),
+                                                          Text(
+                                                              '${e.contactPerson}'),
+                                                        ],
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                  )
-                                ],
-                              ),
-                            ))
-                        .toList(),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        print('bid now');
+                                                        if (widget.userOwner
+                                                                .oSubscriptionStatus ==
+                                                            'Not on subcsription')
+                                                          Toast.show(
+                                                            'You need an active Subscription Plan',
+                                                            context,
+                                                            duration: Toast
+                                                                .LENGTH_LONG,
+                                                            gravity:
+                                                                Toast.CENTER,
+                                                          );
+                                                        else {
+                                                          print('start');
+                                                          modal(e,
+                                                              BidStatus.newBid);
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          vertical: 8.0,
+                                                          horizontal: 40.0,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.black87,
+                                                          shape: BoxShape
+                                                              .rectangle,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      5.0),
+                                                        ),
+                                                        child: Text(
+                                                          'Bid',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                    )
+                                  ],
+                                ),
+                              ))
+                          .toList(),
+                    ),
                   ),
                 ),
     );

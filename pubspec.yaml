@@ -24,6 +24,7 @@ dependencies:
   toast: ^0.1.5
   firebase_messaging: ^7.0.2
   url_launcher: ^5.5.0
+  pull_to_refresh: ^1.6.2
 
 dev_dependencies:
   flutter_test:

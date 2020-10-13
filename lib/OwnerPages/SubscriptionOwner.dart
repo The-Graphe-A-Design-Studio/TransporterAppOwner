@@ -105,6 +105,8 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
     subscriptionEnd = DateTime.parse(widget.userOwner.oSubscriptionUpto);
   }
 
+  Future<void> _getData() async => getData();
+
   @override
   Widget build(BuildContext context) {
     if (!subscriptionController) getData();
@@ -125,234 +127,240 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             )
-          : Column(
-              children: [
-                if (subscriptionEnd != null && subscriptionStatus != null)
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 5.0,
-                      horizontal: 10.0,
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    height: 100.0,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(3.0),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2,
-                          alignment: Alignment.center,
-                          child: (subscriptionStatus == 'Not on subscription')
-                              ? Text(
-                                  subscriptionStatus,
-                                  style: TextStyle(color: Colors.grey),
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      // width: 100.0,
-                                      height: 30.0,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        subscriptionStatus,
-                                        style: TextStyle(color: Colors.grey),
+          : RefreshIndicator(
+              onRefresh: _getData,
+              color: Colors.black,
+              backgroundColor: Colors.white,
+              child: ListView(
+                children: [
+                  if (subscriptionEnd != null && subscriptionStatus != null)
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 5.0,
+                        horizontal: 10.0,
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2,
+                            alignment: Alignment.center,
+                            child: (subscriptionStatus == 'Not on subscription')
+                                ? Text(
+                                    subscriptionStatus,
+                                    style: TextStyle(color: Colors.grey),
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        // width: 100.0,
+                                        height: 30.0,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          subscriptionStatus,
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
                                       ),
+                                      SizedBox(height: 5.0),
+                                      Text(
+                                        '${subscriptionEnd.difference(DateTime.now()).inDays} days left',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      )
+                                    ],
+                                  ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            alignment: Alignment.center,
+                            child: Text(
+                              (subscriptionStatus == 'Not on subscription')
+                                  ? 'Ends on 0-0-0'
+                                  : 'Ends on \n${subscriptionEnd.day} - ${subscriptionEnd.month} - ${subscriptionEnd.year}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  Column(
+                    children: _plans
+                        .map(
+                          (e) => Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 5.0,
+                              horizontal: 10.0,
+                            ),
+                            padding: const EdgeInsets.all(10.0),
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Plan ${_plans.indexOf(e) + 1} :',
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(height: 20.0),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Duration',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          '${e.duration}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 5.0),
-                                    Text(
-                                      '${subscriptionEnd.difference(DateTime.now()).inDays} days left',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    )
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Price',
+                                          style: TextStyle(
+                                            fontSize: 13.0,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '${e.planSellingPrice}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 18.0,
+                                              ),
+                                            ),
+                                            SizedBox(width: 3.0),
+                                            Text(
+                                              '${e.planOriginalPrice}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 2 - 20,
-                          alignment: Alignment.center,
-                          child: Text(
-                            (subscriptionStatus == 'Not on subscription')
-                                ? 'Ends on 0-0-0'
-                                : 'Ends on \n${subscriptionEnd.day} - ${subscriptionEnd.month} - ${subscriptionEnd.year}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w600,
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Original Price'),
+                                //     Text(
+                                //       '${e.planOriginalPrice}',
+                                //       style:
+                                //           TextStyle(fontWeight: FontWeight.w500),
+                                //     )
+                                //   ],
+                                // ),
+                                // SizedBox(height: 5.0),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Selling Price'),
+                                //     Text(
+                                //       '${e.planSellingPrice}',
+                                //       style:
+                                //           TextStyle(fontWeight: FontWeight.w500),
+                                //     )
+                                //   ],
+                                // ),
+                                // SizedBox(height: 5.0),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Discount'),
+                                //     Text(
+                                //       '${e.planDiscount}',
+                                //       style:
+                                //           TextStyle(fontWeight: FontWeight.w500),
+                                //     )
+                                //   ],
+                                // ),
+                                // SizedBox(height: 5.0),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Duration'),
+                                //     Text(
+                                //       '${e.duration}',
+                                //       style:
+                                //           TextStyle(fontWeight: FontWeight.w500),
+                                //     )
+                                //   ],
+                                // ),
+                                Divider(),
+                                Container(
+                                  width: double.infinity,
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      print('buy now');
+                                      _openCheckOut(e);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black87,
+                                        shape: BoxShape.rectangle,
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                      ),
+                                      child: Text(
+                                        'Buy Now',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         )
-                      ],
-                    ),
+                        .toList(),
                   ),
-                Column(
-                  children: _plans
-                      .map(
-                        (e) => Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 5.0,
-                            horizontal: 10.0,
-                          ),
-                          padding: const EdgeInsets.all(10.0),
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Plan ${_plans.indexOf(e) + 1} :',
-                                style: TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(height: 20.0),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Duration',
-                                        style: TextStyle(
-                                          fontSize: 13.0,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.0),
-                                      Text(
-                                        '${e.duration}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Price',
-                                        style: TextStyle(
-                                          fontSize: 13.0,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.0),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            '${e.planSellingPrice}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 18.0,
-                                            ),
-                                          ),
-                                          SizedBox(width: 3.0),
-                                          Text(
-                                            '${e.planOriginalPrice}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text('Original Price'),
-                              //     Text(
-                              //       '${e.planOriginalPrice}',
-                              //       style:
-                              //           TextStyle(fontWeight: FontWeight.w500),
-                              //     )
-                              //   ],
-                              // ),
-                              // SizedBox(height: 5.0),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text('Selling Price'),
-                              //     Text(
-                              //       '${e.planSellingPrice}',
-                              //       style:
-                              //           TextStyle(fontWeight: FontWeight.w500),
-                              //     )
-                              //   ],
-                              // ),
-                              // SizedBox(height: 5.0),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text('Discount'),
-                              //     Text(
-                              //       '${e.planDiscount}',
-                              //       style:
-                              //           TextStyle(fontWeight: FontWeight.w500),
-                              //     )
-                              //   ],
-                              // ),
-                              // SizedBox(height: 5.0),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text('Duration'),
-                              //     Text(
-                              //       '${e.duration}',
-                              //       style:
-                              //           TextStyle(fontWeight: FontWeight.w500),
-                              //     )
-                              //   ],
-                              // ),
-                              Divider(),
-                              Container(
-                                width: double.infinity,
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    print('buy now');
-                                    _openCheckOut(e);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black87,
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                    child: Text(
-                                      'Buy Now',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
