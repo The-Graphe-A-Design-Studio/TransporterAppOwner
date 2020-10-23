@@ -8,6 +8,7 @@ class UserOwner {
   String oIfsc;
   String oPanCard;
   String oRegistered;
+  String planType;
   String oSubscriptionUpto;
   String oSubscriptionStatus;
   String oToken;
@@ -22,6 +23,7 @@ class UserOwner {
     this.oIfsc,
     this.oPanCard,
     this.oRegistered,
+    this.planType,
     this.oSubscriptionStatus,
     this.oSubscriptionUpto,
     this.oToken,
@@ -38,8 +40,9 @@ class UserOwner {
       oIfsc: parsedJson['ifsc code'],
       oPanCard: (parsedJson['pan card'] == null) ? '' : parsedJson['pan card'],
       oRegistered: parsedJson['registered on'],
-      oSubscriptionUpto: parsedJson['subscription period upto'],
-      oSubscriptionStatus: parsedJson['subscription period status'],
+      planType: parsedJson['plan type'],
+      oSubscriptionUpto: parsedJson['period upto'],
+      oSubscriptionStatus: parsedJson['period status'],
       oToken: parsedJson['firebase token'],
     );
   }

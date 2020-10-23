@@ -755,9 +755,10 @@ class HTTPHandler {
         body: {'owner_id': data[0]},
       );
 
-      if (json.decode(response.body)['success'] == '0') return [];
+      // if (json.decode(response.body)['success'] == '0') return [];
 
-      // if (response.body == 'null') return [];
+      print(response.body);
+      if (response.body == null || response.body == 'null' || response.body == '[]') return [];
 
       List<Delivery> delivery = [];
       for (var i = 0; i < json.decode(response.body).length; i++)

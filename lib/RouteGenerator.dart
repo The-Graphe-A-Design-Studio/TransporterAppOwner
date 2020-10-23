@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ownerapp/CommonPages/EmiCalculator.dart';
 import 'package:ownerapp/CommonPages/FadeTransition.dart';
-import 'package:ownerapp/CommonPages/FreightCalculator.dart';
 import 'package:ownerapp/CommonPages/IntroPageLoginOptions.dart';
-import 'package:ownerapp/CommonPages/TollCalculator.dart';
-import 'package:ownerapp/CommonPages/TripPlanner.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/OwnerPages/AddTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/EditTruckFromOwner.dart';
@@ -32,16 +28,6 @@ class RouteGenerator {
         return FadeRoute(page: IntroPageLoginOptions());
       case ownerOptionPage:
         return FadeRoute(page: OwnerOptionsPage());
-
-      //Pages which don't need LoggedIn User
-      case emiCalculatorPage:
-        return FadeRoute(page: EmiCalculator());
-      case freightCalculatorPage:
-        return FadeRoute(page: FreightCalculator());
-      case tollCalculatorPage:
-        return FadeRoute(page: TollCalculator());
-      case tripPlannerPage:
-        return FadeRoute(page: TripPlanner());
 
       //Pages once the user is LoggedIn - Owner
       case homePageOwner:

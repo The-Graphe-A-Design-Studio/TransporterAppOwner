@@ -1,7 +1,7 @@
 name: ownerapp
 description: FLutter Project for The Graphe
 
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -29,8 +29,17 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.7.5
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icon/app.png"
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/icon/

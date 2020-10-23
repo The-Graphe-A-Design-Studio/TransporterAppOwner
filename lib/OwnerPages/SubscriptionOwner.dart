@@ -102,7 +102,8 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
 
     subscriptionStatus = widget.userOwner.oSubscriptionStatus;
-    subscriptionEnd = DateTime.parse(widget.userOwner.oSubscriptionUpto);
+    if (widget.userOwner.planType != '0')
+      subscriptionEnd = DateTime.parse(widget.userOwner.oSubscriptionUpto);
   }
 
   Future<void> _getData() async => getData();
@@ -133,7 +134,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
               backgroundColor: Colors.white,
               child: ListView(
                 children: [
-                  if (subscriptionEnd != null && subscriptionStatus != null)
+                  if (subscriptionStatus != null)
                     Container(
                       margin: const EdgeInsets.symmetric(
                         vertical: 5.0,
@@ -152,7 +153,9 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                           Container(
                             width: MediaQuery.of(context).size.width / 2,
                             alignment: Alignment.center,
-                            child: (subscriptionStatus == 'Not on subscription')
+                            child: (subscriptionStatus ==
+                                        'Not on subscription' ||
+                                    widget.userOwner.planType == '0')
                                 ? Text(
                                     subscriptionStatus,
                                     style: TextStyle(color: Colors.grey),
@@ -182,7 +185,8 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                             width: MediaQuery.of(context).size.width / 2 - 20,
                             alignment: Alignment.center,
                             child: Text(
-                              (subscriptionStatus == 'Not on subscription')
+                              (subscriptionStatus == 'Not on subscription' ||
+                                      widget.userOwner.planType == '0')
                                   ? 'Ends on 0-0-0'
                                   : 'Ends on \n${subscriptionEnd.day} - ${subscriptionEnd.month} - ${subscriptionEnd.year}',
                               textAlign: TextAlign.center,
