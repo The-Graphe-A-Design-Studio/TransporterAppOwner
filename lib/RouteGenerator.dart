@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ownerapp/CommonPages/FadeTransition.dart';
-import 'package:ownerapp/CommonPages/IntroPageLoginOptions.dart';
 import 'package:ownerapp/MyConstants.dart';
+import 'package:ownerapp/OwnerPages/AddOnTruck.dart';
 import 'package:ownerapp/OwnerPages/AddTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/EditTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/HomePageOwner.dart';
@@ -23,9 +23,6 @@ class RouteGenerator {
       case splashPage:
         return FadeRoute(page: SplashScreen());
 
-      //Login or Signup Pages
-      case introLoginOptionPage:
-        return FadeRoute(page: IntroPageLoginOptions());
       case ownerOptionPage:
         return FadeRoute(page: OwnerOptionsPage());
 
@@ -68,6 +65,12 @@ class RouteGenerator {
 
       case myDeliveriesOwner:
         return FadeRoute(page: MyDeliveriesPage(userOwner: args));
+
+      case addOnTruckOwner:
+        return FadeRoute(
+            page: AddOnTruckPlansPage(
+          userOwner: args,
+        ));
 
       default:
         return _errorRoute();

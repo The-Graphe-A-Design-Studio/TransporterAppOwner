@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:ownerapp/BottomSheets/AccountBottomSheetLoggedIn.dart';
+import 'package:ownerapp/BottomSheets/AccountBottomSheetWhite.dart';
 import 'package:ownerapp/CommonPages/LoadingBody.dart';
 import 'package:ownerapp/DialogScreens/DialogImageTruckDocsOwner.dart';
 import 'package:ownerapp/HttpHandler.dart';
@@ -8,6 +9,7 @@ import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:toast/toast.dart';
 
 class ViewTrucksOwner extends StatefulWidget {
   final UserOwner userOwner;
@@ -21,11 +23,16 @@ class ViewTrucksOwner extends StatefulWidget {
 class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
   var temp = false;
   List<Truck> truckList;
+  List<String> locations = [];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   void postGetTrucksRequest(BuildContext _context) async {
-    HTTPHandler().viewAllTrucks([widget.userOwner.oId]).then((value) {
+    HTTPHandler().viewAllTrucks([widget.userOwner.oId]).then((value) async {
+      for (Truck t in value) {
+        locations.add(
+            await HTTPHandler().getAddressOfDriver(t.latitude, t.longitude));
+      }
       setState(() {
         truckList = value;
         temp = true;
@@ -73,7 +80,9 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
       postGetTrucksRequest(context);
     }
     return Scaffold(
-      backgroundColor: Color(0xff252427),
+      backgroundColor: (truckList != null && truckList.isNotEmpty)
+          ? Colors.black87
+          : Colors.white,
       body: SmartRefresher(
         // key: GlobalKey(),
         controller: _refreshController,
@@ -126,9 +135,17 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                   padding: EdgeInsets.only(right: 16.0),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Navigator.pushNamed(
-                                          context, addTruckOwner,
-                                          arguments: widget.userOwner);
+                                      if (truckList.length <
+                                          widget.userOwner.totalTruck)
+                                        Navigator.pushNamed(
+                                            context, addTruckOwner,
+                                            arguments: widget.userOwner);
+                                      else
+                                        Toast.show(
+                                          'Please buy truck add On',
+                                          context,
+                                          gravity: Toast.CENTER,
+                                        );
                                     },
                                     child: CircleAvatar(
                                       backgroundColor: Colors.white,
@@ -256,55 +273,41 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                               SizedBox(
                                                 height: 25.0,
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        "Driver Name",
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .blueGrey
-                                                                .withOpacity(
-                                                                    0.9)),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8.0,
-                                                      ),
-                                                      Text(truck
-                                                          .truckDriverName),
-                                                    ],
+                                                  Text(
+                                                    "Driver Name",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey
+                                                            .withOpacity(0.9)),
                                                   ),
-                                                  // Column(
-                                                  //   crossAxisAlignment:
-                                                  //       CrossAxisAlignment.start,
-                                                  //   children: [
-                                                  //     Text(
-                                                  //       "Capacity",
-                                                  //       style: TextStyle(
-                                                  //           color: Colors.blueGrey
-                                                  //               .withOpacity(
-                                                  //                   0.9)),
-                                                  //     ),
-                                                  //     SizedBox(
-                                                  //       height: 8.0,
-                                                  //     ),
-                                                  //     Text(truck.truckLoad +
-                                                  //         " Tons"),
-                                                  //   ],
-                                                  // ),
                                                   SizedBox(
-                                                    width: 1.0,
+                                                    height: 5.0,
                                                   ),
+                                                  Text(truck.truckDriverName),
                                                 ],
                                               ),
-                                              SizedBox(height: 20.0),
+                                              SizedBox(height: 8.0),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Driver Location",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey
+                                                            .withOpacity(0.9)),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5.0,
+                                                  ),
+                                                  Text(locations[truckList
+                                                      .indexOf(truck)]),
+                                                ],
+                                              ),
+                                              // SizedBox(height: 20.0),
                                               Row(
                                                 children: [
                                                   Text(
@@ -553,7 +556,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                 );
                               }).toList(),
                               options: CarouselOptions(
-                                height: 500.0,
+                                height: 520.0,
                                 reverse: false,
                                 enableInfiniteScroll: false,
                                 autoPlay: false,
@@ -565,7 +568,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                               ),
                             ),
                             SizedBox(
-                              height: 100.0,
+                              height: 60.0,
                             ),
                           ],
                         ),
@@ -586,7 +589,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                       topLeft: Radius.circular(30.0),
                                       topRight: Radius.circular(30.0)),
                                 ),
-                                child: AccountBottomSheetLoggedIn(
+                                child: AccountBottomSheetWhite(
                                   scrollController: scrollController,
                                   userOwner: widget.userOwner,
                                 )),
@@ -608,17 +611,17 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                   children: <Widget>[
                                     Image(
                                         image: AssetImage(
-                                            'assets/images/newOrder.png'),
-                                        height: 300.0),
+                                            'assets/images/logo_white.png'),
+                                        height: 200.0),
                                     SizedBox(
-                                      height: 30.0,
+                                      height: 40.0,
                                     ),
                                     Text(
                                       "Let's Add a New Truck",
                                       style: TextStyle(
                                         fontSize: 23.0,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: Colors.black87,
                                       ),
                                     ),
                                     SizedBox(
@@ -626,12 +629,12 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                     ),
                                     Text("Tap to add a new Truck",
                                         style: TextStyle(
-                                          color: Colors.white12,
+                                          color: Colors.black38,
                                           fontSize: 18.0,
                                         )),
                                     Text("for Accepting Transport",
                                         style: TextStyle(
-                                          color: Colors.white12,
+                                          color: Colors.black38,
                                           fontSize: 18.0,
                                         )),
                                     SizedBox(
@@ -645,10 +648,10 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                       },
                                       child: CircleAvatar(
                                         radius: 40.0,
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: Colors.black87,
                                         child: Icon(
                                           Icons.add,
-                                          color: Color(0xff252427),
+                                          color: Colors.white,
                                           size: 35.0,
                                         ),
                                       ),
@@ -672,7 +675,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                             child: Container(
                                 margin: EdgeInsets.only(bottom: 0),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Colors.black87,
                                   borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(30.0),
                                       topRight: Radius.circular(30.0)),

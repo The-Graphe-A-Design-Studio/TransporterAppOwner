@@ -67,10 +67,10 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushReplacementNamed(context, homePageTransporter,
               arguments: userCustomerCompany);
         } else {
-          Navigator.pushReplacementNamed(context, introLoginOptionPage);
+          Navigator.pushReplacementNamed(context, ownerOptionPage);
         }
       } else {
-        Navigator.pushReplacementNamed(context, introLoginOptionPage);
+        Navigator.pushReplacementNamed(context, ownerOptionPage);
       }
     });
   }
@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff252427),
+      backgroundColor: Colors.white,
       body: Center(
         child: Hero(
           tag: "WhiteLogo",

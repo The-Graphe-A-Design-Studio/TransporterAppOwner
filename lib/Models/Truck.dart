@@ -14,6 +14,8 @@ class Truck {
   String truckRTO;
   bool truckActive;
   bool truckOnTrip;
+  String latitude;
+  String longitude;
 
   Truck({
     this.truckId,
@@ -31,6 +33,8 @@ class Truck {
     this.truckRTO,
     this.truckActive,
     this.truckOnTrip,
+    this.latitude,
+    this.longitude,
   });
 
   factory Truck.fromJson(Map<String, dynamic> parsedJson) {
@@ -50,6 +54,8 @@ class Truck {
       truckRTO: parsedJson['trk_rto'],
       truckActive: parsedJson['trk_active'] == "1" ? true : false,
       truckOnTrip: parsedJson['trk_on_trip'] == "0" ? false : true,
+      latitude: parsedJson['trk_lat'],
+      longitude: parsedJson['trk_lng'],
     );
   }
 }

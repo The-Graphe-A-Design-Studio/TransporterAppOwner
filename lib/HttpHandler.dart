@@ -39,7 +39,7 @@ class HTTPHandler {
       await Future.delayed(Duration(seconds: 1), () {});
       Navigator.pop(context);
       Navigator.pushNamedAndRemoveUntil(
-          context, introLoginOptionPage, (route) => false);
+          context, ownerOptionPage, (route) => false);
     }).catchError((e) => throw e);
   }
 
@@ -310,163 +310,6 @@ class HTTPHandler {
     }
   }
 
-  /*-------------------------- Customer API's ---------------------------*/
-  Future<PostResultOne> registerLoginCustomer(List data) async {
-    try {
-      var result =
-          await http.post("$baseURLCustomer/register-login-logout", body: {
-        'cu_phone_code': data[0],
-        'cu_phone': data[1],
-      });
-      return PostResultOne.fromJson(json.decode(result.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<PostResultOne> logoutCustomer(List data) async {
-    try {
-      var result =
-          await http.post("$baseURLCustomer/register-login-logout", body: {
-        'logout_number': data[0],
-      });
-      return PostResultOne.fromJson(json.decode(result.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<PostResultOne> uploadDocsPic(List data) async {
-    try {
-      var url = "$baseURLOwner/profile";
-      var request = http.MultipartRequest('POST', Uri.parse(url));
-
-      request.fields['cu_phone'] = data[0];
-      request.files
-          .add(await http.MultipartFile.fromPath('${data[1]}', data[2]));
-      var result = await request.send();
-      var finalResult = await http.Response.fromStream(result);
-      return PostResultOne.fromJson(json.decode(finalResult.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<PostResultOne> uploadOfficeAddPic(List data) async {
-    try {
-      var url = "$baseURLOwner/profile";
-      var request = http.MultipartRequest('POST', Uri.parse(url));
-
-      request.fields['cu_phone'] = data[0];
-      request.fields['cu_co_name'] = data[1];
-      request.files
-          .add(await http.MultipartFile.fromPath('co_office_address', data[2]));
-      var result = await request.send();
-      var finalResult = await http.Response.fromStream(result);
-      return PostResultOne.fromJson(json.decode(finalResult.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<List<dynamic>> registerVerifyOtpCustomer(List data) async {
-    try {
-      var result = await http.post("$baseURLCustomer/verification",
-          body: {'phone_number': data[0], 'otp': data[1]});
-      return [PostResultOne.fromJson(json.decode(result.body)), result.body];
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<PostResultOne> registerResendOtpCustomer(List data) async {
-    try {
-      var result = await http.post("$baseURLCustomer/verification", body: {
-        'resend_otp_on': data[0],
-      });
-      return PostResultOne.fromJson(json.decode(result.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /*-------------------------- Driver API's ---------------------------*/
-  Future<PostResultOne> registerDriver(List data) async {
-    try {
-      var url = "$baseURLDriver/register";
-      var request = http.MultipartRequest('POST', Uri.parse(url));
-
-      request.fields['d_name'] = data[0];
-      request.fields['d_email'] = data[1];
-      request.fields['d_phone_code'] = data[2];
-      request.fields['d_phone'] = data[3];
-      request.fields['d_password'] = data[4];
-      request.fields['d_cnf_password'] = data[5];
-      request.fields['d_address'] = data[6];
-      request.files.add(await http.MultipartFile.fromPath('d_rc', data[7]));
-      request.files
-          .add(await http.MultipartFile.fromPath('d_license', data[8]));
-      request.files
-          .add(await http.MultipartFile.fromPath('d_insurance', data[9]));
-      request.files
-          .add(await http.MultipartFile.fromPath('d_road_tax', data[10]));
-      request.files.add(await http.MultipartFile.fromPath('d_rto', data[11]));
-      request.fields['d_pan'] = data[12];
-      request.fields['d_bank'] = data[13];
-      request.fields['d_ifsc'] = data[14];
-
-      var result = await request.send();
-      var finalResult = await http.Response.fromStream(result);
-      return PostResultOne.fromJson(json.decode(finalResult.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<PostResultOne> registerVerifyOtpDriver(List data) async {
-    try {
-      var result = await http.post("$baseURLDriver/register",
-          body: {'phone_number': data[0], 'otp': data[1]});
-      return PostResultOne.fromJson(json.decode(result.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<PostResultOne> registerResendOtpDriver(List data) async {
-    try {
-      var result = await http.post("$baseURLDriver/register", body: {
-        'resend_otp': data[0],
-      });
-      return PostResultOne.fromJson(json.decode(result.body));
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  Future<List> loginDriver(List data) async {
-    try {
-      var result = await http.post("$baseURLDriver/login",
-          body: {'phone_code': '91', 'phone': data[0], 'password': data[1]});
-      var jsonResult = json.decode(result.body);
-      if (jsonResult['success'] == '1') {
-        UserDriver userDriver = UserDriver.fromJson(jsonResult);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('rememberMe', data[2]);
-        prefs.setString('userType', driverUser);
-        prefs.setString('userData', result.body);
-        return [true, userDriver];
-      } else {
-        PostResultOne postResultOne = PostResultOne.fromJson(jsonResult);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('rememberMe', false);
-        return [false, postResultOne];
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
   // RISHAV
 
   /// get available subscription plans
@@ -528,6 +371,7 @@ class HTTPHandler {
 
   /// UPDATING SUBSCRIPTION DATA
   Future<PostResultOne> storeData(
+    String type,
     UserOwner user,
     SubscriptionPlan plan,
     PaymentSuccessResponse paymentResponse,
@@ -536,10 +380,11 @@ class HTTPHandler {
       var response = await http.post(
         'https://truckwale.co.in/api/subscription_payment',
         body: {
-          'user_type': '2',
+          'user_type': type,
           'user_id': user.oId,
           'amount': plan.planSellingPrice.toString(),
-          'duration': plan.duration.split(' ')[0],
+          'duration':
+              (type == '2') ? plan.duration.split(' ')[0] : plan.quantity,
           'razorpay_order_id': paymentResponse.orderId,
           'razorpay_payment_id': paymentResponse.paymentId,
           'razorpay_signature': paymentResponse.signature,
@@ -758,7 +603,9 @@ class HTTPHandler {
       // if (json.decode(response.body)['success'] == '0') return [];
 
       print(response.body);
-      if (response.body == null || response.body == 'null' || response.body == '[]') return [];
+      if (response.body == null ||
+          response.body == 'null' ||
+          response.body == '[]') return [];
 
       List<Delivery> delivery = [];
       for (var i = 0; i < json.decode(response.body).length; i++)
@@ -795,6 +642,34 @@ class HTTPHandler {
       });
 
       return PostResultOne.fromJson(json.decode(response.body));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  // Getting add on truck plans
+  Future<List<SubscriptionPlan>> getAddOnPlans() async {
+    try {
+      var result =
+          await http.get('https://truckwale.co.in/api/add_on_truck_plan');
+
+      var ret = json.decode(result.body);
+      List<SubscriptionPlan> list = [];
+      for (var i in ret) {
+        list.add(SubscriptionPlan.fromJson(i));
+      }
+      return list;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<String> getAddressOfDriver(String lat, String lng) async {
+    try {
+      var response = await http.get('$reverseGeocodingLink$lat,$lng');
+
+      return json.decode(response.body)['results'][0]['formatted_address'];
     } catch (e) {
       print(e);
       throw e;

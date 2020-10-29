@@ -3,23 +3,22 @@ import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 
-class AccountBottomSheetLoggedIn extends StatefulWidget {
+class AccountBottomSheetWhite extends StatefulWidget {
   final ScrollController scrollController;
   final UserOwner userOwner;
 
-  AccountBottomSheetLoggedIn({
+  AccountBottomSheetWhite({
     Key key,
     @required this.scrollController,
     @required this.userOwner,
   }) : super(key: key);
 
   @override
-  _AccountBottomSheetLoggedInState createState() =>
-      _AccountBottomSheetLoggedInState();
+  _AccountBottomSheetWhiteState createState() =>
+      _AccountBottomSheetWhiteState();
 }
 
-class _AccountBottomSheetLoggedInState
-    extends State<AccountBottomSheetLoggedIn> {
+class _AccountBottomSheetWhiteState extends State<AccountBottomSheetWhite> {
   @override
   void initState() {
     super.initState();
@@ -47,12 +46,12 @@ class _AccountBottomSheetLoggedInState
               },
               leading: Icon(
                 Icons.toc,
-                color: Colors.white,
+                color: Colors.black87,
               ),
               title: Text(
                 'Your Subscription',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -69,12 +68,12 @@ class _AccountBottomSheetLoggedInState
               },
               leading: Icon(
                 Icons.drive_eta_sharp,
-                color: Colors.white,
+                color: Colors.black87,
               ),
               title: Text(
                 'Add On Trucks',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -91,12 +90,12 @@ class _AccountBottomSheetLoggedInState
               },
               leading: Icon(
                 Icons.ac_unit,
-                color: Colors.white,
+                color: Colors.black87,
               ),
               title: Text(
                 'View Posts',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -113,12 +112,12 @@ class _AccountBottomSheetLoggedInState
               },
               leading: Icon(
                 Icons.access_alarm,
-                color: Colors.white,
+                color: Colors.black87,
               ),
               title: Text(
                 'View Bids',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -135,12 +134,12 @@ class _AccountBottomSheetLoggedInState
               },
               leading: Icon(
                 Icons.motorcycle,
-                color: Colors.white,
+                color: Colors.black87,
               ),
               title: Text(
                 'View Deliveries',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -156,12 +155,12 @@ class _AccountBottomSheetLoggedInState
               },
               leading: Icon(
                 Icons.logout,
-                color: Colors.white,
+                color: Colors.black87,
               ),
               title: Text(
                 'Logout',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),

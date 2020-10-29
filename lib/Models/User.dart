@@ -12,6 +12,8 @@ class UserOwner {
   String oSubscriptionUpto;
   String oSubscriptionStatus;
   String oToken;
+  int totalTruck;
+  String verified;
 
   UserOwner({
     this.success,
@@ -27,6 +29,8 @@ class UserOwner {
     this.oSubscriptionStatus,
     this.oSubscriptionUpto,
     this.oToken,
+    this.totalTruck,
+    this.verified,
   });
 
   factory UserOwner.fromJson(Map<String, dynamic> parsedJson) {
@@ -44,6 +48,8 @@ class UserOwner {
       oSubscriptionUpto: parsedJson['period upto'],
       oSubscriptionStatus: parsedJson['period status'],
       oToken: parsedJson['firebase token'],
+      totalTruck: int.parse(parsedJson['total truck']),
+      verified: parsedJson['verified'],
     );
   }
 

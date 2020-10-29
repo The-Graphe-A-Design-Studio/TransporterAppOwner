@@ -738,22 +738,30 @@ class _PostPageState extends State<PostPage> {
                                                     GestureDetector(
                                                       onTap: () {
                                                         print('bid now');
+                                                        // if (widget.userOwner
+                                                        //         .oSubscriptionStatus ==
+                                                        //     'Not on subcsription')
                                                         if (widget.userOwner
-                                                                .oSubscriptionStatus ==
-                                                            'Not on subcsription')
+                                                                    .verified ==
+                                                                '1' &&
+                                                            (widget.userOwner
+                                                                        .planType ==
+                                                                    '1' ||
+                                                                widget.userOwner
+                                                                        .planType ==
+                                                                    '2')) {
+                                                          print('start');
+                                                          modal(e,
+                                                              BidStatus.newBid);
+                                                        } else
                                                           Toast.show(
-                                                            'You need an active Subscription Plan',
+                                                            'Not Allowed',
                                                             context,
                                                             duration: Toast
                                                                 .LENGTH_LONG,
                                                             gravity:
                                                                 Toast.CENTER,
                                                           );
-                                                        else {
-                                                          print('start');
-                                                          modal(e,
-                                                              BidStatus.newBid);
-                                                        }
                                                       },
                                                       child: Container(
                                                         padding:

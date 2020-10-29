@@ -10,7 +10,7 @@ class LoadingBody extends StatelessWidget {
         children: [
           Text(
             "Fetching Data...",
-            style: TextStyle(color: Colors.white, fontSize: 26.0),
+            style: TextStyle(color: Colors.black87, fontSize: 26.0),
           ),
           SizedBox(
             height: 20.0,
@@ -18,7 +18,7 @@ class LoadingBody extends StatelessWidget {
           SizedBox(
             width: 260.0,
             child: LinearProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
             ),
           )
         ],

@@ -27,6 +27,8 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
   DateTime subscriptionEnd;
   String subscriptionStatus;
 
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
+
   getData() async {
     subscriptionController = true;
     await HTTPHandler()
@@ -38,7 +40,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
   void _openCheckOut(SubscriptionPlan s) async {
     selected = s;
     HTTPHandler()
-        .generateRazorpayOrderId((s.planSellingPrice * 100).round())
+        .generateRazorpayOrderId((double.parse(s.finalPrice) * 100).round())
         .then((value) {
       var options = {
         'key': RAZORPAY_ID,
@@ -66,10 +68,12 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
     print('Order Id => ${response.orderId}');
     print('Signature => ${response.signature}');
 
-    HTTPHandler().storeData(widget.userOwner, selected, response).then((value) {
+    HTTPHandler()
+        .storeData('2', widget.userOwner, selected, response)
+        .then((value) {
       if (value.success) {
         Toast.show(
-          'You will be logged once your subscription is verified. Please login again!',
+          'You will be logged out to verify your identity. Please login again!',
           context,
           gravity: Toast.CENTER,
           duration: Toast.LENGTH_LONG,
@@ -85,12 +89,18 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     print('Success => $response');
-    Navigator.of(context).popAndPushNamed('/Home');
+    Navigator.of(context).popAndPushNamed(
+      '/homePageOwner',
+      arguments: widget.userOwner,
+    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     print('Success => $response');
-    Navigator.of(context).popAndPushNamed('/Home');
+    Navigator.of(context).popAndPushNamed(
+      '/homePageOwner',
+      arguments: widget.userOwner,
+    );
   }
 
   @override
@@ -113,6 +123,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
     if (!subscriptionController) getData();
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Your Subscriptions',
@@ -217,9 +228,19 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Plan ${_plans.indexOf(e) + 1} :',
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Plan ${_plans.indexOf(e) + 1} :',
+                                    ),
+                                    Text(
+                                      e.planName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(height: 20.0),
                                 Row(
@@ -282,57 +303,6 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                                     ),
                                   ],
                                 ),
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     Text('Original Price'),
-                                //     Text(
-                                //       '${e.planOriginalPrice}',
-                                //       style:
-                                //           TextStyle(fontWeight: FontWeight.w500),
-                                //     )
-                                //   ],
-                                // ),
-                                // SizedBox(height: 5.0),
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     Text('Selling Price'),
-                                //     Text(
-                                //       '${e.planSellingPrice}',
-                                //       style:
-                                //           TextStyle(fontWeight: FontWeight.w500),
-                                //     )
-                                //   ],
-                                // ),
-                                // SizedBox(height: 5.0),
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     Text('Discount'),
-                                //     Text(
-                                //       '${e.planDiscount}',
-                                //       style:
-                                //           TextStyle(fontWeight: FontWeight.w500),
-                                //     )
-                                //   ],
-                                // ),
-                                // SizedBox(height: 5.0),
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     Text('Duration'),
-                                //     Text(
-                                //       '${e.duration}',
-                                //       style:
-                                //           TextStyle(fontWeight: FontWeight.w500),
-                                //     )
-                                //   ],
-                                // ),
                                 Divider(),
                                 Container(
                                   width: double.infinity,
@@ -340,7 +310,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                                   child: GestureDetector(
                                     onTap: () {
                                       print('buy now');
-                                      _openCheckOut(e);
+                                      _openModal(e);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(8.0),
@@ -368,4 +338,65 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
             ),
     );
   }
+
+  void _openModal(SubscriptionPlan p) {
+    _scaffoldKey.currentState.showBottomSheet((context) => Container(
+          color: Colors.white,
+          width: MediaQuery.of(context).size.width,
+          height: 250.0,
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Plan Details'),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Icon(Icons.close),
+                  ),
+                ],
+              ),
+              Divider(),
+              item('Duration', p.duration),
+              item('Original Price', 'Rs. ${p.planOriginalPrice}'),
+              item('Selling Price', 'Rs. ${p.planSellingPrice}'),
+              item('GST', '18 %'),
+              item('Final Price', 'Rs. ${double.parse(p.finalPrice)}'),
+              SizedBox(height: 12.0),
+              GestureDetector(
+                onTap: () => _openCheckOut(p),
+                child: Container(
+                  width: double.infinity,
+                  height: 40.0,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+
+  Widget item(String title, String value) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title),
+            Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      );
 }

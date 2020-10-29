@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ownerapp/DialogScreens/DialogFailed.dart';
@@ -6,7 +8,8 @@ import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
-import 'package:ownerapp/PostMethodResult.dart';
+import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
+import 'package:toast/toast.dart';
 
 class OwnerOptionsPage extends StatefulWidget {
   OwnerOptionsPage({Key key, this.title}) : super(key: key);
@@ -64,6 +67,8 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
   final FocusNode _ifscCode = FocusNode();
 
   bool isLogin = false;
+
+  String _otpCode = "";
 
   @override
   void initState() {
@@ -146,47 +151,51 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
   }
 
   void postOtpVerificationRequest(BuildContext _context) {
-    print('login => $isLogin');
-    print('remember => $rememberMe');
-    DialogProcessing().showCustomDialog(context,
-        title: "OTP Verification", text: "Processing, Please Wait!");
-    HTTPHandler().registerVerifyOtpOwner([
-      mobileNumberController.text,
-      otpController.text,
-      rememberMe,
-    ]).then((value) async {
-      userOwner = value;
-      Navigator.pop(context);
-      if (value.success) {
-        DialogSuccess().showCustomDialog(context, title: "OTP Verification");
-        await Future.delayed(Duration(seconds: 1), () {});
+    if (_otpCode.length == 6) {
+      print('login => $isLogin');
+      print('remember => $rememberMe');
+      DialogProcessing().showCustomDialog(context,
+          title: "OTP Verification", text: "Processing, Please Wait!");
+      HTTPHandler().registerVerifyOtpOwner([
+        mobileNumberController.text,
+        _otpCode,
+        rememberMe,
+      ]).then((value) async {
+        userOwner = value;
         Navigator.pop(context);
-        if (userOwner.oName == '' ||
-            userOwner.oBank == '0' ||
-            userOwner.oIfsc == '0' ||
-            userOwner.oPanCard == '')
-          Navigator.pushReplacementNamed(
-            context,
-            viewProfileOwner,
-            arguments: userOwner,
-          );
-        else
-          Navigator.pushNamedAndRemoveUntil(
-              _context, homePageOwner, (route) => false,
-              arguments: userOwner);
-      } else {
+        if (value.success) {
+          DialogSuccess().showCustomDialog(context, title: "OTP Verification");
+          await Future.delayed(Duration(seconds: 1), () {});
+          Navigator.pop(context);
+          if (userOwner.oName == '' ||
+              userOwner.oBank == '0' ||
+              userOwner.oIfsc == '0' ||
+              userOwner.oPanCard == '')
+            Navigator.pushReplacementNamed(
+              context,
+              viewProfileOwner,
+              arguments: userOwner,
+            );
+          else
+            Navigator.pushNamedAndRemoveUntil(
+                _context, homePageOwner, (route) => false,
+                arguments: userOwner);
+        } else {
+          DialogFailed().showCustomDialog(context,
+              title: "OTP Verification", text: 'OTP Verification Failed');
+          await Future.delayed(Duration(seconds: 3), () {});
+          Navigator.pop(context);
+        }
+      }).catchError((error) async {
+        Navigator.pop(context);
         DialogFailed().showCustomDialog(context,
-            title: "OTP Verification", text: 'OTP Verification Failed');
+            title: "OTP Verification", text: "Network Error");
         await Future.delayed(Duration(seconds: 3), () {});
         Navigator.pop(context);
-      }
-    }).catchError((error) async {
-      Navigator.pop(context);
-      DialogFailed().showCustomDialog(context,
-          title: "OTP Verification", text: "Network Error");
-      await Future.delayed(Duration(seconds: 3), () {});
-      Navigator.pop(context);
-    });
+      });
+    } else {
+      Toast.show('Enter Complete OTP', context);
+    }
   }
 
   void postSignInRequest(BuildContext _context) {
@@ -332,27 +341,16 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
         Align(
           alignment: Alignment.center,
           child: Image(
-            image: AssetImage('assets/images/logo_black.png'),
-            height: 145.0,
-            width: 145.0,
+            image: AssetImage('assets/images/logo_white.png'),
+            height: 125.0,
+            width: 125.0,
           ),
         ),
+        SizedBox(height: 40.0,),
         Align(
           alignment: Alignment.center,
           child: Material(
-            child: Text("Welcome to Some App."),
-          ),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: Material(
-            child: Text("Intro Content Intro Content"),
-          ),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: Material(
-            child: Text("Intro Content"),
+            child: Text("Welcome to Truckwale App."),
           ),
         ),
         SizedBox(height: 40.0),
@@ -486,13 +484,13 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
               Align(
                 alignment: Alignment.center,
                 child: Image(
-                  image: AssetImage('assets/images/logo_black.png'),
-                  height: 145.0,
-                  width: 145.0,
+                  image: AssetImage('assets/images/logo_white.png'),
+                  height: 125.0,
+                  width: 125.0,
                 ),
               ),
               SizedBox(
-                height: 20.0,
+                height: 40.0,
               ),
               Row(
                 children: [
@@ -1157,6 +1155,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
     ]);
   }
 
+  _getSignatureCode() async {
+    String signature = await SmsRetrieved.getAppSignature();
+    print("signature $signature");
+  }
+
   Widget getOtpVerificationBottomSheetWidget(
       context, ScrollController scrollController) {
     return ListView(controller: scrollController, children: <Widget>[
@@ -1219,36 +1222,34 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
               Align(
                 alignment: Alignment.center,
                 child: Image(
-                  image: AssetImage('assets/images/logo_black.png'),
-                  height: 145.0,
-                  width: 145.0,
+                  image: AssetImage('assets/images/logo_white.png'),
+                  height: 125.0,
+                  width: 125.0,
                 ),
               ),
               SizedBox(
-                height: 20.0,
+                height: 40.0,
               ),
-              TextFormField(
-                obscureText: true,
-                controller: otpController,
-                keyboardType: TextInputType.phone,
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.dialpad),
-                  labelText: "Enter OTP",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.amber,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
+              TextFieldPin(
+                borderStyeAfterTextChange: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(color: Colors.black87),
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "This Field is Required";
-                  }
-                  return null;
+                borderStyle: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(color: Colors.black87),
+                ),
+                codeLength: 6,
+                boxSize: 40,
+                textStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                ),
+                filledAfterTextChange: true,
+                filledColor: Colors.white,
+                onOtpCallback: (code, isAutofill) {
+                  print(code);
+                  this._otpCode = code;
                 },
               ),
               SizedBox(height: 16.0),
@@ -1371,13 +1372,13 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
               Align(
                 alignment: Alignment.center,
                 child: Image(
-                  image: AssetImage('assets/images/logo_black.png'),
-                  height: 145.0,
-                  width: 145.0,
+                  image: AssetImage('assets/images/logo_white.png'),
+                  height: 125.0,
+                  width: 125.0,
                 ),
               ),
               SizedBox(
-                height: 20.0,
+                height: 40.0,
               ),
               Row(
                 children: [
@@ -1708,6 +1709,8 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
 
   @override
   Widget build(BuildContext context) {
+    _getSignatureCode();
+
     return WillPopScope(
       onWillPop: onBackPressed,
       child: Scaffold(
