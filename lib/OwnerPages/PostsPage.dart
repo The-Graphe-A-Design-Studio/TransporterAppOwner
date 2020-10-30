@@ -417,27 +417,27 @@ class _PostPageState extends State<PostPage> {
                                               ),
                                             ],
                                           ),
-                                        if (e.expectedPrice.contains('truck'))
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'No. of Trucks',
-                                                style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Colors.black54,
-                                                ),
+                                        SizedBox(width: 30.0),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Quantity',
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black54,
                                               ),
-                                              SizedBox(height: 8.0),
-                                              Text(
-                                                '${e.noOfTrucks}',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                ),
+                                            ),
+                                            SizedBox(height: 8.0),
+                                            Text(
+                                              '${e.quantity} ${e.unit}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                     SizedBox(height: 20.0),

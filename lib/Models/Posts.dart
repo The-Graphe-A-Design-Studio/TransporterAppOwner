@@ -16,6 +16,8 @@ class Post {
   String expiredOn;
   String contactPerson;
   String contactPersonPhone;
+  String quantity;
+  String unit;
 
   Post({
     this.postId,
@@ -33,6 +35,8 @@ class Post {
     this.expiredOn,
     this.contactPerson,
     this.contactPersonPhone,
+    this.quantity,
+    this.unit,
   });
 
   factory Post.fromJson(Map<String, dynamic> parsedJson) {
@@ -65,6 +69,8 @@ class Post {
       expiredOn: parsedJson['expired on'],
       contactPerson: parsedJson['contact person'],
       contactPersonPhone: parsedJson['contact person phone'],
+      quantity: parsedJson['quantity'],
+      unit: parsedJson['unit'],
     );
   }
 }

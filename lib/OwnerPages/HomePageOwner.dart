@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ownerapp/BottomSheets/AccountBottomSheetLoggedIn.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:toast/toast.dart';
 
 class HomePageOwner extends StatefulWidget {
@@ -15,6 +16,17 @@ class HomePageOwner extends StatefulWidget {
 }
 
 class _HomePageOwnerState extends State<HomePageOwner> {
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh(BuildContext context) async {
+    // monitor network fetch
+    print('working properly');
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -26,133 +38,135 @@ class _HomePageOwnerState extends State<HomePageOwner> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: 100.0),
-                  Image(
-                      image: AssetImage('assets/images/logo_white.png'),
-                      height: 200.0),
-                  SizedBox(
-                    height: 30.0,
-                  ),
-                  if (widget.userOwner.planType != '2')
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 30.0),
-                      padding: const EdgeInsets.all(10.0),
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.black,
-                      child: Column(
-                        children: [
-                          Text(
-                            (widget.userOwner.planType == '1')
-                                ? 'You are on free trial!'
-                                : (widget.userOwner.planType == '0')
-                                    ? 'Please wait, until verified by admin'
-                                    : 'Your free trial has expired!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20.0,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                subscriptionOwner,
-                                arguments: widget.userOwner,
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 30.0,
-                                vertical: 10.0,
-                              ),
-                              decoration: BoxDecoration(
+          SmartRefresher(
+            controller: _refreshController,
+            onRefresh: () => _onRefresh(context),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 100.0),
+                    Image(
+                        image: AssetImage('assets/images/logo_white.png'),
+                        height: 200.0),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    if (widget.userOwner.planType != '2')
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 30.0),
+                        padding: const EdgeInsets.all(10.0),
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.black,
+                        child: Column(
+                          children: [
+                            Text(
+                              (widget.userOwner.planType == '1')
+                                  ? 'You are on free trial!'
+                                  : 'You don\'t have active subscription!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
                                 color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              child: Text(
-                                'Upgrade Now',
-                                style: TextStyle(color: Colors.black),
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 20.0,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  subscriptionOwner,
+                                  arguments: widget.userOwner,
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30.0,
+                                  vertical: 10.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Text(
+                                  'Upgrade Now',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    SizedBox(height: 30.0),
+                    Text(
+                      "Truck Owner - " + widget.userOwner.oName,
+                      style: TextStyle(
+                        fontSize: 23.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
                     ),
-                  SizedBox(height: 30.0),
-                  Text(
-                    "Truck Owner - " + widget.userOwner.oName,
-                    style: TextStyle(
-                      fontSize: 23.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                    SizedBox(
+                      height: 30.0,
                     ),
-                  ),
-                  SizedBox(
-                    height: 30.0,
-                  ),
-                  Text("Tap to Add a New Truck",
-                      style: TextStyle(
-                        color: Colors.black38,
-                        fontSize: 18.0,
-                      )),
-                  Text("for Transporting",
-                      style: TextStyle(
-                        color: Colors.black38,
-                        fontSize: 18.0,
-                      )),
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      if (widget.userOwner.verified == '1')
-                        Navigator.pushNamed(context, viewTrucksOwner,
+                    Text("Tap to Add a New Truck",
+                        style: TextStyle(
+                          color: Colors.black38,
+                          fontSize: 18.0,
+                        )),
+                    Text("for Transporting",
+                        style: TextStyle(
+                          color: Colors.black38,
+                          fontSize: 18.0,
+                        )),
+                    SizedBox(
+                      height: 40.0,
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        if (widget.userOwner.verified == '1')
+                          Navigator.pushNamed(context, viewTrucksOwner,
+                              arguments: widget.userOwner);
+                        else
+                          Toast.show(
+                              'Please wait, until verified by admin.', context);
+                      },
+                      child: Text(
+                        "View My Trucks",
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 25.0,
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, viewProfileOwner,
                             arguments: widget.userOwner);
-                      else
-                        Toast.show(
-                            'Please wait, until verified by admin.', context);
-                    },
-                    child: Text(
-                      "View My Trucks",
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0),
+                      },
+                      child: Text(
+                        "View My Profile",
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 25.0,
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, viewProfileOwner,
-                          arguments: widget.userOwner);
-                    },
-                    child: Text(
-                      "View My Profile",
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0),
+                    SizedBox(
+                      height: 100,
                     ),
-                  ),
-                  SizedBox(
-                    height: 100,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
