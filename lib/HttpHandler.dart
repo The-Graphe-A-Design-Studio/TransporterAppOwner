@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
@@ -670,6 +671,21 @@ class HTTPHandler {
       var response = await http.get('$reverseGeocodingLink$lat,$lng');
 
       return json.decode(response.body)['results'][0]['formatted_address'];
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<LatLng> getLoc(String id) async {
+    try {
+      var response = await http.post(
+          'https://truckwale.co.in/api/truck_location',
+          body: {'truck_id': id});
+
+      print(response.body);
+      return LatLng(double.parse(json.decode(response.body)['lat']),
+          double.parse(json.decode(response.body)['lng']));
     } catch (e) {
       print(e);
       throw e;

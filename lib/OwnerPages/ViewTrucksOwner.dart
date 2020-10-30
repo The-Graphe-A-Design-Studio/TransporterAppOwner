@@ -84,7 +84,6 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
           ? Colors.black87
           : Colors.white,
       body: SmartRefresher(
-        // key: GlobalKey(),
         controller: _refreshController,
         onRefresh: () => _onRefresh(context),
         child: (truckList == null)
@@ -237,13 +236,17 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                               SizedBox(height: 20.0),
                                               Row(
                                                 children: [
-                                                  Text(
-                                                    truck.truckNumber,
-                                                    style: TextStyle(
-                                                        fontSize: 25.0,
-                                                        color: Colors.blueGrey,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                  Hero(
+                                                    tag: truck,
+                                                    child: Text(
+                                                      truck.truckNumber,
+                                                      style: TextStyle(
+                                                          fontSize: 25.0,
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
                                                   ),
                                                   Spacer(),
                                                   GestureDetector(
@@ -290,9 +293,25 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                                 ],
                                               ),
                                               SizedBox(height: 8.0),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                              // Column(
+                                              //   crossAxisAlignment:
+                                              //       CrossAxisAlignment.start,
+                                              //   children: [
+                                              //     Text(
+                                              //       "Driver Location",
+                                              //       style: TextStyle(
+                                              //           color: Colors.blueGrey
+                                              //               .withOpacity(0.9)),
+                                              //     ),
+                                              //     SizedBox(
+                                              //       height: 5.0,
+                                              //     ),
+                                              //     Text(locations[truckList
+                                              //         .indexOf(truck)]),
+                                              //   ],
+                                              // ),
+                                              // SizedBox(height: 20.0),
+                                              Row(
                                                 children: [
                                                   Text(
                                                     "Driver Location",
@@ -300,14 +319,31 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                                         color: Colors.blueGrey
                                                             .withOpacity(0.9)),
                                                   ),
-                                                  SizedBox(
-                                                    height: 5.0,
+                                                  Spacer(),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .pushNamed(
+                                                        truckDetails,
+                                                        arguments: [
+                                                          widget.userOwner,
+                                                          truck
+                                                        ],
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 20.0,
+                                                          vertical: 10.0,
+                                                        ),
+                                                        child: Text("View"),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  Text(locations[truckList
-                                                      .indexOf(truck)]),
                                                 ],
                                               ),
-                                              // SizedBox(height: 20.0),
                                               Row(
                                                 children: [
                                                   Text(

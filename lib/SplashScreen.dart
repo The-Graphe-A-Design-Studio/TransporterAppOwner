@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,9 +40,14 @@ class _SplashScreenState extends State<SplashScreen> {
     return Future.value(rememberMe);
   }
 
+  Future<void> requestPermission() async {
+    await Permission.location.request();
+  }
+
   @override
   void initState() {
     super.initState();
+    requestPermission();
     doSomeAction().then((value) {
       if (value == true) {
         if (userType == truckOwnerUser) {
