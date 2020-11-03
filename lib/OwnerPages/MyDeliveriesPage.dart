@@ -209,12 +209,10 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
   }
 
   void _onRefresh(BuildContext context) async {
-    // monitor network fetch
     print('working properly');
     getDeliveries();
     getTrucks();
     await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 

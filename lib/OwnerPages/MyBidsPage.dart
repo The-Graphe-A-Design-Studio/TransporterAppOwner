@@ -40,11 +40,9 @@ class _MyBidspageState extends State<MyBidspage> {
   }
 
   void _onRefresh(BuildContext context) async {
-    // monitor network fetch
     print('working properly');
     getBids();
     await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 

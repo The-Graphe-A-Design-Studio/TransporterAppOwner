@@ -9,6 +9,7 @@ import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class ViewTrucksOwner extends StatefulWidget {
@@ -26,6 +27,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
   List<String> locations = [];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  UserOwner owner;
 
   void postGetTrucksRequest(BuildContext _context) async {
     HTTPHandler().viewAllTrucks([widget.userOwner.oId]).then((value) async {
@@ -65,12 +67,28 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
   }
 
   void _onRefresh(BuildContext context) async {
-    // monitor network fetch
     print('working properly');
     postGetTrucksRequest(context);
+    reloadUser();
     await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
+  }
+
+  void reloadUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    HTTPHandler().registerVerifyOtpOwner(
+        [owner.oPhone, prefs.getString('otp'), true]).then((value) {
+      setState(() {
+        this.owner = value;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    owner = widget.userOwner;
   }
 
   @override
@@ -135,10 +153,10 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                   child: GestureDetector(
                                     onTap: () {
                                       if (truckList.length <
-                                          widget.userOwner.totalTruck)
+                                          owner.totalTruck)
                                         Navigator.pushNamed(
                                             context, addTruckOwner,
-                                            arguments: widget.userOwner);
+                                            arguments: owner);
                                       else
                                         Toast.show(
                                           'Please buy truck add On',
@@ -293,24 +311,6 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                                 ],
                                               ),
                                               SizedBox(height: 8.0),
-                                              // Column(
-                                              //   crossAxisAlignment:
-                                              //       CrossAxisAlignment.start,
-                                              //   children: [
-                                              //     Text(
-                                              //       "Driver Location",
-                                              //       style: TextStyle(
-                                              //           color: Colors.blueGrey
-                                              //               .withOpacity(0.9)),
-                                              //     ),
-                                              //     SizedBox(
-                                              //       height: 5.0,
-                                              //     ),
-                                              //     Text(locations[truckList
-                                              //         .indexOf(truck)]),
-                                              //   ],
-                                              // ),
-                                              // SizedBox(height: 20.0),
                                               Row(
                                                 children: [
                                                   Text(
@@ -326,7 +326,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                                           .pushNamed(
                                                         truckDetails,
                                                         arguments: [
-                                                          widget.userOwner,
+                                                          owner,
                                                           truck
                                                         ],
                                                       );
@@ -627,7 +627,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                 ),
                                 child: AccountBottomSheetWhite(
                                   scrollController: scrollController,
-                                  userOwner: widget.userOwner,
+                                  userOwner: owner,
                                 )),
                           );
                         },
@@ -680,7 +680,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                       onTap: () {
                                         Navigator.pushNamed(
                                             context, addTruckOwner,
-                                            arguments: widget.userOwner);
+                                            arguments: owner);
                                       },
                                       child: CircleAvatar(
                                         radius: 40.0,
@@ -718,7 +718,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                 ),
                                 child: AccountBottomSheetLoggedIn(
                                   scrollController: scrollController,
-                                  userOwner: widget.userOwner,
+                                  userOwner: owner,
                                 )),
                           );
                         },
