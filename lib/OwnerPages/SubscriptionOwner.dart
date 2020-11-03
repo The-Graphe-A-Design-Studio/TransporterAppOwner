@@ -87,16 +87,6 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
         .then((value) {
       if (value.success) {
         Navigator.of(context).pop();
-        // Toast.show(
-        //   'You will be logged out to verify your identity. Please login again!',
-        //   context,
-        //   gravity: Toast.CENTER,
-        //   duration: Toast.LENGTH_LONG,
-        // );
-        // Future.delayed(
-        //   Duration(milliseconds: 900),
-        //   () => HTTPHandler().signOut(context, widget.userOwner.oPhone),
-        // );
         reloadUser();
       } else
         print('error');
@@ -136,7 +126,10 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
       subscriptionEnd = DateTime.parse(owner.oSubscriptionUpto);
   }
 
-  Future<void> _getData() async => getData();
+  Future<void> _getData() async {
+    reloadUser();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {

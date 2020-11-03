@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ownerapp/BottomSheets/AccountBottomSheetLoggedIn.dart';
+import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class HomePageOwner extends StatefulWidget {
@@ -18,18 +20,30 @@ class HomePageOwner extends StatefulWidget {
 class _HomePageOwnerState extends State<HomePageOwner> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  UserOwner owner;
 
   void _onRefresh(BuildContext context) async {
-    // monitor network fetch
     print('working properly');
+    reloadUser();
     await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
+  }
+
+  void reloadUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    HTTPHandler().registerVerifyOtpOwner(
+        [owner.oPhone, prefs.getString('otp'), true]).then((value) {
+      setState(() {
+        this.owner = value;
+      });
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    owner = widget.userOwner;
   }
 
   @override
@@ -55,7 +69,7 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                     SizedBox(
                       height: 30.0,
                     ),
-                    if (widget.userOwner.planType != '2')
+                    if (owner.planType != '2')
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 30.0),
                         padding: const EdgeInsets.all(10.0),
@@ -64,7 +78,7 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                         child: Column(
                           children: [
                             Text(
-                              (widget.userOwner.planType == '1')
+                              (owner.planType == '1')
                                   ? 'You are on free trial!'
                                   : 'You don\'t have active subscription!',
                               textAlign: TextAlign.center,
@@ -82,7 +96,7 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                                 Navigator.pushNamed(
                                   context,
                                   subscriptionOwner,
-                                  arguments: widget.userOwner,
+                                  arguments: owner,
                                 );
                               },
                               child: Container(
@@ -106,7 +120,7 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                       ),
                     SizedBox(height: 30.0),
                     Text(
-                      "Truck Owner - " + widget.userOwner.oName,
+                      "Truck Owner - " + owner.oName,
                       style: TextStyle(
                         fontSize: 23.0,
                         fontWeight: FontWeight.bold,
@@ -131,9 +145,9 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                     ),
                     FlatButton(
                       onPressed: () {
-                        if (widget.userOwner.verified == '1')
+                        if (owner.verified == '1')
                           Navigator.pushNamed(context, viewTrucksOwner,
-                              arguments: widget.userOwner);
+                              arguments: owner);
                         else
                           Toast.show(
                               'Please wait, until verified by admin.', context);
@@ -152,7 +166,7 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                     FlatButton(
                       onPressed: () {
                         Navigator.pushNamed(context, viewProfileOwner,
-                            arguments: widget.userOwner);
+                            arguments: owner);
                       },
                       child: Text(
                         "View My Profile",
@@ -187,7 +201,7 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                   ),
                   child: AccountBottomSheetLoggedIn(
                     scrollController: scrollController,
-                    userOwner: widget.userOwner,
+                    userOwner: owner,
                   ),
                 ),
               );
