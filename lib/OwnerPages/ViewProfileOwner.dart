@@ -9,6 +9,7 @@ import 'package:ownerapp/Models/User.dart';
 import 'dart:io';
 
 import 'package:ownerapp/MyConstants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 import 'package:toast/toast.dart';
 
@@ -210,6 +211,12 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     }
   }
 
+  void saveOTP() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('otp', _otpCode);
+  }
+
   void postOtpVerificationRequest(BuildContext _context) {
     if (_otpCode.length == 6) {
       print('run');
@@ -220,6 +227,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
         _otpCode,
         true,
       ]).then((value) async {
+        saveOTP();
         Navigator.pop(context);
         if (value.success) {
           widget.userOwner.oBank = bankAccountNumberController.text;

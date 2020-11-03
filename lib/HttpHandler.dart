@@ -66,6 +66,7 @@ class HTTPHandler {
       throw error;
     }
   }
+  
 
   Future<UserOwner> registerVerifyOtpOwner(List data) async {
     try {

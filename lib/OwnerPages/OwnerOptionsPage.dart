@@ -8,6 +8,7 @@ import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
 import 'package:toast/toast.dart';
 
@@ -103,20 +104,9 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
     DialogProcessing().showCustomDialog(context,
         title: "Sign Up Request", text: "Processing, Please Wait!");
     HTTPHandler().registerOwner([
-      // nameController.text.toString(),
       '91',
       mobileNumberController.text.toString(),
       'graphe@devs'
-      // emailController.text.toString(),
-      // addressController.text.toString(),
-      // cityController.text.toString(),
-      // passwordController.text.toString(),
-      // confirmPasswordController.text.toString(),
-      // operatingRoutesController.text.toString(),
-      // permitStatesController.text.toString(),
-      // panCardNumberController.text.toString(),
-      // bankAccountNumberController.text.toString(),
-      // ifscCodeController.text.toString()
     ]).then((value) async {
       Navigator.pop(context);
       if (value.success) {
@@ -150,6 +140,12 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
     });
   }
 
+  void saveOTP() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('otp', _otpCode);
+  }
+
   void postOtpVerificationRequest(BuildContext _context) {
     if (_otpCode.length == 6) {
       print('login => $isLogin');
@@ -161,6 +157,7 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
         _otpCode,
         rememberMe,
       ]).then((value) async {
+        saveOTP();
         userOwner = value;
         Navigator.pop(context);
         if (value.success) {
@@ -227,34 +224,6 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
         await Future.delayed(Duration(seconds: 3), () {});
         Navigator.pop(context);
       }
-      // if (value.success) {
-      //   Navigator.pop(context);
-      //   await Future.delayed(Duration(seconds: 1), () {});
-      //   setState(() {
-      //     isLogin = true;
-      //     selectedWidgetMarker = WidgetMarker.otpVerification;
-      //   });
-      //   Navigator.pop(context);
-      //   Scaffold.of(_context).showSnackBar(SnackBar(
-      //     backgroundColor: Colors.black,
-      //     content: Text(
-      //       value.message,
-      //       style: TextStyle(color: Colors.white),
-      //     ),
-      //   ));
-      //   // DialogSuccess().showCustomDialog(context, title: "Sign In");
-      //   // await Future.delayed(Duration(seconds: 1), () {});
-      //   // Navigator.pop(context);
-      //   // Navigator.pushNamedAndRemoveUntil(
-      //   //     _context, homePageOwner, (route) => false,
-      //   //     arguments: userOwner);
-      // } else {
-      //   Navigator.pop(context);
-      //   DialogFailed().showCustomDialog(context,
-      //       title: "Sign In", text: 'Verification Failed');
-      //   await Future.delayed(Duration(seconds: 3), () {});
-      //   Navigator.pop(context);
-      // }
     }).catchError((error) async {
       Navigator.pop(context);
       DialogFailed()
@@ -580,394 +549,6 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
         ),
       ),
     ]);
-    // return ListView(controller: scrollController, children: <Widget>[
-    //   SingleChildScrollView(
-    //     child: Form(
-    //       key: _formKeyCredentials,
-    //       child: Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: <Widget>[
-    //           Row(
-    //             children: <Widget>[
-    //               Align(
-    //                 alignment: Alignment.centerLeft,
-    //                 child: Material(
-    //                   color: Colors.transparent,
-    //                   child: InkWell(
-    //                     onTap: () {
-    //                       setState(() {
-    //                         clearControllers();
-    //                         selectedWidgetMarker = WidgetMarker.options;
-    //                       });
-    //                     },
-    //                     child: CircleAvatar(
-    //                       backgroundColor: Colors.transparent,
-    //                       child: Icon(
-    //                         Icons.arrow_back_ios,
-    //                         color: Color(0xff252427),
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //               Spacer(),
-    //               Align(
-    //                 alignment: Alignment.centerRight,
-    //                 child: Material(
-    //                   color: Colors.transparent,
-    //                   child: InkWell(
-    //                     onTap: () {
-    //                       setState(() {
-    //                         clearControllers();
-    //                         selectedWidgetMarker = WidgetMarker.options;
-    //                       });
-    //                     },
-    //                     child: Text(
-    //                       "Skip",
-    //                       style: TextStyle(
-    //                           color: Colors.black12,
-    //                           fontWeight: FontWeight.bold,
-    //                           fontSize: 26.0),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //               SizedBox(
-    //                 width: 10.0,
-    //               ),
-    //             ],
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: nameController,
-    //             keyboardType: TextInputType.text,
-    //             textCapitalization: TextCapitalization.words,
-    //             textInputAction: TextInputAction.next,
-    //             focusNode: _name,
-    //             onFieldSubmitted: (term) {
-    //               _name.unfocus();
-    //               FocusScope.of(context).requestFocus(_mobileNumber);
-    //             },
-    //             decoration: InputDecoration(
-    //               prefixIcon: Icon(Icons.person),
-    //               labelText: "Full Name",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           Row(
-    //             children: [
-    //               SizedBox(
-    //                 child: TextFormField(
-    //                   readOnly: true,
-    //                   decoration: InputDecoration(
-    //                     prefixIcon: Icon(Icons.dialpad),
-    //                     hintText: "+91",
-    //                     border: OutlineInputBorder(
-    //                       borderRadius: BorderRadius.circular(5.0),
-    //                       borderSide: BorderSide(
-    //                         color: Colors.amber,
-    //                         style: BorderStyle.solid,
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //                 width: 97.0,
-    //               ),
-    //               SizedBox(width: 16.0),
-    //               Flexible(
-    //                 child: TextFormField(
-    //                   controller: mobileNumberController,
-    //                   keyboardType: TextInputType.number,
-    //                   textInputAction: TextInputAction.next,
-    //                   focusNode: _mobileNumber,
-    //                   onFieldSubmitted: (term) {
-    //                     _mobileNumber.unfocus();
-    //                     FocusScope.of(context).requestFocus(_email);
-    //                   },
-    //                   decoration: InputDecoration(
-    //                     labelText: "Mobile Number",
-    //                     border: OutlineInputBorder(
-    //                       borderRadius: BorderRadius.circular(5.0),
-    //                       borderSide: BorderSide(
-    //                         color: Colors.amber,
-    //                         style: BorderStyle.solid,
-    //                       ),
-    //                     ),
-    //                   ),
-    //                   validator: (value) {
-    //                     if (value.isEmpty) {
-    //                       return "This Field is Required";
-    //                     } else if (value.length < 10) {
-    //                       return "Enter Valid Mobile Number";
-    //                     }
-    //                     return null;
-    //                   },
-    //                 ),
-    //               )
-    //             ],
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: emailController,
-    //             keyboardType: TextInputType.emailAddress,
-    //             textInputAction: TextInputAction.next,
-    //             focusNode: _email,
-    //             onFieldSubmitted: (term) {
-    //               _email.unfocus();
-    //               FocusScope.of(context).requestFocus(_address);
-    //             },
-    //             decoration: InputDecoration(
-    //               prefixIcon: Icon(Icons.mail),
-    //               labelText: "Email",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: addressController,
-    //             keyboardType: TextInputType.text,
-    //             textInputAction: TextInputAction.next,
-    //             focusNode: _address,
-    //             onFieldSubmitted: (term) {
-    //               _address.unfocus();
-    //               FocusScope.of(context).requestFocus(_city);
-    //             },
-    //             decoration: InputDecoration(
-    //               prefixIcon: Icon(Icons.location_on),
-    //               labelText: "Your Address",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: cityController,
-    //             keyboardType: TextInputType.text,
-    //             textInputAction: TextInputAction.next,
-    //             focusNode: _city,
-    //             onFieldSubmitted: (term) {
-    //               _city.unfocus();
-    //               FocusScope.of(context).requestFocus(_operatingRoutes);
-    //             },
-    //             decoration: InputDecoration(
-    //               prefixIcon: Icon(Icons.location_on),
-    //               labelText: "Your City",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: operatingRoutesController,
-    //             keyboardType: TextInputType.text,
-    //             textInputAction: TextInputAction.next,
-    //             focusNode: _operatingRoutes,
-    //             onFieldSubmitted: (term) {
-    //               _operatingRoutes.unfocus();
-    //               FocusScope.of(context).requestFocus(_permitStatesRoute);
-    //             },
-    //             decoration: InputDecoration(
-    //               labelText: "Operating Routes",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: permitStatesController,
-    //             keyboardType: TextInputType.text,
-    //             textInputAction: TextInputAction.next,
-    //             focusNode: _permitStatesRoute,
-    //             onFieldSubmitted: (term) {
-    //               _permitStatesRoute.unfocus();
-    //               FocusScope.of(context).requestFocus(_password);
-    //             },
-    //             decoration: InputDecoration(
-    //               labelText: "Permit States",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //               controller: passwordController,
-    //               keyboardType: TextInputType.visiblePassword,
-    //               textInputAction: TextInputAction.next,
-    //               focusNode: _password,
-    //               onFieldSubmitted: (term) {
-    //                 _password.unfocus();
-    //                 FocusScope.of(context).requestFocus(_confirmPassword);
-    //               },
-    //               decoration: InputDecoration(
-    //                 prefixIcon: Icon(Icons.vpn_key),
-    //                 labelText: "Password",
-    //                 border: OutlineInputBorder(
-    //                   borderRadius: BorderRadius.circular(5.0),
-    //                   borderSide: BorderSide(
-    //                     color: Colors.amber,
-    //                     style: BorderStyle.solid,
-    //                   ),
-    //                 ),
-    //               ),
-    //               validator: (value) {
-    //                 if (value.isEmpty) {
-    //                   return "This Field is Required";
-    //                 }
-    //                 return null;
-    //               }),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           TextFormField(
-    //             controller: confirmPasswordController,
-    //             keyboardType: TextInputType.visiblePassword,
-    //             textInputAction: TextInputAction.done,
-    //             focusNode: _confirmPassword,
-    //             decoration: InputDecoration(
-    //               prefixIcon: Icon(Icons.vpn_key),
-    //               labelText: "Confirm Password",
-    //               border: OutlineInputBorder(
-    //                 borderRadius: BorderRadius.circular(5.0),
-    //                 borderSide: BorderSide(
-    //                   color: Colors.amber,
-    //                   style: BorderStyle.solid,
-    //                 ),
-    //               ),
-    //             ),
-    //             validator: (value) {
-    //               if (value.isEmpty) {
-    //                 return "This Field is Required";
-    //               } else if (value.toString() !=
-    //                   passwordController.text.toString()) {
-    //                 return "Passwords Don't Match";
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //           SizedBox(
-    //             height: 16.0,
-    //           ),
-    //           Material(
-    //             color: Colors.transparent,
-    //             child: InkWell(
-    //               splashColor: Colors.transparent,
-    //               onTap: () {
-    //                 if (_formKeyCredentials.currentState.validate()) {
-    //                   setState(() {
-    //                     selectedWidgetMarker = WidgetMarker.ownerDetails;
-    //                   });
-    //                 }
-    //               },
-    //               child: Container(
-    //                 width: MediaQuery.of(context).size.width,
-    //                 height: 50.0,
-    //                 child: Center(
-    //                   child: Text(
-    //                     "Next",
-    //                     style: TextStyle(
-    //                         color: Colors.white,
-    //                         fontSize: 24.0,
-    //                         fontWeight: FontWeight.bold),
-    //                   ),
-    //                 ),
-    //                 decoration: BoxDecoration(
-    //                   color: Color(0xff252427),
-    //                   borderRadius: BorderRadius.circular(10),
-    //                   border: Border.all(width: 2.0, color: Color(0xff252427)),
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // ]);
   }
 
   Widget getOwnerDetailsBottomSheetWidget(

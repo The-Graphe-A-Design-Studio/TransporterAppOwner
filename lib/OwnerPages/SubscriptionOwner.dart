@@ -4,6 +4,7 @@ import 'package:ownerapp/Models/User.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/HttpHandler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class SubscriptionOwner extends StatefulWidget {
@@ -28,6 +29,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
   String subscriptionStatus;
 
   var _scaffoldKey = GlobalKey<ScaffoldState>();
+  UserOwner owner;
 
   getData() async {
     subscriptionController = true;
@@ -63,6 +65,18 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
     });
   }
 
+  void reloadUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    HTTPHandler().registerVerifyOtpOwner(
+        [owner.oPhone, prefs.getString('otp'), true]).then((value) {
+      setState(() {
+        this.owner = value;
+        getStats();
+      });
+    });
+  }
+
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print('Payment Id => ${response.paymentId}');
     print('Order Id => ${response.orderId}');
@@ -72,16 +86,18 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
         .storeData('2', widget.userOwner, selected, response)
         .then((value) {
       if (value.success) {
-        Toast.show(
-          'You will be logged out to verify your identity. Please login again!',
-          context,
-          gravity: Toast.CENTER,
-          duration: Toast.LENGTH_LONG,
-        );
-        Future.delayed(
-          Duration(milliseconds: 900),
-          () => HTTPHandler().signOut(context, widget.userOwner.oPhone),
-        );
+        Navigator.of(context).pop();
+        // Toast.show(
+        //   'You will be logged out to verify your identity. Please login again!',
+        //   context,
+        //   gravity: Toast.CENTER,
+        //   duration: Toast.LENGTH_LONG,
+        // );
+        // Future.delayed(
+        //   Duration(milliseconds: 900),
+        //   () => HTTPHandler().signOut(context, widget.userOwner.oPhone),
+        // );
+        reloadUser();
       } else
         print('error');
     });
@@ -106,14 +122,18 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
   @override
   void initState() {
     super.initState();
+    owner = widget.userOwner;
+    getStats();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
 
-    subscriptionStatus = widget.userOwner.oSubscriptionStatus;
-    if (widget.userOwner.planType != '0')
-      subscriptionEnd = DateTime.parse(widget.userOwner.oSubscriptionUpto);
+  void getStats() {
+    subscriptionStatus = owner.oSubscriptionStatus;
+    if (owner.planType != '0')
+      subscriptionEnd = DateTime.parse(owner.oSubscriptionUpto);
   }
 
   Future<void> _getData() async => getData();
@@ -166,7 +186,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                             alignment: Alignment.center,
                             child: (subscriptionStatus ==
                                         'Not on subscription' ||
-                                    widget.userOwner.planType == '0')
+                                    owner.planType == '0')
                                 ? Text(
                                     subscriptionStatus,
                                     style: TextStyle(color: Colors.grey),
@@ -197,7 +217,7 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
                             alignment: Alignment.center,
                             child: Text(
                               (subscriptionStatus == 'Not on subscription' ||
-                                      widget.userOwner.planType == '0')
+                                      owner.planType == '0')
                                   ? 'Ends on 0-0-0'
                                   : 'Ends on \n${subscriptionEnd.day} - ${subscriptionEnd.month} - ${subscriptionEnd.year}',
                               textAlign: TextAlign.center,
