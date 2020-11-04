@@ -31,21 +31,17 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
 
   void postGetTrucksRequest(BuildContext _context) async {
     HTTPHandler().viewAllTrucks([widget.userOwner.oId]).then((value) async {
-      for (Truck t in value) {
-        locations.add(
-            await HTTPHandler().getAddressOfDriver(t.latitude, t.longitude));
-      }
+      // print('reeached here');
+      // for (Truck t in value) {
+      //   locations.add(
+      //       await HTTPHandler().getAddressOfDriver(t.latitude, t.longitude));
+      // }
       setState(() {
         truckList = value;
         temp = true;
       });
     }).catchError((error) {
       print("Error " + error.toString());
-      Scaffold.of(_context).showSnackBar(SnackBar(
-        backgroundColor: Colors.black,
-        content: Text("Network Error"),
-        duration: Duration(seconds: 2),
-      ));
     });
   }
 
@@ -152,8 +148,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                   padding: EdgeInsets.only(right: 16.0),
                                   child: GestureDetector(
                                     onTap: () {
-                                      if (truckList.length <
-                                          owner.totalTruck)
+                                      if (truckList.length < owner.totalTruck)
                                         Navigator.pushNamed(
                                             context, addTruckOwner,
                                             arguments: owner);

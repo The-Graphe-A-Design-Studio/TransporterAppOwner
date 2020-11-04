@@ -266,6 +266,7 @@ class HTTPHandler {
           .post("$baseURLOwner/trucks", body: {'truck_owner_id': data[0]});
       var ret = json.decode(result.body);
       List<Truck> list = [];
+      print(ret.length);
       for (var i in ret) {
         list.add(Truck.fromJson(i));
       }

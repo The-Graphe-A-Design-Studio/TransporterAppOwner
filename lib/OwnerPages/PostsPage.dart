@@ -269,70 +269,139 @@ class _PostPageState extends State<PostPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 15.0,
-                                          height: 15.0,
-                                          decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.green[600],
-                                              width: 3.0,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 10.0),
-                                        Flexible(
-                                          child: Text(
-                                            '${e.sources[0].source}',
-                                            style: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    Column(
+                                      children: e.sources
+                                          .map((e1) => Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        width: 15.0,
+                                                        height: 15.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .transparent,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          border: Border.all(
+                                                            color: Colors
+                                                                .green[600],
+                                                            width: 3.0,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10.0),
+                                                      Flexible(
+                                                        child: Text(
+                                                          '${e1.source}',
+                                                          style: TextStyle(
+                                                            fontSize: 15.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    margin: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 5.0,
+                                                      vertical: 3.0,
+                                                    ),
+                                                    height: 5.0,
+                                                    width: 1.5,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  Container(
+                                                    margin: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 5.0,
+                                                      vertical: 3.0,
+                                                    ),
+                                                    height: 5.0,
+                                                    width: 1.5,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ],
+                                              ))
+                                          .toList(),
                                     ),
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 5.0,
-                                        vertical: 3.0,
-                                      ),
-                                      height: 16.0,
-                                      width: 1.5,
-                                      color: Colors.grey,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 15.0,
-                                          height: 15.0,
-                                          decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.red[600],
-                                              width: 3.0,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 10.0),
-                                        Flexible(
-                                          child: Text(
-                                            '${e.destinations[e.destinations.length - 1].destination}',
-                                            style: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    Column(
+                                      children: e.destinations
+                                          .map((e1) => Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        width: 15.0,
+                                                        height: 15.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .transparent,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          border: Border.all(
+                                                            color:
+                                                                Colors.red[600],
+                                                            width: 3.0,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10.0),
+                                                      Flexible(
+                                                        child: Text(
+                                                          '${e1.destination}',
+                                                          style: TextStyle(
+                                                            fontSize: 15.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  if (e.destinations
+                                                          .indexOf(e1) !=
+                                                      (e.destinations.length -
+                                                          1))
+                                                    Container(
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 5.0,
+                                                        vertical: 3.0,
+                                                      ),
+                                                      height: 5.0,
+                                                      width: 1.5,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  if (e.destinations
+                                                          .indexOf(e1) !=
+                                                      (e.destinations.length -
+                                                          1))
+                                                    Container(
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 5.0,
+                                                        vertical: 3.0,
+                                                      ),
+                                                      height: 5.0,
+                                                      width: 1.5,
+                                                      color: Colors.grey,
+                                                    ),
+                                                ],
+                                              ))
+                                          .toList(),
                                     ),
                                     SizedBox(height: 30.0),
                                     Row(
