@@ -5,12 +5,16 @@ class DeliveryTruck {
   String truckNumber;
   String driverName;
   String driverPhone;
+  String lat;
+  String lng;
 
   DeliveryTruck({
     this.deleteTruckId,
     this.truckNumber,
     this.driverName,
     this.driverPhone,
+    this.lat,
+    this.lng,
   });
 
   factory DeliveryTruck.fromJson(Map<String, dynamic> parsedJson) {
@@ -19,6 +23,8 @@ class DeliveryTruck {
       truckNumber: parsedJson['truck number'],
       driverName: parsedJson['driver name'],
       driverPhone: parsedJson['driver phone'],
+      lat: parsedJson['latitude'],
+      lng: parsedJson['longitude'],
     );
   }
 }

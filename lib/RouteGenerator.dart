@@ -3,6 +3,7 @@ import 'package:ownerapp/CommonPages/FadeTransition.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/OwnerPages/AddOnTruck.dart';
 import 'package:ownerapp/OwnerPages/AddTruckFromOwner.dart';
+import 'package:ownerapp/OwnerPages/DriverLocation.dart';
 import 'package:ownerapp/OwnerPages/EditTruckFromOwner.dart';
 import 'package:ownerapp/OwnerPages/HomePageOwner.dart';
 import 'package:ownerapp/OwnerPages/MyBidsPage.dart';
@@ -77,6 +78,12 @@ class RouteGenerator {
         return FadeRoute(
             page: TruckDetails(
           args: args,
+        ));
+
+      case driverLocation:
+        return FadeRoute(
+            page: DriverLocation(
+          deliveryTruck: args,
         ));
 
       default:

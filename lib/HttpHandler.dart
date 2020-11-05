@@ -693,4 +693,19 @@ class HTTPHandler {
       throw e;
     }
   }
+
+  Future<LatLng> getDelLoc(String id) async {
+    try {
+      var response = await http.post(
+          'https://truckwale.co.in/api/truck_location',
+          body: {'delivery_truck_id': id});
+
+      print(response.body);
+      return LatLng(double.parse(json.decode(response.body)['lat']),
+          double.parse(json.decode(response.body)['lng']));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
 }

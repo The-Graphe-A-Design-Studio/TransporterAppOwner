@@ -65,7 +65,7 @@ class _TruckDetailsState extends State<TruckDetails> {
       _onAddMarkerButtonPressed();
       _mapController.moveCamera(CameraUpdate.newLatLng(value));
     });
-    Timer.periodic(Duration(seconds: 2), (timer) {
+    Timer.periodic(Duration(milliseconds: 200), (timer) {
       HTTPHandler().getLoc(truck.truckId).then((value) {
         _lastMapPosition = value;
         _onAddMarkerButtonPressed();

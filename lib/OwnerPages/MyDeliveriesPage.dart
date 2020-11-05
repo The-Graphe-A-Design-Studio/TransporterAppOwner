@@ -6,6 +6,7 @@ import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/Deliveries.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/User.dart';
+import 'package:ownerapp/MyConstants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyDeliveriesPage extends StatefulWidget {
@@ -747,14 +748,23 @@ class _MyDeliveriesPageState extends State<MyDeliveriesPage> {
                                                         ],
                                                       ),
                                                       Flexible(
-                                                        child: Text(
-                                                          '${d.driverName.split(' ')[0]} (${d.truckNumber})',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
+                                                        child: GestureDetector(
+                                                          onTap: () => Navigator
+                                                                  .of(context)
+                                                              .pushNamed(
+                                                                  driverLocation,
+                                                                  arguments: d),
+                                                          child: Text(
+                                                            '${d.driverName.split(' ')[0]} (${d.truckNumber})\nView on map',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ),
                                                         ),
-                                                      )
+                                                      ),
                                                     ],
                                                   ),
                                                   SizedBox(height: 5.0),
