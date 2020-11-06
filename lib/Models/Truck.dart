@@ -2,6 +2,7 @@ class Truck {
   String truckId;
   String truckOwner;
   String truckCat;
+  String truckCatType;
   String truckNumber;
   String truckLoad;
   String truckDriverName;
@@ -16,11 +17,13 @@ class Truck {
   bool truckOnTrip;
   String latitude;
   String longitude;
+  String truckVerified;
 
   Truck({
     this.truckId,
     this.truckOwner,
     this.truckCat,
+    this.truckCatType,
     this.truckNumber,
     this.truckLoad,
     this.truckDriverName,
@@ -35,6 +38,7 @@ class Truck {
     this.truckOnTrip,
     this.latitude,
     this.longitude,
+    this.truckVerified,
   });
 
   factory Truck.fromJson(Map<String, dynamic> parsedJson) {
@@ -42,6 +46,7 @@ class Truck {
       truckId: parsedJson['trk_id'],
       truckOwner: parsedJson['trk_owner'],
       truckCat: parsedJson['trk_cat'],
+      truckCatType: parsedJson['trk_cat_type'],
       truckNumber: parsedJson['trk_num'],
       truckLoad: parsedJson['trk_load'],
       truckDriverName: parsedJson['trk_dr_name'],
@@ -56,6 +61,7 @@ class Truck {
       truckOnTrip: parsedJson['trk_on_trip'] == "0" ? false : true,
       latitude: parsedJson['trk_lat'],
       longitude: parsedJson['trk_lng'],
+      truckVerified: parsedJson['trk_verified'],
     );
   }
 }

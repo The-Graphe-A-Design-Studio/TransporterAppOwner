@@ -66,7 +66,6 @@ class HTTPHandler {
       throw error;
     }
   }
-  
 
   Future<UserOwner> registerVerifyOtpOwner(List data) async {
     try {
@@ -703,6 +702,19 @@ class HTTPHandler {
       print(response.body);
       return LatLng(double.parse(json.decode(response.body)['lat']),
           double.parse(json.decode(response.body)['lng']));
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<Map> truckDoc(String truckId) async {
+    try {
+      var response = await http.post(
+          'https://truckwale.co.in/api/driver/driver_docs',
+          body: {'truck_id': truckId});
+
+      return json.decode(response.body);
     } catch (e) {
       print(e);
       throw e;

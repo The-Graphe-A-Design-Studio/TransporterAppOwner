@@ -12,6 +12,7 @@ import 'package:ownerapp/OwnerPages/OwnerOptionsPage.dart';
 import 'package:ownerapp/OwnerPages/PostsPage.dart';
 import 'package:ownerapp/OwnerPages/SubscriptionOwner.dart';
 import 'package:ownerapp/OwnerPages/TruckDetails.dart';
+import 'package:ownerapp/OwnerPages/TruckDetailsInfo.dart';
 import 'package:ownerapp/OwnerPages/ViewProfileOwner.dart';
 import 'package:ownerapp/OwnerPages/ViewTrucksOwner.dart';
 import 'package:ownerapp/SplashScreen.dart';
@@ -85,6 +86,9 @@ class RouteGenerator {
             page: DriverLocation(
           deliveryTruck: args,
         ));
+
+      case truckDetailsInfo:
+        return FadeRoute(page: TruckDetailsInfo(args));
 
       default:
         return _errorRoute();

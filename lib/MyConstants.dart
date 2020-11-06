@@ -51,3 +51,4 @@ const String myDeliveriesOwner = "/myDeliveries";
 const String addOnTruckOwner = "/addOns";
 const String truckDetails = "/details";
 const String driverLocation = '/driver';
+const String truckDetailsInfo = '/truck-details-info';
