@@ -684,7 +684,6 @@ class HTTPHandler {
           'https://truckwale.co.in/api/truck_location',
           body: {'truck_id': id});
 
-      print(response.body);
       return LatLng(double.parse(json.decode(response.body)['lat']),
           double.parse(json.decode(response.body)['lng']));
     } catch (e) {
@@ -699,7 +698,6 @@ class HTTPHandler {
           'https://truckwale.co.in/api/truck_location',
           body: {'delivery_truck_id': id});
 
-      print(response.body);
       return LatLng(double.parse(json.decode(response.body)['lat']),
           double.parse(json.decode(response.body)['lng']));
     } catch (e) {
