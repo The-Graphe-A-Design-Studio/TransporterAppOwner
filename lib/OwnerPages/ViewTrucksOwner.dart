@@ -274,7 +274,7 @@ class ViewTrucksOwnerState extends State<ViewTrucksOwner> {
                                       GestureDetector(
                                         onTap: () => Navigator.of(context)
                                             .pushNamed(truckDetailsInfo,
-                                                arguments: t),
+                                                arguments: [t, owner]),
                                         child: Container(
                                           width: double.infinity,
                                           alignment: Alignment.center,
