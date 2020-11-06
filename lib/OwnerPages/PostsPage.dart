@@ -269,6 +269,33 @@ class _PostPageState extends State<PostPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8.0,
+                                        bottom: 10.0,
+                                      ),
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: 'Post Id : ',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15.0,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: e.postId,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 17.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                     Column(
                                       children: e.sources
                                           .map((e1) => Column(

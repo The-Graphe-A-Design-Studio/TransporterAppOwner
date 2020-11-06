@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ownerapp/DialogScreens/DialogFailed.dart';
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
@@ -22,7 +23,6 @@ class OwnerOptionsPage extends StatefulWidget {
 }
 
 enum WidgetMarker {
-  options,
   credentials,
   ownerDetails,
   otpVerification,
@@ -30,13 +30,12 @@ enum WidgetMarker {
 }
 
 class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
-  WidgetMarker selectedWidgetMarker = WidgetMarker.options;
-  WidgetMarker selectedBottomSheetWidgetMarker = WidgetMarker.options;
+  WidgetMarker selectedWidgetMarker = WidgetMarker.signIn;
+  WidgetMarker selectedBottomSheetWidgetMarker = WidgetMarker.signIn;
   UserOwner userOwner;
 
   final GlobalKey<FormState> _formKeyOwnerDetails = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeyOtp = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKeySignIn = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
   final mobileNumberController = TextEditingController();
@@ -315,7 +314,9 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
             width: 125.0,
           ),
         ),
-        SizedBox(height: 40.0,),
+        SizedBox(
+          height: 40.0,
+        ),
         Align(
           alignment: Alignment.center,
           child: Material(
@@ -396,7 +397,6 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          key: _formKeySignIn,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -408,10 +408,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
@@ -430,10 +431,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: Text(
                           "Skip",
@@ -464,16 +466,18 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
               Row(
                 children: [
                   SizedBox(
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.dialpad),
-                        hintText: "+91",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                      child: TextFormField(
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.dialpad),
+                          hintText: "+91",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
                       ),
@@ -482,33 +486,35 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                   ),
                   SizedBox(width: 16.0),
                   Flexible(
-                    child: TextFormField(
-                      controller: mobileNumberController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      focusNode: _mobileNumberSignIn,
-                      onFieldSubmitted: (term) {
-                        _mobileNumberSignIn.unfocus();
-                        FocusScope.of(context).requestFocus(_passwordSignIn);
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Mobile Number",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                      child: TextFormField(
+                        controller: mobileNumberController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _mobileNumberSignIn,
+                        onFieldSubmitted: (term) {
+                          _mobileNumberSignIn.unfocus();
+                          FocusScope.of(context).requestFocus(_passwordSignIn);
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Mobile Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "This Field is Required";
+                          } else if (value.length != 10) {
+                            return "Enter Valid Mobile Number";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "This Field is Required";
-                        } else if (value.length != 10) {
-                          return "Enter Valid Mobile Number";
-                        }
-                        return null;
-                      },
                     ),
                   )
                 ],
@@ -521,16 +527,16 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                 child: InkWell(
                   splashColor: Colors.transparent,
                   onTap: () {
-                    if (_formKeySignIn.currentState.validate()) {
+                    // if (_formKeySignIn.currentState.validate()) {
                       postSignUpRequest(context);
-                    }
+                    // }
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 50.0,
                     child: Center(
                       child: Text(
-                        "Register",
+                        "Continue",
                         style: TextStyle(
                             color: Color(0xff252427),
                             fontSize: 24.0,
@@ -589,10 +595,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: Text(
                           "Skip",
@@ -758,10 +765,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
@@ -780,10 +788,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: Text(
                           "Skip",
@@ -896,7 +905,6 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
     return ListView(controller: scrollController, children: <Widget>[
       SingleChildScrollView(
         child: Form(
-          key: _formKeySignIn,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -908,10 +916,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
@@ -930,10 +939,11 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            clearControllers();
-                            selectedWidgetMarker = WidgetMarker.options;
-                          });
+                          // setState(() {
+                          //   clearControllers();
+                          //   selectedWidgetMarker = WidgetMarker.options;
+                          // });
+                          SystemNavigator.pop();
                         },
                         child: Text(
                           "Skip",
@@ -964,16 +974,18 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
               Row(
                 children: [
                   SizedBox(
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.dialpad),
-                        hintText: "+91",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                                          child: TextFormField(
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.dialpad),
+                          hintText: "+91",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
                       ),
@@ -982,48 +994,52 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                   ),
                   SizedBox(width: 16.0),
                   Flexible(
-                    child: TextFormField(
-                      controller: mobileNumberController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      focusNode: _mobileNumberSignIn,
-                      onFieldSubmitted: (term) {
-                        _mobileNumberSignIn.unfocus();
-                        FocusScope.of(context).requestFocus(_passwordSignIn);
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Mobile Number",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: BorderSide(
-                            color: Colors.amber,
-                            style: BorderStyle.solid,
+                    child: Material(
+                                          child: TextFormField(
+                        controller: mobileNumberController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        focusNode: _mobileNumberSignIn,
+                        onFieldSubmitted: (term) {
+                          _mobileNumberSignIn.unfocus();
+                          FocusScope.of(context).requestFocus(_passwordSignIn);
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Mobile Number",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.amber,
+                              style: BorderStyle.solid,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "This Field is Required";
+                          } else if (value.length != 10) {
+                            return "Enter Valid Mobile Number";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "This Field is Required";
-                        } else if (value.length != 10) {
-                          return "Enter Valid Mobile Number";
-                        }
-                        return null;
-                      },
                     ),
                   )
                 ],
               ),
               Row(
                 children: [
-                  Checkbox(
-                    value: rememberMe,
-                    checkColor: Colors.white,
-                    activeColor: Color(0xff252427),
-                    onChanged: (bool value) {
-                      setState(() {
-                        rememberMe = value;
-                      });
-                    },
+                  Material(
+                                      child: Checkbox(
+                      value: rememberMe,
+                      checkColor: Colors.white,
+                      activeColor: Color(0xff252427),
+                      onChanged: (bool value) {
+                        setState(() {
+                          rememberMe = value;
+                        });
+                      },
+                    ),
                   ),
                   SizedBox(
                     width: 0.0,
@@ -1048,16 +1064,14 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                 child: InkWell(
                   splashColor: Colors.transparent,
                   onTap: () {
-                    if (_formKeySignIn.currentState.validate()) {
                       postSignInRequest(context);
-                    }
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 50.0,
                     child: Center(
                       child: Text(
-                        "Sign In",
+                        "Continue",
                         style: TextStyle(
                             color: Color(0xff252427),
                             fontSize: 24.0,
@@ -1227,8 +1241,8 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
 
   Widget getCustomWidget(context) {
     switch (selectedWidgetMarker) {
-      case WidgetMarker.options:
-        return getOptionsWidget(context);
+      // case WidgetMarker.options:
+      //   return getOptionsWidget(context);
       case WidgetMarker.credentials:
         return getCredentialsWidget(context);
       case WidgetMarker.ownerDetails:
@@ -1244,8 +1258,8 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
   Widget getCustomBottomSheetWidget(
       context, ScrollController scrollController) {
     switch (selectedWidgetMarker) {
-      case WidgetMarker.options:
-        return getOptionsBottomSheetWidget(context, scrollController);
+      // case WidgetMarker.options:
+      //   return getOptionsBottomSheetWidget(context, scrollController);
       case WidgetMarker.credentials:
         return getCredentialsBottomSheetWidget(context, scrollController);
       case WidgetMarker.ownerDetails:
@@ -1260,13 +1274,13 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
 
   Future<bool> onBackPressed() {
     switch (selectedWidgetMarker) {
-      case WidgetMarker.options:
-        return Future.value(true);
+      // case WidgetMarker.options:
+      //   return Future.value(true);
       case WidgetMarker.credentials:
-        setState(() {
-          clearControllers();
-          selectedWidgetMarker = WidgetMarker.options;
-        });
+        // setState(() {
+        //   clearControllers();
+        //   selectedWidgetMarker = WidgetMarker.options;
+        // });
         return Future.value(false);
       case WidgetMarker.ownerDetails:
         setState(() {
@@ -1279,10 +1293,10 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
         });
         return Future.value(false);
       case WidgetMarker.signIn:
-        setState(() {
-          clearControllers();
-          selectedWidgetMarker = WidgetMarker.options;
-        });
+        // setState(() {
+        //   clearControllers();
+        //   selectedWidgetMarker = WidgetMarker.options;
+        // });
         return Future.value(false);
     }
     return Future.value(true);
