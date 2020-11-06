@@ -8,6 +8,7 @@ import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/User.dart';
+import 'package:ownerapp/MyConstants.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -216,18 +217,25 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                               ),
                             ],
                           ),
-                          Container(
-                            width: 100.0,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: Colors.black,
-                            ),
-                            child: Text(
-                              'Edit',
-                              style: TextStyle(color: Colors.white),
+                          GestureDetector(
+                            onTap: () {
+                              print("Edit");
+                              Navigator.pushNamed(context, editTrucksOwner,
+                                  arguments: {"truck": truck, "state": this});
+                            },
+                            child: Container(
+                              width: 100.0,
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: Colors.black,
+                              ),
+                              child: Text(
+                                'Edit',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                         ],
@@ -247,7 +255,7 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                                 horizontal: 20.0,
                                 vertical: 10.0,
                               ),
-                              child: Text(truck.truckDriverName),
+                              child: Text(docs['driver name']),
                             ),
                           ),
                         ],
@@ -266,7 +274,7 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                                 horizontal: 20.0,
                                 vertical: 10.0,
                               ),
-                              child: Text(truck.truckDriverPhone),
+                              child: Text(docs['driver phone']),
                             ),
                           ),
                         ],
@@ -286,7 +294,7 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                                 vertical: 10.0,
                               ),
                               child: Text(
-                                  '${truck.truckCat} ( ${truck.truckCatType} )'),
+                                  '${docs['truck category']} ( ${docs['truck type']} )'),
                             ),
                           ),
                         ],

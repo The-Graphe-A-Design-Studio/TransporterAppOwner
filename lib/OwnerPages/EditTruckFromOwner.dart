@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ownerapp/CommonPages/LoadingBody.dart';
 import 'package:ownerapp/DialogScreens/DialogFailed.dart';
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/TruckCategory.dart';
+import 'package:ownerapp/Models/TruckCategoryType.dart';
+import 'package:toast/toast.dart';
 
 class EditTruckOwner extends StatefulWidget {
   final Truck truck;
@@ -32,9 +33,11 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
   bool firstTime = true;
 
   final FocusNode _truckNumber = FocusNode();
-  final FocusNode _truckLoad = FocusNode();
   final FocusNode _truckDriverName = FocusNode();
   final FocusNode _truckDriverNumber = FocusNode();
+
+  List<TruckCategoryType> listOfCatType;
+  TruckCategoryType selectedTruckCategoryType;
 
   @override
   void initState() {
@@ -52,47 +55,76 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
   }
 
   void postEditTruckRequest(BuildContext _context) {
-    DialogProcessing().showCustomDialog(context,
-        title: "Edit Truck Info", text: "Processing, Please Wait!");
-    HTTPHandler().editTruckInfo([
-      widget.truck.truckId,
-      selectedTruckCategory.truckCatID.toString(),
-      truckNumberController.text.toString(),
-      truckLoadController.text.toString(),
-      truckDriverNameController.text.toString(),
-      '91',
-      truckDriverMobileNumberController.text.toString(),
-    ]).then((value) async {
-      Navigator.pop(context);
-      if (value.success) {
-        DialogSuccess().showCustomDialog(context, title: "Edit Truck Info");
-        await Future.delayed(Duration(seconds: 1), () {});
-        widget.viewTrucksOwnerState.setState(() {
-          widget.viewTrucksOwnerState.temp = false;
-        });
+    if (selectedTruckCategoryType == null)
+      Toast.show('Please select a sub-category', context);
+    else {
+      DialogProcessing().showCustomDialog(context,
+          title: "Edit Truck Info", text: "Processing, Please Wait!");
+      HTTPHandler().editTruckInfo([
+        widget.truck.truckId,
+        selectedTruckCategory.truckCatID.toString(),
+        truckNumberController.text.toString(),
+        selectedTruckCategoryType.id.toString(),
+        truckDriverNameController.text.toString(),
+        '91',
+        truckDriverMobileNumberController.text.toString(),
+      ]).then((value) async {
+        Navigator.pop(context);
+        if (value.success) {
+          DialogSuccess().showCustomDialog(context, title: "Edit Truck Info");
+          await Future.delayed(Duration(seconds: 1), () {});
 
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          DialogFailed().showCustomDialog(context,
+              title: "Edit Truck Info", text: value.message);
+          await Future.delayed(Duration(seconds: 3), () {});
+          Navigator.pop(context);
+        }
+      }).catchError((error) async {
+        print(error);
         Navigator.pop(context);
-        Navigator.pop(context);
-      } else {
         DialogFailed().showCustomDialog(context,
-            title: "Edit Truck Info", text: value.message);
+            title: "Edit Truck Info", text: "Network Error");
         await Future.delayed(Duration(seconds: 3), () {});
         Navigator.pop(context);
+      });
+    }
+  }
+
+  void _getType() {
+    HTTPHandler()
+        .getTruckCategoryType(selectedTruckCategory.truckCatID)
+        .then((value) {
+      if (firstTime) {
+        for (TruckCategoryType t in value) {
+          if (t.name == widget.truck.truckCatType) {
+            setState(() {
+              listOfCatType = value;
+              selectedTruckCategoryType = t;
+            });
+            break;
+          }
+        }
+      } else {
+        setState(() {
+          listOfCatType = value;
+        });
       }
-    }).catchError((error) async {
-      print(error);
-      Navigator.pop(context);
-      DialogFailed().showCustomDialog(context,
-          title: "Edit Truck Info", text: "Network Error");
-      await Future.delayed(Duration(seconds: 3), () {});
-      Navigator.pop(context);
     });
   }
 
   Widget getEditsBottomSheetWidget(context, ScrollController scrollController) {
     if (firstTime) {
       firstTime = false;
-      selectedTruckCategory = listOfCat[int.parse(widget.truck.truckCat) - 1];
+      for (TruckCategory cat in listOfCat) {
+        if (cat.truckCatName == widget.truck.truckCat) {
+          selectedTruckCategory = cat;
+          _getType();
+          break;
+        }
+      }
       truckNumberController.text = widget.truck.truckNumber;
       truckLoadController.text = widget.truck.truckLoad;
       truckDriverNameController.text = widget.truck.truckDriverName;
@@ -159,6 +191,7 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
                 onChanged: (TruckCategory value) {
                   setState(() {
                     selectedTruckCategory = value;
+                    _getType();
                   });
                 },
                 dropdownColor: Colors.white,
@@ -169,6 +202,24 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
                   );
                 }).toList(),
               ),
+              if (selectedTruckCategory != null)
+                (listOfCatType == null)
+                    ? Center(child: CircularProgressIndicator())
+                    : DropdownButton(
+                        isExpanded: true,
+                        hint: Text("Select Truck Category Type"),
+                        value: selectedTruckCategoryType,
+                        onChanged: (TruckCategoryType value) {
+                          setState(() {
+                            selectedTruckCategoryType = value;
+                          });
+                        },
+                        dropdownColor: Colors.white,
+                        items: listOfCatType.map((TruckCategoryType item) {
+                          return DropdownMenuItem(
+                              value: item, child: Text(item.name));
+                        }).toList(),
+                      ),
               SizedBox(
                 height: 16.0,
               ),
@@ -180,7 +231,7 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
                 focusNode: _truckNumber,
                 onFieldSubmitted: (term) {
                   _truckNumber.unfocus();
-                  FocusScope.of(context).requestFocus(_truckLoad);
+                  FocusScope.of(context).requestFocus(_truckDriverName);
                 },
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
@@ -200,35 +251,6 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
                   return null;
                 },
               ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextFormField(
-                  controller: truckLoadController,
-                  keyboardType: TextInputType.visiblePassword,
-                  textInputAction: TextInputAction.next,
-                  focusNode: _truckLoad,
-                  onFieldSubmitted: (term) {
-                    _truckLoad.unfocus();
-                    FocusScope.of(context).requestFocus(_truckDriverName);
-                  },
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.event_seat),
-                    labelText: "Truck Capacity (In Tons)",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.amber,
-                        style: BorderStyle.solid,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return "This Field is Required";
-                    }
-                    return null;
-                  }),
               SizedBox(
                 height: 16.0,
               ),
@@ -403,7 +425,11 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
     return Scaffold(
       backgroundColor: Color(0xff252427),
       body: listOfCat == null
-          ? LoadingBody()
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
           : Stack(children: <Widget>[
               getEditsWidget(context),
               DraggableScrollableSheet(
@@ -413,19 +439,21 @@ class _EditTruckOwnerState extends State<EditTruckOwner> {
                 builder:
                     (BuildContext context, ScrollController scrollController) {
                   return Hero(
-                      tag: 'AnimeBottom',
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30.0),
-                                topRight: Radius.circular(30.0)),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: getEditsBottomSheetWidget(
-                                context, scrollController),
-                          )));
+                    tag: 'AnimeBottom',
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0)),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: getEditsBottomSheetWidget(
+                            context, scrollController),
+                      ),
+                    ),
+                  );
                 },
               ),
             ]),

@@ -248,7 +248,7 @@ class HTTPHandler {
         'trk_id': data[0],
         'trk_cat_edit': data[1],
         'trk_num_edit': data[2],
-        'trk_load_edit': data[3],
+        'trk_cat_type_edit': data[3],
         'trk_dr_name_edit': data[4],
         'trk_dr_phone_code_edit': data[5],
         'trk_dr_phone_edit': data[6]
