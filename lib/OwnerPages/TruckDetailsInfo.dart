@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ownerapp/CommonPages/LoadingBody.dart';
 import 'package:ownerapp/DialogScreens/DialogFailed.dart';
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
@@ -26,47 +27,20 @@ class TruckDetailsInfo extends StatefulWidget {
 
 class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
   Map docs;
-  File roadTax;
-  File rtoPass;
-  File insurance;
-  File rc;
+  Future<File> roadTax;
+  Future<File> rtoPass;
+  Future<File> insurance;
+  Future<File> rc;
+  String roadTaxPath;
+  String rtoPassPath;
+  String insurancePath;
+  String rcPath;
+
   bool imageDone;
   UserOwner owner;
   Truck truck;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-
-  Future<void> getNewRoadTax() async {
-    roadTax = await FilePicker.getFile();
-    if (roadTax.existsSync()) {
-      imageDone = true;
-      setState(() {});
-    }
-  }
-
-  Future<void> getNewRTOPass() async {
-    rtoPass = await FilePicker.getFile();
-    if (rtoPass.existsSync()) {
-      imageDone = true;
-      setState(() {});
-    }
-  }
-
-  Future<void> getNewInsurance() async {
-    insurance = await FilePicker.getFile();
-    if (insurance.existsSync()) {
-      imageDone = true;
-      setState(() {});
-    }
-  }
-
-  Future<void> getNewRc() async {
-    rc = await FilePicker.getFile();
-    if (rc.existsSync()) {
-      imageDone = true;
-      setState(() {});
-    }
-  }
 
   void reloadUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -118,22 +92,22 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
     switch (val) {
       case 1:
         key = 'trk_road_tax_edit';
-        filePath = roadTax.path.toString();
+        filePath = roadTaxPath;
         break;
 
       case 2:
         key = 'trk_rto_edit';
-        filePath = rtoPass.path.toString();
+        filePath = rtoPassPath;
         break;
 
       case 3:
         key = 'trk_insurance_edit';
-        filePath = insurance.path.toString();
+        filePath = insurancePath;
         break;
 
       case 4:
         key = 'trk_rc_edit';
-        filePath = rc.path.toString();
+        filePath = rcPath;
         break;
     }
 
@@ -402,19 +376,39 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                       SizedBox(height: 20.0),
                       Stack(
                         children: [
-                          Container(
-                            height: 250.0,
-                            width: double.infinity,
-                            child: PhotoView(
-                              maxScale: PhotoViewComputedScale.contained,
-                              imageProvider: (rc == null)
-                                  ? NetworkImage(
-                                      'https://truckwale.co.in/${docs['rc']}')
-                                  : FileImage(rc),
-                              backgroundDecoration:
-                                  BoxDecoration(color: Colors.white),
-                            ),
-                          ),
+                          (rc != null)
+                              ? FutureBuilder<File>(
+                                  future: rc,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<File> snapshot) {
+                                    if (snapshot.data != null)
+                                      rcPath = snapshot.data.path.toString();
+                                    return Container(
+                                      height: 250.0,
+                                      width: double.infinity,
+                                      decoration: (rc != null &&
+                                              snapshot.data != null)
+                                          ? BoxDecoration(
+                                              image: DecorationImage(
+                                                image: FileImage(snapshot.data),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            )
+                                          : BoxDecoration(),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  height: 250.0,
+                                  width: double.infinity,
+                                  child: PhotoView(
+                                    maxScale: PhotoViewComputedScale.contained,
+                                    imageProvider: NetworkImage(
+                                        'https://truckwale.co.in/${docs['rc']}'),
+                                    backgroundDecoration:
+                                        BoxDecoration(color: Colors.white),
+                                  ),
+                                ),
                           Align(
                             alignment: Alignment.topRight,
                             child: Container(
@@ -440,8 +434,9 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                             child: Align(
                               alignment: Alignment.bottomRight,
                               child: GestureDetector(
-                                onTap: () =>
-                                    (rc == null) ? getNewRc() : updateImage(4),
+                                onTap: () => (rc == null)
+                                    ? _showModalSheet(context, 4)
+                                    : updateImage(4),
                                 child: Container(
                                   width: 100.0,
                                   height: 30.0,
@@ -480,19 +475,40 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                       SizedBox(height: 20.0),
                       Stack(
                         children: [
-                          Container(
-                            height: 250.0,
-                            width: double.infinity,
-                            child: PhotoView(
-                              maxScale: PhotoViewComputedScale.contained,
-                              imageProvider: (insurance == null)
-                                  ? NetworkImage(
-                                      'https://truckwale.co.in/${docs['insurance']}')
-                                  : FileImage(insurance),
-                              backgroundDecoration:
-                                  BoxDecoration(color: Colors.white),
-                            ),
-                          ),
+                          (insurance != null)
+                              ? FutureBuilder<File>(
+                                  future: insurance,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<File> snapshot) {
+                                    if (snapshot.data != null)
+                                      insurancePath =
+                                          snapshot.data.path.toString();
+                                    return Container(
+                                      height: 250.0,
+                                      width: double.infinity,
+                                      decoration: (insurance != null &&
+                                              snapshot.data != null)
+                                          ? BoxDecoration(
+                                              image: DecorationImage(
+                                                image: FileImage(snapshot.data),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            )
+                                          : BoxDecoration(),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  height: 250.0,
+                                  width: double.infinity,
+                                  child: PhotoView(
+                                    maxScale: PhotoViewComputedScale.contained,
+                                    imageProvider: NetworkImage(
+                                        'https://truckwale.co.in/${docs['insurance']}'),
+                                    backgroundDecoration:
+                                        BoxDecoration(color: Colors.white),
+                                  ),
+                                ),
                           Align(
                             alignment: Alignment.topRight,
                             child: Container(
@@ -519,7 +535,7 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                               alignment: Alignment.bottomRight,
                               child: GestureDetector(
                                 onTap: () => (insurance == null)
-                                    ? getNewInsurance()
+                                    ? _showModalSheet(context, 3)
                                     : updateImage(3),
                                 child: Container(
                                   width: 100.0,
@@ -559,19 +575,40 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                       SizedBox(height: 20.0),
                       Stack(
                         children: [
-                          Container(
-                            height: 250.0,
-                            width: double.infinity,
-                            child: PhotoView(
-                              maxScale: PhotoViewComputedScale.contained,
-                              imageProvider: (rtoPass == null)
-                                  ? NetworkImage(
-                                      'https://truckwale.co.in/${docs['rto pass']}')
-                                  : FileImage(rtoPass),
-                              backgroundDecoration:
-                                  BoxDecoration(color: Colors.white),
-                            ),
-                          ),
+                          (rtoPass != null)
+                              ? FutureBuilder<File>(
+                                  future: rtoPass,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<File> snapshot) {
+                                    if (snapshot.data != null)
+                                      rtoPassPath =
+                                          snapshot.data.path.toString();
+                                    return Container(
+                                      height: 250.0,
+                                      width: double.infinity,
+                                      decoration: (rtoPass != null &&
+                                              snapshot.data != null)
+                                          ? BoxDecoration(
+                                              image: DecorationImage(
+                                                image: FileImage(snapshot.data),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            )
+                                          : BoxDecoration(),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  height: 250.0,
+                                  width: double.infinity,
+                                  child: PhotoView(
+                                    maxScale: PhotoViewComputedScale.contained,
+                                    imageProvider: NetworkImage(
+                                        'https://truckwale.co.in/${docs['rto pass']}'),
+                                    backgroundDecoration:
+                                        BoxDecoration(color: Colors.white),
+                                  ),
+                                ),
                           Align(
                             alignment: Alignment.topRight,
                             child: Container(
@@ -598,7 +635,7 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                               alignment: Alignment.bottomRight,
                               child: GestureDetector(
                                 onTap: () => (rtoPass == null)
-                                    ? getNewRTOPass()
+                                    ? _showModalSheet(context, 2)
                                     : updateImage(2),
                                 child: Container(
                                   width: 100.0,
@@ -638,20 +675,41 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                       SizedBox(height: 20.0),
                       Stack(
                         children: [
-                          Container(
-                            height: 250.0,
-                            width: double.infinity,
-                            child: PhotoView(
-                              maxScale: PhotoViewComputedScale.contained,
-                              imageProvider: (roadTax == null)
-                                  ? NetworkImage(
+                          (roadTax != null)
+                              ? FutureBuilder<File>(
+                                  future: roadTax,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<File> snapshot) {
+                                    if (snapshot.data != null)
+                                      roadTaxPath =
+                                          snapshot.data.path.toString();
+                                    return Container(
+                                      height: 250.0,
+                                      width: double.infinity,
+                                      decoration: (roadTax != null &&
+                                              snapshot.data != null)
+                                          ? BoxDecoration(
+                                              image: DecorationImage(
+                                                image: FileImage(snapshot.data),
+                                                fit: BoxFit.contain,
+                                              ),
+                                            )
+                                          : BoxDecoration(),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  height: 250.0,
+                                  width: double.infinity,
+                                  child: PhotoView(
+                                    maxScale: PhotoViewComputedScale.contained,
+                                    imageProvider: NetworkImage(
                                       'https://truckwale.co.in/${docs['road tax']}',
-                                    )
-                                  : FileImage(roadTax),
-                              backgroundDecoration:
-                                  BoxDecoration(color: Colors.white),
-                            ),
-                          ),
+                                    ),
+                                    backgroundDecoration:
+                                        BoxDecoration(color: Colors.white),
+                                  ),
+                                ),
                           Align(
                             alignment: Alignment.topRight,
                             child: Container(
@@ -678,7 +736,8 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
                               alignment: Alignment.bottomRight,
                               child: GestureDetector(
                                 onTap: () => (roadTax == null)
-                                    ? getNewRoadTax()
+                                    ? _showModalSheet(context, 1)
+                                    // getNewRoadTax()
                                     : updateImage(1),
                                 child: Container(
                                   width: 100.0,
@@ -711,5 +770,98 @@ class _TruckDetailsInfoState extends State<TruckDetailsInfo> {
               ),
             ),
     );
+  }
+
+  void _showModalSheet(BuildContext context, int v) => showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          height: 150,
+          color: Colors.black87,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FlatButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.camera,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Camera',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  pickImageFromSystem(ImageSource.camera, v);
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.folder_open,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Gallery',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  pickImageFromSystem(ImageSource.gallery, v);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      });
+
+  pickImageFromSystem(ImageSource source, int cat) {
+    switch (cat) {
+      case 1:
+        setState(() {
+          roadTax = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+        });
+        break;
+
+      case 2:
+        setState(() {
+          rtoPass = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+        });
+        break;
+
+      case 3:
+        setState(() {
+          insurance = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+        });
+        break;
+
+      case 4:
+        setState(() {
+          rc = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+        });
+        break;
+    }
   }
 }

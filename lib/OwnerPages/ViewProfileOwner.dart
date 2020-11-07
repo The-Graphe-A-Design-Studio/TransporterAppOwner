@@ -480,9 +480,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                 child: InkWell(
                   splashColor: Colors.transparent,
                   onTap: () {
-                    // if (_formKeyProfile.currentState.validate()) {
-                    //   postUpdateRequest(context);
-                    // }
                     postUpdateRequest(context);
                   },
                   child: Container(
