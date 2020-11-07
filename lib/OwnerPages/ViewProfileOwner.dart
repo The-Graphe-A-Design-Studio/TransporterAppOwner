@@ -10,8 +10,6 @@ import 'dart:io';
 
 import 'package:ownerapp/MyConstants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sms_otp_auto_verify/sms_otp_auto_verify.dart';
-import 'package:toast/toast.dart';
 
 class ViewProfileOwner extends StatefulWidget {
   final UserOwner userOwner;
@@ -60,7 +58,7 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     setState(() {
       imageFile = ImagePicker.pickImage(
         source: source,
-        imageQuality: 50,
+        imageQuality: 15,
       );
     });
   }
@@ -69,7 +67,9 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
       ? FutureBuilder<File>(
           future: imageFile,
           builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-            panCardNumberController.text = snapshot.data.path;
+            if (snapshot.data != null)
+              panCardNumberController.text = snapshot.data.path;
+
             return Container(
               height: 250.0,
               width: double.infinity,
@@ -167,9 +167,9 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                   .showCustomDialog(context, title: "Update Profile");
               await Future.delayed(Duration(seconds: 1), () {});
 
-imageCache.clear();
-            imageCache.clearLiveImages();
-            reloadUser();
+              imageCache.clear();
+              imageCache.clearLiveImages();
+              reloadUser();
               // setState(() {
               //   selectedWidgetMarker = WidgetMarker.verifyOTP;
               // });
@@ -198,9 +198,9 @@ imageCache.clear();
           DialogSuccess().showCustomDialog(context, title: "Update Profile");
           await Future.delayed(Duration(seconds: 1), () {});
 
-imageCache.clear();
-            imageCache.clearLiveImages();
-            reloadUser();
+          imageCache.clear();
+          imageCache.clearLiveImages();
+          reloadUser();
           // setState(() {
           //   selectedWidgetMarker = WidgetMarker.verifyOTP;
           // });
@@ -431,7 +431,8 @@ imageCache.clear();
                 height: 16.0,
               ),
               GestureDetector(
-                onTap: () => pickImageFromSystem(ImageSource.gallery),
+                onTap: () => _showModalSheet(context),
+                // pickImageFromSystem(ImageSource.gallery),
                 child: Material(
                   child: TextFormField(
                     controller: panCardNumberController,
@@ -511,11 +512,6 @@ imageCache.clear();
     ]);
   }
 
-  _getSignatureCode() async {
-    String signature = await SmsRetrieved.getAppSignature();
-    print("signature $signature");
-  }
-
   Widget getCredentialsWidget(context) {
     return Center(
       child: Column(
@@ -570,7 +566,6 @@ imageCache.clear();
     );
   }
 
-
   Widget getCustomWidget(context) {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
@@ -598,8 +593,6 @@ imageCache.clear();
 
   @override
   Widget build(BuildContext context) {
-    _getSignatureCode();
-
     return WillPopScope(
       // onWillPop: onBackPressed,
       onWillPop: () => Navigator.pushReplacementNamed(
@@ -638,4 +631,57 @@ imageCache.clear();
       ),
     );
   }
+
+  void _showModalSheet(BuildContext context) => showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          height: 150,
+          color: Colors.black87,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FlatButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.camera,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Camera',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  pickImageFromSystem(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.folder_open,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Gallery',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  pickImageFromSystem(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      });
 }
