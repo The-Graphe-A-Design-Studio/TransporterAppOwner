@@ -27,9 +27,6 @@ enum WidgetMarker {
 class _AddTruckOwnerState extends State<AddTruckOwner> {
   WidgetMarker selectedWidgetMarker = WidgetMarker.credentials;
 
-  // final GlobalKey<FormState> _formKeyCredentials = GlobalKey<FormState>();
-  // final GlobalKey<FormState> _formKeyDocuments = GlobalKey<FormState>();
-
   final truckNumberController = TextEditingController();
   final truckLoadController = TextEditingController();
   final truckDriverNameController = TextEditingController();

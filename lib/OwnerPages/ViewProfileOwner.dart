@@ -24,15 +24,10 @@ class ViewProfileOwner extends StatefulWidget {
 
 enum WidgetMarker {
   viewProfile,
-  verifyOTP,
 }
 
 class _ViewProfileOwnerState extends State<ViewProfileOwner> {
   WidgetMarker selectedWidgetMarker = WidgetMarker.viewProfile;
-
-  // final GlobalKey<FormState> _formKeyProfile = GlobalKey<FormState>();
-  // final GlobalKey<FormState> _formKeyChangePassword = GlobalKey<FormState>();
-  // final GlobalKey<FormState> _formKeyOtp = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
   final mobileNumberController = TextEditingController();
@@ -143,9 +138,12 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
             DialogSuccess().showCustomDialog(context, title: "Update Profile");
             await Future.delayed(Duration(seconds: 1), () {});
 
-            setState(() {
-              selectedWidgetMarker = WidgetMarker.verifyOTP;
-            });
+            imageCache.clear();
+            imageCache.clearLiveImages();
+            reloadUser();
+            // setState(() {
+            //   selectedWidgetMarker = WidgetMarker.verifyOTP;
+            // });
             Navigator.pop(context);
           } else {
             DialogFailed().showCustomDialog(context,
@@ -169,9 +167,12 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
                   .showCustomDialog(context, title: "Update Profile");
               await Future.delayed(Duration(seconds: 1), () {});
 
-              setState(() {
-                selectedWidgetMarker = WidgetMarker.verifyOTP;
-              });
+imageCache.clear();
+            imageCache.clearLiveImages();
+            reloadUser();
+              // setState(() {
+              //   selectedWidgetMarker = WidgetMarker.verifyOTP;
+              // });
               Navigator.pop(context);
             } else {
               DialogFailed().showCustomDialog(context,
@@ -197,9 +198,12 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
           DialogSuccess().showCustomDialog(context, title: "Update Profile");
           await Future.delayed(Duration(seconds: 1), () {});
 
-          setState(() {
-            selectedWidgetMarker = WidgetMarker.verifyOTP;
-          });
+imageCache.clear();
+            imageCache.clearLiveImages();
+            reloadUser();
+          // setState(() {
+          //   selectedWidgetMarker = WidgetMarker.verifyOTP;
+          // });
           Navigator.pop(context);
         } else {
           DialogFailed().showCustomDialog(context,
@@ -211,84 +215,15 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     }
   }
 
-  void saveOTP() async {
+  void reloadUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setString('otp', _otpCode);
-  }
-
-  void postOtpVerificationRequest(BuildContext _context) {
-    if (_otpCode.length == 6) {
-      print('run');
-      DialogProcessing().showCustomDialog(context,
-          title: "OTP Verification", text: "Processing, Please Wait!");
-      HTTPHandler().registerVerifyOtpOwner([
-        mobileNumberController.text,
-        _otpCode,
-        true,
-      ]).then((value) async {
-        saveOTP();
-        Navigator.pop(context);
-        if (value.success) {
-          widget.userOwner.oBank = bankAccountNumberController.text;
-          widget.userOwner.oIfsc = ifscCodeController.text;
-          DialogSuccess().showCustomDialog(context,
-              title: "OTP Verification", text: 'Successful');
-          await Future.delayed(Duration(seconds: 1), () {});
-          Navigator.pop(context);
-          Navigator.popAndPushNamed(
-            context,
-            homePageOwner,
-            arguments: widget.userOwner,
-          );
-        } else {
-          DialogFailed().showCustomDialog(context,
-              title: "OTP Verification", text: 'OTP Verification Failed!');
-          await Future.delayed(Duration(seconds: 3), () {});
-          Navigator.pop(context);
-        }
-      }).catchError((error) async {
-        print(error);
-        Navigator.pop(context);
-        DialogFailed().showCustomDialog(context,
-            title: "OTP Verification", text: "Network Error");
-        await Future.delayed(Duration(seconds: 3), () {});
-        Navigator.pop(context);
-      });
-    } else {
-      Toast.show('Enter Complete OTP', context);
-    }
-  }
-
-  void postResendOtpRequest(BuildContext _context) {
-    DialogProcessing().showCustomDialog(context,
-        title: "Resend OTP", text: "Processing, Please Wait!");
-    HTTPHandler().registerResendOtpOwner([mobileNumberController.text]).then(
-        (value) async {
-      Navigator.pop(context);
-      if (value.success) {
-        DialogSuccess().showCustomDialog(context, title: "Resend OTP");
-        await Future.delayed(Duration(seconds: 1), () {});
-        Navigator.pop(context);
-        Scaffold.of(_context).showSnackBar(SnackBar(
-          backgroundColor: Colors.black,
-          content: Text(
-            value.message,
-            style: TextStyle(color: Colors.white),
-          ),
-        ));
-      } else {
-        DialogFailed().showCustomDialog(context,
-            title: "Resend OTP", text: value.message);
-        await Future.delayed(Duration(seconds: 3), () {});
-        Navigator.pop(context);
-      }
-    }).catchError((error) async {
-      Navigator.pop(context);
-      DialogFailed().showCustomDialog(context,
-          title: "Resend OTP", text: "Network Error");
-      await Future.delayed(Duration(seconds: 3), () {});
-      Navigator.pop(context);
+    HTTPHandler().registerVerifyOtpOwner(
+        [widget.userOwner.oPhone, prefs.getString('otp'), true]).then((value) {
+      // setState(() {
+      //   this.owner = value;
+      // });
+      Navigator.of(context).pop();
     });
   }
 
@@ -581,150 +516,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     print("signature $signature");
   }
 
-  Widget getOtpVerificationBottomSheetWidget(
-      context, ScrollController scrollController) {
-    return ListView(controller: scrollController, children: <Widget>[
-      SingleChildScrollView(
-        child: Form(
-          // key: _formKeyOtp,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedWidgetMarker = WidgetMarker.viewProfile;
-                          });
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: Color(0xff252427),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Skip",
-                          style: TextStyle(
-                              color: Colors.black12,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 26.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Image(
-                  image: AssetImage('assets/images/logo_white.png'),
-                  height: 125.0,
-                  width: 125.0,
-                ),
-              ),
-              SizedBox(
-                height: 40.0,
-              ),
-              TextFieldPin(
-                borderStyeAfterTextChange: UnderlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.black87),
-                ),
-                borderStyle: UnderlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.black87),
-                ),
-                codeLength: 6,
-                boxSize: 40,
-                textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                ),
-                filledAfterTextChange: true,
-                filledColor: Colors.white,
-                onOtpCallback: (code, isAutofill) {
-                  print(code);
-                  this._otpCode = code;
-                },
-              ),
-              SizedBox(height: 16.0),
-              Align(
-                alignment: Alignment.centerRight,
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      otpController.clear();
-                    });
-                    postResendOtpRequest(context);
-                  },
-                  child: Text(
-                    "Resend OTP",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 40.0,
-              ),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  onTap: () {
-                    postOtpVerificationRequest(context);
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 50.0,
-                    child: Center(
-                      child: Text(
-                        "Verify OTP",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xff252427),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(width: 2.0, color: Color(0xff252427)),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ]);
-  }
-
   Widget getCredentialsWidget(context) {
     return Center(
       child: Column(
@@ -779,66 +570,11 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     );
   }
 
-  Widget getChangePasswordWidget(context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).size.width * 0.3 - 20,
-          ),
-          Text(
-            "Change",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 40.0,
-                fontWeight: FontWeight.bold),
-          ),
-          Text(
-            "Password",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 40.0,
-                fontWeight: FontWeight.bold),
-          ),
-          Spacer(),
-        ],
-      ),
-    );
-  }
-
-  Widget getOtpVerificationWidget(context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).size.width * 0.3 - 20,
-          ),
-          Text(
-            "OTP",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 40.0,
-                fontWeight: FontWeight.bold),
-          ),
-          Text(
-            "Verification",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 40.0,
-                fontWeight: FontWeight.bold),
-          ),
-          Spacer(),
-        ],
-      ),
-    );
-  }
 
   Widget getCustomWidget(context) {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
         return getProfileWidget(context);
-      case WidgetMarker.verifyOTP:
-        return getOtpVerificationWidget(context);
     }
     return getProfileWidget(context);
   }
@@ -848,8 +584,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
         return getCredentialsBottomSheetWidget(context, scrollController);
-      case WidgetMarker.verifyOTP:
-        return getOtpVerificationBottomSheetWidget(context, scrollController);
     }
     return getCredentialsBottomSheetWidget(context, scrollController);
   }
@@ -858,11 +592,6 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
     switch (selectedWidgetMarker) {
       case WidgetMarker.viewProfile:
         return Future.value(true);
-      case WidgetMarker.verifyOTP:
-        setState(() {
-          selectedWidgetMarker = WidgetMarker.viewProfile;
-        });
-        return Future.value(false);
     }
     return Future.value(true);
   }

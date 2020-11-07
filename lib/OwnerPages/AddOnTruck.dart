@@ -127,6 +127,8 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
   Future<void> _getData() async {
     reloadUser();
     getData();
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
   }
 
   @override

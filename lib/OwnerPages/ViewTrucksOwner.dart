@@ -1,13 +1,9 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:ownerapp/BottomSheets/AccountBottomSheetLoggedIn.dart';
 import 'package:ownerapp/BottomSheets/AccountBottomSheetWhite.dart';
 import 'package:ownerapp/CommonPages/LoadingBody.dart';
-import 'package:ownerapp/DialogScreens/DialogImageTruckDocsOwner.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/Truck.dart';
-import 'package:ownerapp/Models/TruckCategory.dart';
-import 'package:ownerapp/Models/TruckCategoryType.dart';
 import 'package:ownerapp/Models/User.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';

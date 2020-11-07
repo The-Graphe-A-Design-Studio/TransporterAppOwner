@@ -435,11 +435,6 @@ class HTTPHandler {
         },
       );
 
-      loginOwner([
-        '91',
-        data[0],
-      ]);
-
       return PostResultOne.fromJson(json.decode(response.body));
     } catch (e) {
       print(e);
