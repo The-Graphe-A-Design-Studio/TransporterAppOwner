@@ -44,7 +44,6 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
         'description': 'TruckWale',
         'prefill': {
           'contact': widget.userOwner.oPhone,
-          'email': 'rishav@thegraphe.com',
         },
       };
 
@@ -83,10 +82,6 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
           gravity: Toast.CENTER,
           duration: Toast.LENGTH_LONG,
         );
-        // Future.delayed(
-        //   Duration(milliseconds: 900),
-        //   () => HTTPHandler().signOut(context, owner.oPhone),
-        // );
       } else
         print('error');
     });
@@ -94,18 +89,10 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     print('Success => $response');
-    Navigator.of(context).popAndPushNamed(
-      '/homePageOwner',
-      arguments: owner,
-    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     print('Success => $response');
-    Navigator.of(context).popAndPushNamed(
-      '/homePageOwner',
-      arguments: owner,
-    );
   }
 
   @override
@@ -298,7 +285,10 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
               item('Final Price', 'Rs. ${double.parse(p.finalPrice)}'),
               SizedBox(height: 12.0),
               GestureDetector(
-                onTap: () => _openCheckOut(p),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _openCheckOut(p);
+                },
                 child: Container(
                   width: double.infinity,
                   height: 40.0,

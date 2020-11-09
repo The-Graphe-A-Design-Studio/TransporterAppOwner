@@ -5,7 +5,6 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:ownerapp/MyConstants.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toast/toast.dart';
 
 class SubscriptionOwner extends StatefulWidget {
   final UserOwner userOwner;
@@ -52,7 +51,6 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
         'description': 'TruckWale',
         'prefill': {
           'contact': widget.userOwner.oPhone,
-          'email': 'rishav@thegraphe.com',
         },
       };
 
@@ -95,18 +93,10 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     print('Success => $response');
-    Navigator.of(context).popAndPushNamed(
-      '/homePageOwner',
-      arguments: widget.userOwner,
-    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     print('Success => $response');
-    Navigator.of(context).popAndPushNamed(
-      '/homePageOwner',
-      arguments: widget.userOwner,
-    );
   }
 
   @override
@@ -378,7 +368,10 @@ class _SubscriptionOwnerState extends State<SubscriptionOwner> {
               item('Final Price', 'Rs. ${double.parse(p.finalPrice)}'),
               SizedBox(height: 12.0),
               GestureDetector(
-                onTap: () => _openCheckOut(p),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _openCheckOut(p);
+                },
                 child: Container(
                   width: double.infinity,
                   height: 40.0,
