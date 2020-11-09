@@ -61,13 +61,15 @@ class _TruckDetailsState extends State<TruckDetails> {
     HTTPHandler().getLoc(truck.truckId).then((value) {
       _lastMapPosition = value;
       _onAddMarkerButtonPressed();
-      _mapController.moveCamera(CameraUpdate.newLatLng(value));
+      // _mapController.moveCamera(CameraUpdate.newLatLng(value));
+      _mapController.animateCamera(CameraUpdate.newLatLng(value));
     });
-    Timer.periodic(Duration(milliseconds: 200), (timer) {
+    Timer.periodic(Duration(seconds: 1), (timer) {
       HTTPHandler().getLoc(truck.truckId).then((value) {
         _lastMapPosition = value;
         _onAddMarkerButtonPressed();
-        _mapController.moveCamera(CameraUpdate.newLatLng(value));
+        // _mapController.moveCamera(CameraUpdate.newLatLng(value));
+        _mapController.animateCamera(CameraUpdate.newLatLng(value));
       });
     });
   }
@@ -88,7 +90,7 @@ class _TruckDetailsState extends State<TruckDetails> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: CameraPosition(
                 target: _center,
-                zoom: 18.0,
+                zoom: 20.0,
               ),
               mapType: _currentMapType,
               markers: _markers,
