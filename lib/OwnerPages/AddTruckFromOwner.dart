@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ownerapp/DialogScreens/DialogFailed.dart';
 import 'package:ownerapp/DialogScreens/DialogProcessing.dart';
 import 'package:ownerapp/DialogScreens/DialogSuccess.dart';
@@ -45,6 +46,15 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
   final FocusNode _truckDriverName = FocusNode();
   final FocusNode _truckDriverNumber = FocusNode();
 
+  Future<File> roadTax;
+  Future<File> rtoPass;
+  Future<File> insurance;
+  Future<File> rc;
+  String roadTaxPath;
+  String rtoPassPath;
+  String insurancePath;
+  String rcPath;
+
   @override
   void initState() {
     super.initState();
@@ -79,7 +89,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
     rtoPassingDone = false;
   }
 
-  void postAddTruckRequest(BuildContext _context) {
+  void postAddTruckRequest(BuildContext _context) async {
     DialogProcessing().showCustomDialog(context,
         title: "Adding Truck", text: "Processing, Please Wait!");
     HTTPHandler().addTrucksOwner([
@@ -90,10 +100,14 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
       truckDriverNameController.text.toString(),
       '91',
       truckDriverMobileNumberController.text.toString(),
-      rcFile.path.toString(),
-      insuranceFile.path.toString(),
-      roadTaxFile.path.toString(),
-      rtoPassingFile.path.toString()
+      (await rc).path.toString(),
+      (await insurance).path.toString(),
+      (await roadTax).path.toString(),
+      (await rtoPass).path.toString(),
+      // rcFile.path.toString(),
+      // insuranceFile.path.toString(),
+      // roadTaxFile.path.toString(),
+      // rtoPassingFile.path.toString()
     ]).then((value) async {
       Navigator.pop(context);
       if (value.success) {
@@ -496,7 +510,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               Material(
                 child: TextFormField(
                   readOnly: true,
-                  onTap: () => getRcFile(),
+                  onTap: () => _showModalSheet(context, 4),
                   decoration: InputDecoration(
                     suffixIcon: Icon(
                       rcDone ? Icons.check_box : Icons.add_box,
@@ -514,7 +528,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               Material(
                 child: TextFormField(
                   readOnly: true,
-                  onTap: () => getInsuranceFile(),
+                  onTap: () => _showModalSheet(context, 3),
                   decoration: InputDecoration(
                     suffixIcon: Icon(
                       insuranceDone ? Icons.check_box : Icons.add_box,
@@ -532,7 +546,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               Material(
                 child: TextFormField(
                   readOnly: true,
-                  onTap: () => getRoadTaxFile(),
+                  onTap: () => _showModalSheet(context, 1),
                   decoration: InputDecoration(
                     suffixIcon: Icon(
                       roadTaxDone ? Icons.check_box : Icons.add_box,
@@ -550,7 +564,7 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
               Material(
                 child: TextFormField(
                   readOnly: true,
-                  onTap: () => getRtoPassingFile(),
+                  onTap: () => _showModalSheet(context, 2),
                   decoration: InputDecoration(
                     suffixIcon: Icon(
                       rtoPassingDone ? Icons.check_box : Icons.add_box,
@@ -743,5 +757,102 @@ class _AddTruckOwnerState extends State<AddTruckOwner> {
         ]),
       ),
     );
+  }
+
+  void _showModalSheet(BuildContext context, int v) => showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          height: 150,
+          color: Colors.black87,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FlatButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.camera,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Camera',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  pickImageFromSystem(ImageSource.camera, v);
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.folder_open,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Gallery',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  pickImageFromSystem(ImageSource.gallery, v);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      });
+
+  pickImageFromSystem(ImageSource source, int cat) {
+    switch (cat) {
+      case 1:
+        setState(() {
+          roadTax = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+          roadTaxDone = true;
+        });
+        break;
+
+      case 2:
+        setState(() {
+          rtoPass = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+          rtoPassingDone = true;
+        });
+        break;
+
+      case 3:
+        setState(() {
+          insurance = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+          insuranceDone = true;
+        });
+        break;
+
+      case 4:
+        setState(() {
+          rc = ImagePicker.pickImage(
+            source: source,
+            imageQuality: 15,
+          );
+          rcDone = true;
+        });
+        break;
+    }
   }
 }
