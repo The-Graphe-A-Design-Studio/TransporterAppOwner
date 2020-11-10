@@ -75,7 +75,7 @@ class _DriverLocationState extends State<DriverLocation> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: CameraPosition(
                 target: _center,
-                zoom: 18.0,
+                zoom: 20.0,
               ),
               mapType: _currentMapType,
               markers: _markers,

@@ -90,7 +90,7 @@ class _TruckDetailsState extends State<TruckDetails> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: CameraPosition(
                 target: _center,
-                zoom: 15.0,
+                zoom: 20.0,
               ),
               mapType: _currentMapType,
               markers: _markers,
