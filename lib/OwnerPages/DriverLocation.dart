@@ -51,13 +51,13 @@ class _DriverLocationState extends State<DriverLocation> {
     HTTPHandler().getDelLoc(widget.deliveryTruck.deleteTruckId).then((value) {
       _lastMapPosition = value;
       _onAddMarkerButtonPressed();
-      _mapController.moveCamera(CameraUpdate.newLatLng(value));
+      _mapController.animateCamera(CameraUpdate.newLatLng(value));
     });
     Timer.periodic(Duration(milliseconds: 100), (timer) {
       HTTPHandler().getDelLoc(widget.deliveryTruck.deleteTruckId).then((value) {
         _lastMapPosition = value;
         _onAddMarkerButtonPressed();
-        _mapController.moveCamera(CameraUpdate.newLatLng(value));
+        _mapController.animateCamera(CameraUpdate.newLatLng(value));
       });
     });
   }
