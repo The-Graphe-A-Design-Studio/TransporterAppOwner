@@ -376,7 +376,9 @@ class HTTPHandler {
     String type,
     UserOwner user,
     SubscriptionPlan plan,
+    double price,
     PaymentSuccessResponse paymentResponse,
+    String coupon,
   ) async {
     try {
       var response = await http.post(
@@ -390,6 +392,7 @@ class HTTPHandler {
           'razorpay_order_id': paymentResponse.orderId,
           'razorpay_payment_id': paymentResponse.paymentId,
           'razorpay_signature': paymentResponse.signature,
+          'coupon': coupon,
         },
       );
 
@@ -706,6 +709,22 @@ class HTTPHandler {
       var response = await http.post(
           'https://truckwale.co.in/api/driver/driver_docs',
           body: {'truck_id': truckId});
+
+      return json.decode(response.body);
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<Map> checkCoupon(
+    String couponCode,
+    String userId,
+    String userType,
+  ) async {
+    try {
+      var response = await http.get(
+          'https://truckwale.co.in/api/coupons?user_type=$userType&user_id=$userId&coupon=$couponCode');
 
       return json.decode(response.body);
     } catch (e) {

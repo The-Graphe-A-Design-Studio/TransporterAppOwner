@@ -9,6 +9,14 @@ import 'package:toast/toast.dart';
 import '../HttpHandler.dart';
 import '../MyConstants.dart';
 
+enum CouponStatus {
+  notChecked,
+  checking,
+  exists,
+  notExists,
+  applied,
+}
+
 class AddOnTruckPlansPage extends StatefulWidget {
   final UserOwner userOwner;
 
@@ -25,20 +33,23 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
 
   Razorpay _razorpay;
   SubscriptionPlan selected;
+  double selectedPlanPrice;
   UserOwner owner;
+
+  TextEditingController couponCode;
+  String coupon = '';
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  void _openCheckOut(SubscriptionPlan s) async {
+  void _openCheckOut(SubscriptionPlan s, double price) async {
     selected = s;
-    HTTPHandler()
-        .generateRazorpayOrderId((double.parse(s.finalPrice) * 100).round())
-        .then((value) {
+    selectedPlanPrice = price;
+    HTTPHandler().generateRazorpayOrderId((price * 100).round()).then((value) {
       print(value);
       var options = {
         'key': RAZORPAY_ID,
-        'amount': (double.parse(s.finalPrice) * 100).round(),
+        'amount': (price * 100).round(),
         'order_id': value,
         'name': widget.userOwner.oName,
         'description': 'TruckWale',
@@ -72,7 +83,16 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
     print('Order Id => ${response.orderId}');
     print('Signature => ${response.signature}');
 
-    HTTPHandler().storeData('3', owner, selected, response).then((value) {
+    HTTPHandler()
+        .storeData(
+      '3',
+      owner,
+      selected,
+      selectedPlanPrice,
+      response,
+      coupon,
+    )
+        .then((value) {
       if (value.success) {
         Navigator.of(context).pop();
         reloadUser();
@@ -103,6 +123,7 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    couponCode = TextEditingController();
   }
 
   getData() async {
@@ -260,53 +281,151 @@ class _AddOnTruckPlansPageState extends State<AddOnTruckPlansPage> {
   }
 
   void _openModal(SubscriptionPlan p) {
-    _scaffoldKey.currentState.showBottomSheet((context) => Container(
-          color: Colors.white,
-          width: MediaQuery.of(context).size.width,
-          height: 250.0,
-          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Plan Details'),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(Icons.close),
-                  ),
-                ],
-              ),
-              Divider(),
-              item('No. of Trucks', p.quantity),
-              item('Original Price', 'Rs. ${p.planOriginalPrice}'),
-              item('Selling Price', 'Rs. ${p.planSellingPrice}'),
-              item('GST', '18 %'),
-              item('Final Price', 'Rs. ${double.parse(p.finalPrice)}'),
-              SizedBox(height: 12.0),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _openCheckOut(p);
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 40.0,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white),
-                  ),
+    Map couponData;
+    CouponStatus status = CouponStatus.notChecked;
+
+    double sellingPrice = p.planSellingPrice;
+    double finalPrice = double.parse(p.finalPrice);
+
+    _scaffoldKey.currentState.showBottomSheet((context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setSheetState) {
+          return Container(
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+            height: 280.0,
+            padding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Plan Details'),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Icon(Icons.close),
+                    ),
+                  ],
                 ),
-              )
-            ],
-          ),
-        ));
+                Divider(),
+                item('Original Price', 'Rs. ${p.planOriginalPrice}'),
+                item('Selling Price', 'Rs. ${sellingPrice.toStringAsFixed(2)}'),
+                item('GST', '18 %'),
+                item('Final Price', 'Rs. ${finalPrice.toStringAsFixed(2)}'),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: couponCode,
+                        textCapitalization: TextCapitalization.characters,
+                      ),
+                    ),
+                    SizedBox(width: 5.0),
+                    GestureDetector(
+                      onTap: () {
+                        if (couponCode.text == '')
+                          Toast.show('Coupon Code required', context);
+                        else {
+                          setSheetState(() {
+                            status = CouponStatus.checking;
+                          });
+                          HTTPHandler()
+                              .checkCoupon(
+                                  couponCode.text, widget.userOwner.oId, '3')
+                              .then((value) {
+                            print(value);
+                            if (value['success'] == '1') {
+                              coupon = couponCode.text;
+                              status = CouponStatus.exists;
+                              couponData = value;
+                              sellingPrice = (sellingPrice *
+                                  (1 -
+                                      (int.parse(couponData['discount']
+                                              .split('%')[0])) /
+                                          100));
+                              finalPrice = sellingPrice + (0.18 * sellingPrice);
+                            } else
+                              status = CouponStatus.notExists;
+
+                            couponCode.text = '';
+
+                            setSheetState(() {});
+                          });
+                        }
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 5.0,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3.0),
+                            border: Border.all(
+                              width: 0.5,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          child: Text((status == CouponStatus.notChecked)
+                              ? 'APPLY'
+                              : (status == CouponStatus.exists)
+                                  ? 'APPLIED'
+                                  : 'APPLYING')),
+                    ),
+                  ],
+                ),
+                if (status == CouponStatus.exists)
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(
+                      'Discount of : ${couponData['discount']}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                if (status == CouponStatus.notExists)
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(
+                      'Coupon doesn\'t exist',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 12.0),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _openCheckOut(p, finalPrice);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 40.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 
   Widget item(String title, String value) => Padding(
