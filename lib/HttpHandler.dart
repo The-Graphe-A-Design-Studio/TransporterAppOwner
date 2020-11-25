@@ -386,7 +386,7 @@ class HTTPHandler {
         body: {
           'user_type': type,
           'user_id': user.oId,
-          'amount': plan.planSellingPrice.toString(),
+          'amount': price.toString(),
           'duration':
               (type == '2') ? plan.duration.split(' ')[0] : plan.quantity,
           'razorpay_order_id': paymentResponse.orderId,
