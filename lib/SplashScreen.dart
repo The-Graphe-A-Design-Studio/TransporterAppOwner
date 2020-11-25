@@ -86,13 +86,27 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Hero(
-          tag: "WhiteLogo",
-          child: Image(
-            image: AssetImage('assets/images/logo_white.png'),
-            height: 200.0,
-            width: 200.0,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Hero(
+              tag: "WhiteLogo",
+              child: Image(
+                image: AssetImage('assets/images/logo_white.png'),
+                height: 200.0,
+                width: 200.0,
+              ),
+            ),
+            SizedBox(height: 20.0),
+            Text(
+              'TRUCK OWNER',
+              style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 22.0,
+              ),
+            ),
+          ],
         ),
       ),
     );
