@@ -676,28 +676,34 @@ class HTTPHandler {
     }
   }
 
-  Future<LatLng> getLoc(String id) async {
+  Future<List> getLoc(String id) async {
     try {
       var response = await http.post(
           'https://truckwale.co.in/api/truck_location',
           body: {'truck_id': id});
 
-      return LatLng(double.parse(json.decode(response.body)['lat']),
-          double.parse(json.decode(response.body)['lng']));
+      return [
+        LatLng(double.parse(json.decode(response.body)['lat']),
+            double.parse(json.decode(response.body)['lng'])),
+        json.decode(response.body)['last updated at'],
+      ];
     } catch (e) {
       print(e);
       throw e;
     }
   }
 
-  Future<LatLng> getDelLoc(String id) async {
+  Future<List> getDelLoc(String id) async {
     try {
       var response = await http.post(
           'https://truckwale.co.in/api/truck_location',
           body: {'delivery_truck_id': id});
 
-      return LatLng(double.parse(json.decode(response.body)['lat']),
-          double.parse(json.decode(response.body)['lng']));
+      return [
+        LatLng(double.parse(json.decode(response.body)['lat']),
+            double.parse(json.decode(response.body)['lng'])),
+        json.decode(response.body)['last updated at'],
+      ];
     } catch (e) {
       print(e);
       throw e;

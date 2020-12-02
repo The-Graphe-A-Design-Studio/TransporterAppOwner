@@ -26,6 +26,8 @@ class _TruckDetailsState extends State<TruckDetails> {
   UserOwner userOwner;
   Truck truck;
 
+  String time = '';
+
   static const LatLng _center = const LatLng(22.62739470, 88.40363220);
   LatLng _lastMapPosition = _center;
   MapType _currentMapType = MapType.normal;
@@ -60,17 +62,23 @@ class _TruckDetailsState extends State<TruckDetails> {
     truck = widget.args[1];
     // _onAddMarkerButtonPressed();
     HTTPHandler().getLoc(truck.truckId).then((value) {
-      _lastMapPosition = value;
+      _lastMapPosition = value[0];
       _onAddMarkerButtonPressed();
       // _mapController.moveCamera(CameraUpdate.newLatLng(value));
-      _mapController.animateCamera(CameraUpdate.newLatLng(value));
+      _mapController.animateCamera(CameraUpdate.newLatLng(value[0]));
+      setState(() {
+        time = value[1];
+      });
     });
     Timer.periodic(Duration(seconds: 1), (timer) {
       HTTPHandler().getLoc(truck.truckId).then((value) {
-        _lastMapPosition = value;
+        _lastMapPosition = value[0];
         _onAddMarkerButtonPressed();
         // _mapController.moveCamera(CameraUpdate.newLatLng(value));
-        _mapController.animateCamera(CameraUpdate.newLatLng(value));
+        _mapController.animateCamera(CameraUpdate.newLatLng(value[0]));
+        setState(() {
+          time = value[1];
+        });
       });
     });
   }
@@ -125,7 +133,7 @@ class _TruckDetailsState extends State<TruckDetails> {
                 ),
                 SizedBox(height: 10.0),
                 Text(
-                  'Last updated at ${DateFormat.yMEd().add_jms().format(DateTime.now())} ',
+                  'Last updated at $time ',
                   style: TextStyle(fontSize: 15.0),
                 ),
               ],

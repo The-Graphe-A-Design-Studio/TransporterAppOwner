@@ -22,6 +22,7 @@ class _DriverLocationState extends State<DriverLocation> {
   LatLng _lastMapPosition = _center;
   MapType _currentMapType = MapType.normal;
   final Set<Marker> _markers = {};
+  String time = '';
 
   void _onAddMarkerButtonPressed() {
     setState(() {
@@ -50,15 +51,21 @@ class _DriverLocationState extends State<DriverLocation> {
     super.initState();
 
     HTTPHandler().getDelLoc(widget.deliveryTruck.deleteTruckId).then((value) {
-      _lastMapPosition = value;
+      _lastMapPosition = value[0];
       _onAddMarkerButtonPressed();
-      _mapController.animateCamera(CameraUpdate.newLatLng(value));
+      _mapController.animateCamera(CameraUpdate.newLatLng(value[0]));
+      setState(() {
+        time = value[1];
+      });
     });
     Timer.periodic(Duration(milliseconds: 100), (timer) {
       HTTPHandler().getDelLoc(widget.deliveryTruck.deleteTruckId).then((value) {
-        _lastMapPosition = value;
+        _lastMapPosition = value[0];
         _onAddMarkerButtonPressed();
-        _mapController.animateCamera(CameraUpdate.newLatLng(value));
+        _mapController.animateCamera(CameraUpdate.newLatLng(value[0]));
+        setState(() {
+          time = value[1];
+        });
       });
     });
   }
@@ -110,7 +117,7 @@ class _DriverLocationState extends State<DriverLocation> {
                 ),
                 SizedBox(height: 10.0),
                 Text(
-                  'Last updated at ${DateFormat.yMEd().add_jms().format(DateTime.now())} ',
+                  'Last updated at $time ',
                   style: TextStyle(fontSize: 15.0),
                 ),
               ],
