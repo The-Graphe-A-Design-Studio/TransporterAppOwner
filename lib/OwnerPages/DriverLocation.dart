@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:ownerapp/HttpHandler.dart';
 import 'package:ownerapp/Models/Deliveries.dart';
 
@@ -66,11 +67,14 @@ class _DriverLocationState extends State<DriverLocation> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text('Driver Location'),
+      ),
       body: Column(
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height * 2 / 3,
             child: GoogleMap(
               onMapCreated: _onMapCreated,
               initialCameraPosition: CameraPosition(
@@ -80,6 +84,36 @@ class _DriverLocationState extends State<DriverLocation> {
               mapType: _currentMapType,
               markers: _markers,
               onCameraMove: _onCameraMove,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30.0,
+              vertical: 20.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.deliveryTruck.truckNumber,
+                  style: TextStyle(
+                      fontSize: 25.0,
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10.0),
+                Text(
+                  '${widget.deliveryTruck.driverName} ( ${widget.deliveryTruck.driverPhone} )',
+                  style: TextStyle(fontSize: 15.0),
+                ),
+                SizedBox(height: 10.0),
+                Text(
+                  'Last updated at ${DateFormat.yMEd().add_jms().format(DateTime.now())} ',
+                  style: TextStyle(fontSize: 15.0),
+                ),
+              ],
             ),
           ),
         ],

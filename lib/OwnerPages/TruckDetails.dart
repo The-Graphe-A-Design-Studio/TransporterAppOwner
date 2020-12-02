@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:ownerapp/Models/Truck.dart';
 import 'package:ownerapp/Models/User.dart';
 
@@ -120,6 +121,11 @@ class _TruckDetailsState extends State<TruckDetails> {
                 SizedBox(height: 10.0),
                 Text(
                   '${truck.truckCat} ( ${truck.truckCatType} )',
+                  style: TextStyle(fontSize: 15.0),
+                ),
+                SizedBox(height: 10.0),
+                Text(
+                  'Last updated at ${DateFormat.yMEd().add_jms().format(DateTime.now())} ',
                   style: TextStyle(fontSize: 15.0),
                 ),
               ],

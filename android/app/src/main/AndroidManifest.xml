@@ -16,7 +16,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
-        android:label="ownerapp">
+        android:label="Truck Owner">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDH8iEIWiHLIRcSsJWm8Fh1qbgwt0JRAc0" />
