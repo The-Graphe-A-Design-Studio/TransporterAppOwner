@@ -973,31 +973,32 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
               ),
               Row(
                 children: [
-                  SizedBox(
-                    child: Material(
-                                          child: TextFormField(
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.dialpad),
-                          hintText: "+91",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.amber,
-                              style: BorderStyle.solid,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    width: 97.0,
-                  ),
-                  SizedBox(width: 16.0),
+//                  SizedBox(
+//                    child: Material(
+//                      child: TextFormField(
+//                        readOnly: true,
+//                        decoration: InputDecoration(
+//                          prefixIcon: Icon(Icons.dialpad),
+//                          hintText: "+91",
+//                          border: OutlineInputBorder(
+//                            borderRadius: BorderRadius.circular(5.0),
+//                            borderSide: BorderSide(
+//                              color: Colors.amber,
+//                              style: BorderStyle.solid,
+//                            ),
+//                          ),
+//                        ),
+//                      ),
+//                    ),
+//                    width: 97.0,
+//                  ),
+//                  SizedBox(width: 16.0),
                   Flexible(
                     child: Material(
-                                          child: TextFormField(
+                      child: TextFormField(
                         controller: mobileNumberController,
                         keyboardType: TextInputType.number,
+                        maxLength: 10,
                         textInputAction: TextInputAction.next,
                         focusNode: _mobileNumberSignIn,
                         onFieldSubmitted: (term) {
@@ -1006,6 +1007,7 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                         },
                         decoration: InputDecoration(
                           labelText: "Mobile Number",
+                          prefixText: "+91     ",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
                             borderSide: BorderSide(
@@ -1027,35 +1029,35 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                   )
                 ],
               ),
-              Row(
-                children: [
-                  Material(
-                                      child: Checkbox(
-                      value: rememberMe,
-                      checkColor: Colors.white,
-                      activeColor: Color(0xff252427),
-                      onChanged: (bool value) {
-                        setState(() {
-                          rememberMe = value;
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 0.0,
-                  ),
-                  Text("Remember Me"),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      print("Forgot Password");
-                    },
-                    child: Container(
-                      child: Text("Forgot Password?"),
-                    ),
-                  )
-                ],
-              ),
+//              Row(
+//                children: [
+//                  Material(
+//                    child: Checkbox(
+//                      value: rememberMe,
+//                      checkColor: Colors.white,
+//                      activeColor: Color(0xff252427),
+//                      onChanged: (bool value) {
+//                        setState(() {
+//                          rememberMe = value;
+//                        });
+//                      },
+//                    ),
+//                  ),
+//                  SizedBox(
+//                    width: 0.0,
+//                  ),
+//                  Text("Remember Me"),
+//                  Spacer(),
+//                  GestureDetector(
+//                    onTap: () {
+//                      print("Forgot Password");
+//                    },
+//                    child: Container(
+//                      child: Text("Forgot Password?"),
+//                    ),
+//                  )
+//                ],
+//              ),
               SizedBox(
                 height: 30.0,
               ),
@@ -1071,7 +1073,7 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
                     height: 50.0,
                     child: Center(
                       child: Text(
-                        "Continue",
+                        "Next",
                         style: TextStyle(
                             color: Color(0xff252427),
                             fontSize: 24.0,
