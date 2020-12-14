@@ -430,50 +430,67 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
               SizedBox(
                 height: 16.0,
               ),
-              GestureDetector(
-                onTap: () => _showModalSheet(context),
-                // pickImageFromSystem(ImageSource.gallery),
-                child: Material(
-                  child: TextFormField(
-                    controller: panCardNumberController,
-                    enabled: false,
-                    keyboardType: TextInputType.text,
-                    textCapitalization: TextCapitalization.characters,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.dialpad),
-                      labelText: "PAN Card",
-                      disabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          style: BorderStyle.solid,
-                        ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 100.0,
+                    height: 30.0,
+                    margin: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      "PAN Card",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 18.0,
                       ),
                     ),
                   ),
-                ),
+                  GestureDetector(
+                      onTap: () => _showModalSheet(context),
+                      child: Container(
+                        width: 100.0,
+                        height: 30.0,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(5.0),
+                        margin: const EdgeInsets.only(bottom: 3.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Color(0xff252427),
+                          border: Border.all(
+                            width: 0.3,
+                            color: Colors.black,
+                          ),
+                        ),
+                        child: Text(
+                          (panCardNumberController.text == '') ? 'Add' : (imageFile == null) ? 'Edit' : 'Update',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 16.0,
-              ),
+              SizedBox(height: 10.0),
               (imageFile != null)
                   ? _imagePreview()
-                  : (panCardNumberController.text != null)
-                      ? Container(
-                          height: 250.0,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://truckwale.co.in/${panCardNumberController.text}'),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        )
-                      : Container(),
+                  : (panCardNumberController.text != '')
+                  ? Container(
+                height: 250.0,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        'https://truckwale.co.in/${panCardNumberController.text}'),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              )
+                  : Container(),
               SizedBox(
-                height: 16.0,
+                height: 20.0,
               ),
               Material(
                 color: Colors.transparent,
@@ -544,18 +561,20 @@ class _ViewProfileOwnerState extends State<ViewProfileOwner> {
             height: MediaQuery.of(context).size.width * 0.3 - 20,
           ),
           Text(
-            "View",
+            "My",
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 40.0,
-                fontWeight: FontWeight.bold),
+                fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             "Profile",
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 40.0,
-                fontWeight: FontWeight.bold),
+                fontWeight: FontWeight.bold,
+            ),
           ),
           Spacer(),
         ],

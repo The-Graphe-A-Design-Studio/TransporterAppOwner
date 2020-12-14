@@ -196,14 +196,14 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
 
   void postSignInRequest(BuildContext _context) {
     DialogProcessing().showCustomDialog(context,
-        title: "Sign In", text: "Processing, Please Wait!");
+        title: "Requesting OTP", text: "Processing, Please Wait!");
     HTTPHandler().loginOwner([
       '91',
       mobileNumberController.text,
     ]).then((value) async {
       Navigator.pop(context);
       if (value.success) {
-        DialogSuccess().showCustomDialog(context, title: "Sign In");
+        DialogSuccess().showCustomDialog(context, title: "Requesting OTP");
         await Future.delayed(Duration(seconds: 1), () {});
         setState(() {
           isLogin = false;
@@ -219,14 +219,14 @@ class _OwnerOptionsPageState extends State<OwnerOptionsPage> {
         ));
       } else {
         DialogFailed()
-            .showCustomDialog(context, title: "Sign In", text: value.message);
+            .showCustomDialog(context, title: "Requesting OTP", text: value.message);
         await Future.delayed(Duration(seconds: 3), () {});
         Navigator.pop(context);
       }
     }).catchError((error) async {
       Navigator.pop(context);
       DialogFailed()
-          .showCustomDialog(context, title: "Sign In", text: "Network Error");
+          .showCustomDialog(context, title: "Requesting OTP", text: "Network Error");
       await Future.delayed(Duration(seconds: 3), () {});
       Navigator.pop(context);
     });

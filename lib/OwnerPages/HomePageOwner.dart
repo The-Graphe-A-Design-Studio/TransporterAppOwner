@@ -57,18 +57,66 @@ class _HomePageOwnerState extends State<HomePageOwner> {
             onRefresh: () => _onRefresh(context),
             child: Container(
               width: MediaQuery.of(context).size.width,
+              color: Color.fromRGBO(245, 245, 245, 1),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 100.0),
-                    Image(
-                        image: AssetImage('assets/images/logo_white.png'),
-                        height: 200.0),
-                    SizedBox(
-                      height: 30.0,
+                    SizedBox(height: 70.0),
+                    Container(
+                      padding: EdgeInsets.only(left: 30.0),
+                      child: Text(
+                        "Dashboard",
+                        style: TextStyle(
+                          fontSize: 23.0,
+                          color: Colors.black87,
+                        ),
+                      ),
                     ),
+                    //SizedBox(height: 10.0),
+                    Container(
+                      margin: EdgeInsets.all(30.0),
+                      height: 180.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15.0),
+                        ),
+                        color: Colors.white,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image(
+                            image: AssetImage('assets/images/logo_white.png'),
+                            height: 100.0,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                owner.oName,
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 5.0,),
+                              Text(
+                                "TRUCK OWNER",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 15.0,),
                     if (owner.planType != '2')
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -118,66 +166,195 @@ class _HomePageOwnerState extends State<HomePageOwner> {
                           ],
                         ),
                       ),
-                    SizedBox(height: 30.0),
-                    Text(
-                      "Truck Owner - " + owner.oName,
-                      style: TextStyle(
-                        fontSize: 23.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                    SizedBox(height: 5.0),
+                    Container(
+                      margin: EdgeInsets.only(left: 30.0),
+                      child: Text("Options",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18.0,
+                          )),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 30.0),
+                      child: Text("Manage your account",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15.0,
+                          )),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+//                          GestureDetector(
+//                            onTap: () {
+//                              if (truckList.length < owner.totalTruck)
+//                                Navigator.pushNamed(
+//                                    context, addTruckOwner,
+//                                    arguments: owner);
+//                              else
+//                                Toast.show(
+//                                  'Please buy truck add On',
+//                                  context,
+//                                  gravity: Toast.CENTER,
+//                                );
+//                            },
+//                            child: Container(
+//                              height: 220.0,
+//                              width: 160.0,
+//                              margin: EdgeInsets.only(left: 30.0),
+//                              padding: EdgeInsets.all(20.0),
+//                              decoration: BoxDecoration(
+//                                borderRadius: BorderRadius.all(
+//                                  Radius.circular(15.0),
+//                                ),
+//                                color: Colors.white,
+//                              ),
+//                              child: Column(
+//                                children: <Widget>[
+//                                  SizedBox(height: 30.0,),
+//                                  Image(
+//                                    image: AssetImage('assets/icon/plus-circle.png'),
+//                                    height: 70.0,
+//                                    alignment: Alignment.center,
+//                                  ),
+//                                  SizedBox(height: 40.0,),
+//                                  Align(
+//                                    alignment: Alignment.centerLeft,
+//                                    child: Text(
+//                                      "New Truck",
+//                                      style: TextStyle(
+//                                        color: Colors.black,
+//                                        fontSize: 15.0,
+//                                      ),
+//                                    ),
+//                                  ),
+//                                  Align(
+//                                    alignment: Alignment.centerLeft,
+//                                    child: Text(
+//                                      "Tap to add",
+//                                      style: TextStyle(
+//                                        color: Colors.black,
+//                                        fontSize: 12.0,
+//                                      ),
+//                                    ),
+//                                  ),
+//                                ],
+//                              ),
+//                            ),
+//                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (owner.verified == '1')
+                                Navigator.pushNamed(context, viewTrucksOwner,
+                                    arguments: owner);
+                              else
+                                Toast.show(
+                                    'Please wait, until verified by admin.', context);
+                            },
+                            child: Container(
+                              height: 220.0,
+                              width: 160.0,
+                              margin: EdgeInsets.only(left: 30.0),
+                              padding: EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15.0),
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(height: 30.0,),
+                                  Image(
+                                    image: AssetImage('assets/icon/truck.png'),
+                                    height: 70.0,
+                                    alignment: Alignment.center,
+                                  ),
+                                  SizedBox(height: 40.0,),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Trucks",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15.0,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "view my trucks",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, viewProfileOwner,
+                                  arguments: owner);
+                            },
+                            child: Container(
+                              height: 220.0,
+                              width: 160.0,
+                              margin: EdgeInsets.only(left: 30.0),
+                              padding: EdgeInsets.all(20.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15.0),
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(height: 30.0,),
+                                  Image(
+                                    image: AssetImage('assets/icon/person.png'),
+                                    height: 70.0,
+                                    alignment: Alignment.center,
+                                  ),
+                                  SizedBox(height: 40.0,),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Profile",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15.0,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "view my profile",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 30.0,)
+                        ],
                       ),
                     ),
                     SizedBox(
-                      height: 30.0,
-                    ),
-                    Text("Tap to Add a New Truck",
-                        style: TextStyle(
-                          color: Colors.black38,
-                          fontSize: 18.0,
-                        )),
-                    Text("for Transporting",
-                        style: TextStyle(
-                          color: Colors.black38,
-                          fontSize: 18.0,
-                        )),
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        if (owner.verified == '1')
-                          Navigator.pushNamed(context, viewTrucksOwner,
-                              arguments: owner);
-                        else
-                          Toast.show(
-                              'Please wait, until verified by admin.', context);
-                      },
-                      child: Text(
-                        "View My Trucks",
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25.0,
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, viewProfileOwner,
-                            arguments: owner);
-                      },
-                      child: Text(
-                        "View My Profile",
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 100,
+                      height: 150,
                     ),
                   ],
                 ),
